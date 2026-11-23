@@ -1,0 +1,42 @@
+<!-- =========================================================================
+     PA'L MAESTRO · ¿CACHAI O NO? — CÓDIGO LISTO PARA BLOGGER
+     Instrucciones:
+       1. En Blogger ve a: Páginas → Nueva página
+       2. Título sugerido: ¿Cachai o no?
+       3. Cambia el editor a "Vista HTML" (ícono <> arriba a la izquierda)
+       4. Pega TODO este bloque y presiona "Publicar"
+       5. Quedará en: https://www.palmaestro.xyz/p/cachai-o-no.html
+     ========================================================================= -->
+<p class="pm-tech-italic" style="margin:0 0 14px;">
+  Quiz interactivo oficial de Pa'l Maestro (Canal 3 · Chile) · Pregunta del Día sincronizada con @pal_maestro + Ruleta de 120 preguntas de obra, normativa y ferretería.
+</p>
+
+<div style="position:relative;">
+  <div id="pm-cachai-loading" style="display:flex; justify-content:center; padding:36px 0;">
+    <palmaestro-loader loop size="230" show-status></palmaestro-loader>
+  </div>
+  <iframe
+    id="pm-cachai-frame"
+    class="iframe-wrapper-maestro"
+    src="https://shewinho.github.io/palmaestro-web/apps/cachai-o-no.html"
+    title="¿Cachai o no? · Juego oficial de Pa'l Maestro"
+    style="width:100%; min-height:920px; height:960px; display:none; border:2.5px solid #1F2536; border-radius:16px; background:#FFF8EE;"
+    onload="document.getElementById('pm-cachai-loading').style.display='none'; this.style.display='block';"
+    frameborder="0"
+    allow="clipboard-write; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<script>
+(function(){
+  var fr = document.getElementById('pm-cachai-frame');
+  if(!fr) return;
+  window.addEventListener('message', function(ev){
+    if(ev.origin !== 'https://shewinho.github.io') return;
+    if(ev.data && ev.data.type === 'pm-cachai-height' && ev.data.height){
+      fr.style.height = Math.max(880, Math.min(2600, Number(ev.data.height))) + 'px';
+    }
+  });
+})();
+</script>

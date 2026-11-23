@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>¿Cachai o no? · Quiz de Construcción | Pa'l Maestro</title>
+<meta name="description" content="Juega la Pregunta del Día y gira la ruleta de construcción, normativa chilena y ferretería de Pa'l Maestro.">
+<style>
+@font-face {
+  font-family: 'Allo';
+  src: url('https://cdn.jsdelivr.net/gh/joshpuckett/allo@main/fonts/web/AlloVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Allo';
+  src: url('https://cdn.jsdelivr.net/gh/joshpuckett/allo@main/fonts/web/AlloVariableItalic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --paper: #FFF8EE;
+  --card: #FFFFFF;
+  --ink: #1F2536;
+  --muted: #475569;
+  --red: #EF3B39;
+  --yellow: #FFD000;
+  --blue: #38BDF8;
+  --orange: #FF5A1F;
+  --green: #22C55E;
+  --mate: #8D4B26;
+  --pink: #EC4899;
+  --navy: #1C2754;
+  --brown: #3B2212;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Allo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-variation-settings: "ROND" 40;
+  color: var(--ink);
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.14) 1px, transparent 1px),
+    linear-gradient(rgba(31, 37, 54, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 37, 54, 0.05) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 20px 20px, 20px 20px;
+  padding-bottom: 42px;
+}
+
+/* Cinta de obra animada */
+.pm-tape {
+  background: var(--yellow);
+  border-bottom: 2.5px solid var(--ink);
+  display: flex;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.pm-tape-haz {
+  width: 20px;
+  flex-shrink: 0;
+  background: repeating-linear-gradient(-45deg, #1F2536, #1F2536 7px, #FFD000 7px, #FFD000 14px);
+}
+.pm-tape-view { overflow: hidden; flex: 1; padding: 5px 0; }
+.pm-tape-track {
+  display: flex;
+  width: max-content;
+  animation: scrollTape 26s linear infinite;
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+}
+.pm-tape-track span { margin: 0 18px; }
+@keyframes scrollTape { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Contenedor principal */
+.app-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 14px 14px 28px;
+}
+
+/* Jerarquía tipográfica oficial Allo */
+.pm-title {
+  font-weight: 900;
+  font-variation-settings: "ROND" 100;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+}
+.pm-tech-italic {
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "ROND" 0;
+  font-size: 12px;
+  line-height: 1.38;
+  letter-spacing: 0.015em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cards, botones y detalles táctiles */
+.pm-card {
+  background: var(--card);
+  border: 2.5px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 5px 5px 0 var(--ink);
+  position: relative;
+}
+.pm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 2.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  border-radius: 12px;
+  padding: 9px 14px;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+  background: #FFFFFF;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 110ms ease, box-shadow 110ms ease, background 140ms ease;
+}
+.pm-btn:hover:not(:disabled) { transform: translate(-1.5px, -1.5px); box-shadow: 4.5px 4.5px 0 var(--ink); }
+.pm-btn:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.pm-btn:disabled { opacity: 0.48; cursor: not-allowed; }
+.pm-btn.yellow { background: var(--yellow); color: var(--ink); }
+.pm-btn.red { background: var(--red); color: #FFFFFF; }
+.pm-btn.green { background: var(--green); color: var(--ink); }
+.pm-btn.blue { background: var(--blue); color: var(--ink); }
+.pm-btn.navy { background: var(--navy); color: #FFFFFF; }
+.pm-btn.sm { padding: 6px 11px; font-size: 12.5px; border-width: 2px; box-shadow: 2px 2px 0 var(--ink); }
+
+.washi {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 86px;
+  height: 20px;
+  background: rgba(255, 208, 0, 0.85);
+  border-left: 2px dashed rgba(31, 37, 54, 0.28);
+  border-right: 2px dashed rgba(31, 37, 54, 0.28);
+  pointer-events: none;
+}
+.washi.blue { background: rgba(56, 189, 248, 0.72); transform: translateX(-50%) rotate(2.4deg); }
+.washi.red { background: rgba(239, 59, 57, 0.68); transform: translateX(-50%) rotate(-1.6deg); }
+
+.zine-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  font-size: 11.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 2px solid var(--ink);
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+  border-radius: 7px;
+  transform: rotate(-1.5deg);
+}
+.zine-accent {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 1px 9px;
+  border-radius: 8px;
+  transform: rotate(-1.8deg);
+}
+
+/* Patrones vectoriales animados al hover */
+@keyframes glide28 { from { background-position: 0 0; } to { background-position: 28px 28px; } }
+@keyframes glide24 { from { background-position: 0 0; } to { background-position: 24px 0; } }
+.pat-dots {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='6' cy='6' r='2.2' fill='%23FFFFFF' fill-opacity='0.34'/%3E%3Ccircle cx='18' cy='18' r='2.2' fill='%231F2536' fill-opacity='0.14'/%3E%3C/svg%3E");
+  background-size: 24px 24px;
+  animation: glide28 2.4s linear infinite;
+}
+.pat-diag {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M-6 24L18 0M6 24L30 0' stroke='%23FFFFFF' stroke-width='2.4' stroke-opacity='0.26'/%3E%3C/svg%3E");
+  background-size: 24px 24px;
+  animation: glide24 1.6s linear infinite;
+}
+
+/* Header */
+.top-header {
+  padding: 12px 15px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.brand-logo-img {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  background: #FFFDF8;
+  font-size: 12.5px;
+  font-weight: 900;
+}
+.stat-pill.streak { background: #FFF3B0; }
+.stat-pill.rank { background: #E0F7FF; }
+
+/* Pestañas principales */
+.nav-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 10px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  background: #FFFFFF;
+  color: var(--ink);
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 3.5px 3.5px 0 var(--ink);
+  transition: transform 110ms ease, box-shadow 110ms ease, background 140ms ease;
+}
+.tab-btn:hover { transform: translate(-1px, -1px); box-shadow: 4.5px 4.5px 0 var(--ink); }
+.tab-btn.active {
+  background: var(--yellow);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.tab-btn svg { flex-shrink: 0; }
+
+/* Micro-animaciones SVG */
+.ico { width: 18px; height: 18px; display: inline-block; vertical-align: middle; }
+.pm-btn:hover .ico-spin, .tab-btn:hover .ico-spin { animation: spinSlow 0.9s cubic-bezier(.34,1.56,.64,1); }
+@keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(180deg); } }
+.pm-btn:hover .ico-bounce { animation: hop 0.55s ease-in-out infinite; }
+@keyframes hop { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+/* Vistas */
+.view { display: none; }
+.view.active { display: block; animation: fadeInUp 220ms ease; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Tarjeta de Pregunta & Modo Blueprint en Respuesta */
+.quiz-stage {
+  padding: 20px;
+  transition: background 260ms ease, color 260ms ease;
+}
+.quiz-stage.blueprint {
+  background-color: var(--navy);
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.16) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px, 64px 64px, 16px 16px, 16px 16px;
+  color: #FFFFFF;
+}
+
+.q-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.dif-chip {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 2px solid var(--ink);
+  background: #FFFDF8;
+  color: var(--ink);
+}
+.quiz-stage.blueprint .dif-chip { background: var(--yellow); }
+
+.q-box {
+  background: #FFFFFF;
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  box-shadow: 4px 4px 0 var(--ink);
+  position: relative;
+  margin-bottom: 14px;
+}
+.q-text {
+  margin: 0;
+  font-size: clamp(19px, 3vw, 25px);
+  font-weight: 900;
+  font-variation-settings: "ROND" 100;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+/* Barra de tiempo */
+.timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.timer-track {
+  flex: 1;
+  height: 16px;
+  background: #FFFFFF;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+}
+.timer-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--yellow);
+  transition: width 100ms linear, background 200ms ease;
+}
+.timer-fill.urgent { background: var(--red); }
+.timer-num {
+  min-width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2.5px solid var(--ink);
+  background: var(--yellow);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 16px;
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+}
+.timer-num.urgent { background: var(--red); color: #FFFFFF; animation: pulseUrg 0.5s infinite; }
+@keyframes pulseUrg { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+/* Alternativas */
+.alts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.alt-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 13px 15px;
+  background: #FFFFFF;
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--ink);
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 110ms ease, box-shadow 110ms ease, background 150ms ease;
+}
+.alt-btn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+  background: #FFFDF5;
+}
+.alt-btn:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1.5px 1.5px 0 var(--ink); }
+.alt-btn:disabled { cursor: default; }
+.alt-key {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.alt-btn.is-correct {
+  background: var(--green);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.alt-btn.is-correct .alt-key {
+  background: #FFFFFF;
+  color: #15803D;
+}
+.alt-btn.is-wrong {
+  background: var(--red);
+  color: #FFFFFF;
+}
+.alt-btn.is-wrong .alt-key {
+  background: #FFFFFF;
+  color: var(--red);
+}
+.alt-btn.is-hidden {
+  display: none;
+}
+
+/* Zona de personaje + explicación (Panel 3 estilo Blueprint) */
+.result-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 14px;
+  align-items: end;
+}
+@media (max-width: 640px) {
+  .result-grid { grid-template-columns: 1fr; }
+  .char-stage { order: -1; }
+}
+.exp-card {
+  background: var(--paper);
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  padding: 18px 16px 15px;
+  box-shadow: 5px 5px 0 var(--ink);
+  position: relative;
+}
+.exp-tag {
+  position: absolute;
+  top: -14px;
+  left: 14px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  transform: rotate(-1.5deg);
+}
+.verdict-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 13px;
+  border-radius: 10px;
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-weight: 900;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+.verdict-banner.ok { background: var(--green); color: var(--ink); }
+.verdict-banner.bad { background: var(--orange); color: #FFFFFF; }
+.exp-text {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+.source-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 2px dashed rgba(31, 37, 54, 0.18);
+}
+.blog-cta {
+  margin-top: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 900;
+  color: var(--navy);
+  background: #E0F7FF;
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  padding: 6px 11px;
+  text-decoration: none;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.blog-cta:hover { background: var(--blue); }
+
+.char-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+}
+.char-stage img {
+  width: 148px;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(4px 6px 0 rgba(15, 23, 42, 0.45));
+  animation: popChar 360ms cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popChar { from { transform: scale(0.75) translateY(18px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+.char-caption {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 9px;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+}
+
+.result-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Personaje acompañante en estado pregunta */
+.question-host-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 2px dashed rgba(31, 37, 54, 0.16);
+}
+.question-host-row img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: #FFF3B0;
+  border: 2px solid var(--ink);
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+}
+
+/* Cuenta regresiva próximo día + archivo días */
+.daily-footer {
+  margin-top: 16px;
+  padding: 14px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #FFFDF8;
+}
+.led-box {
+  background: #0F171A;
+  color: #4ADE80;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+  font-family: ui-monospace, Consolas, monospace;
+  letter-spacing: 0.12em;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 6px 11px;
+  border-radius: 9px;
+  border: 2px solid var(--ink);
+}
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 2px;
+}
+.day-tile {
+  padding: 7px 6px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: var(--ink);
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  text-align: center;
+}
+.day-tile.ok { background: #DCFCE7; }
+.day-tile.bad { background: #FEE2E2; }
+.day-tile.active { background: var(--yellow); }
+
+/* Vista Ruleta Libre */
+.roulette-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 800px) {
+  .roulette-layout { grid-template-columns: 1fr; }
+}
+.wheel-card {
+  padding: 18px 14px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.wheel-wrap {
+  position: relative;
+  width: 296px;
+  height: 296px;
+  max-width: 100%;
+}
+.wheel-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(7px 7px 0 #1F2536);
+}
+.wheel-pointer {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 40px;
+  z-index: 4;
+  transform-origin: 50% 8px;
+}
+.wheel-pointer.kick { animation: ptrKick 110ms ease; }
+@keyframes ptrKick { 0%{transform:translateX(-50%) rotate(0)} 45%{transform:translateX(-50%) rotate(-18deg)} 100%{transform:translateX(-50%) rotate(0)} }
+
+.dif-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.dif-pill {
+  padding: 5px 10px;
+  border-radius: 9px;
+  border: 2px solid var(--ink);
+  background: #FFFFFF;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.dif-pill.active { background: var(--blue); }
+
+.sobre-banner {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Vista Mi Cuadrilla */
+.cuadrilla-hero {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+  background: #FFFDF8;
+}
+@media (max-width: 600px) { .cuadrilla-hero { grid-template-columns: 1fr; } }
+.rank-prog-track {
+  height: 16px;
+  background: #E8E2D8;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 6px;
+}
+.rank-prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--yellow));
+  width: 0%;
+  transition: width 350ms ease;
+}
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+@media (max-width: 640px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+.kpi-card {
+  padding: 14px 12px;
+  text-align: center;
+}
+.kpi-val {
+  font-size: 28px;
+  font-weight: 900;
+  font-variation-settings: "ROND" 100;
+  line-height: 1.05;
+}
+.cat-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (max-width: 640px) { .cat-stats-grid { grid-template-columns: 1fr; } }
+.cat-stat-item {
+  padding: 12px 14px;
+}
+.cat-bar-track {
+  height: 11px;
+  background: #F1ECE3;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.cat-bar-fill { height: 100%; width: 0%; transition: width 350ms ease; }
+
+/* Modal Story Preview */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 39, 84, 0.72);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 90;
+}
+.modal-backdrop.open { display: flex; }
+.modal-card {
+  max-width: 420px;
+  width: 100%;
+  padding: 18px;
+  text-align: center;
+  max-height: 92vh;
+  overflow: auto;
+}
+.modal-card img {
+  width: auto;
+  max-width: 100%;
+  max-height: 56vh;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 2.5px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  background: transparent;
+  margin: 10px auto 12px;
+}
+
+/* Loader overlay suave al arrancar */
+#bootOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 248, 238, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 100;
+  transition: opacity 280ms ease;
+}
+#bootOverlay.hide { opacity: 0; pointer-events: none; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2.5px solid var(--yellow);
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-weight: 800;
+  font-size: 13.5px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 120;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+body.in-iframe .pm-tape { display: none; }
+body.in-iframe .app-shell { padding-top: 12px; padding-bottom: 24px; }
+
+@media (max-width: 600px) {
+  .brand-logo-img { height: 34px; }
+  .tab-btn { font-size: 12.5px; padding: 10px 6px; gap: 5px; }
+  .quiz-stage { padding: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loader Oficial Pa'l Maestro (Tetera + Mate) -->
+<div id="bootOverlay">
+  <palmaestro-loader id="pmBootLoader" progress="20" size="210" show-status show-bar></palmaestro-loader>
+  <p class="pm-tech-italic" style="margin:0">Preparando el mesón y las 120 preguntas de obra...</p>
+</div>
+
+<!-- Cinta de Obra Animada -->
+<div class="pm-tape" aria-hidden="true">
+  <div class="pm-tape-haz"></div>
+  <div class="pm-tape-view">
+    <div class="pm-tape-track">
+      <span>¿CACHAI O NO? · PA'L MAESTRO CHILE</span>
+      <span>PREGUNTA DEL DÍA SINCRONIZADA CON EL REEL</span>
+      <span>MIDE DOS VECES, CORTA UNA</span>
+      <span>NORMATIVA · FERRETERÍA · MITOS · OBRA</span>
+      <span>¿CACHAI O NO? · PA'L MAESTRO CHILE</span>
+      <span>PREGUNTA DEL DÍA SINCRONIZADA CON EL REEL</span>
+      <span>MIDE DOS VECES, CORTA UNA</span>
+      <span>NORMATIVA · FERRETERÍA · MITOS · OBRA</span>
+    </div>
+  </div>
+  <div class="pm-tape-haz"></div>
+</div>
+
+<div class="app-shell">
+  <!-- Header -->
+  <header class="pm-card top-header">
+    <div class="brand-row">
+      <img class="brand-logo-img" src="./cachai-o-no-data/img/logo_cachai.png" alt="¿Cachai o no?" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='inline-block'">
+      <span id="logoFallback" class="pm-title zine-accent" style="display:none;font-size:20px">¿Cachai o no?</span>
+      <div>
+        <div class="pm-tech-italic">Canal 3 · Pa'l Maestro Chile</div>
+      </div>
+    </div>
+    <div class="header-stats">
+      <span class="stat-pill streak" title="Racha diaria">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#EF3B39" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 4.2-3 6.2-3 10a5 5 0 0 0 10 0c0-3.5-2.5-5.8-3.5-7.5-.2 1.8-1.4 3-2.5 3.3 1-1.9.8-4.2-1-5.8z"/></svg>
+        <span id="hdrStreak">0</span> días
+      </span>
+      <span class="stat-pill rank" title="Tu rango de cuadrilla">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#1F2536" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20"/><path d="M4 18a8 8 0 0 1 16 0"/><path d="M10 10V5a2 2 0 0 1 4 0v5"/></svg>
+        <span id="hdrRank">Ayudante</span>
+      </span>
+      <button class="pm-btn sm" id="btnSound" aria-label="Activar o silenciar sonido" title="Sonido">
+        <svg id="icoSoundOn" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        <svg id="icoSoundOff" class="ico" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
+      <a class="pm-btn sm blue" href="https://www.palmaestro.xyz/" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v10h14V10"/></svg>
+        palmaestro.xyz
+      </a>
+    </div>
+  </header>
+
+  <!-- Navegación 3 Modos -->
+  <nav class="nav-tabs" role="tablist">
+    <button class="tab-btn active" data-tab="daily" role="tab" aria-selected="true">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Pregunta del Día</span>
+    </button>
+    <button class="tab-btn" data-tab="roulette" role="tab" aria-selected="false">
+      <svg class="ico ico-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/><circle cx="12" cy="12" r="2.5" fill="#FFD000"/></svg>
+      <span>Ruleta Libre</span>
+    </button>
+    <button class="tab-btn" data-tab="profile" role="tab" aria-selected="false">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      <span>Mi Cuadrilla</span>
+    </button>
+  </nav>
+
+  <!-- ==================== VISTA 1: PREGUNTA DEL DÍA ==================== -->
+  <section id="view-daily" class="view active">
+    <div id="dailyStage" class="pm-card quiz-stage"></div>
+
+    <div class="pm-card daily-footer">
+      <div>
+        <div class="pm-title" style="font-size:15px">Próxima Pregunta del Día</div>
+        <div class="pm-tech-italic">Sincronizada con el Reel diario en @pal_maestro</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="led-box" id="nextDayClock">00:00:00</div>
+        <button class="pm-btn sm" id="btnToggleArchive">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+          Días anteriores
+        </button>
+      </div>
+    </div>
+
+    <div id="archiveCard" class="pm-card" style="display:none;margin-top:12px;padding:15px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="pm-title" style="font-size:15px">Archivo de días publicados</div>
+        <span class="pm-tech-italic">Toca cualquier día para practicarlo</span>
+      </div>
+      <div class="archive-grid" id="archiveGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==================== VISTA 2: RULETA LIBRE ==================== -->
+  <section id="view-roulette" class="view">
+    <div class="roulette-layout">
+      <div class="pm-card wheel-card">
+        <span class="washi blue"></span>
+        <div class="pm-title" style="font-size:19px">Gira la <span class="zine-accent">Ruleta</span></div>
+
+        <div class="wheel-wrap">
+          <svg class="wheel-pointer" id="wheelPtr" viewBox="0 0 36 40">
+            <polygon points="18,38 3,6 33,6" fill="#EF3B39" stroke="#1F2536" stroke-width="3.5" stroke-linejoin="round"/>
+            <circle cx="18" cy="10" r="4" fill="#FFD000" stroke="#1F2536" stroke-width="2.5"/>
+          </svg>
+          <svg class="wheel-svg" id="wheelSvg" viewBox="-160 -160 320 320"></svg>
+        </div>
+
+        <div class="sobre-banner" id="sobreBanner">
+          <span class="pm-tech-italic">Elige etapa de obra y gira la ruleta</span>
+        </div>
+
+        <button class="pm-btn yellow" id="btnSpin" style="width:100%;font-size:16px;padding:12px">
+          <svg class="ico ico-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
+          ¡GIRAR LA RULETA!
+        </button>
+
+        <div style="width:100%;padding-top:6px;border-top:2px dashed rgba(31,37,54,0.16)">
+          <div class="pm-tech-italic" style="margin-bottom:6px">Etapa de obra (dificultad):</div>
+          <div class="dif-pills" id="difPills">
+            <button class="dif-pill active" data-dif="all">Todas</button>
+            <button class="dif-pill" data-dif="obra_gruesa">Obra gruesa</button>
+            <button class="dif-pill" data-dif="terminaciones">Terminaciones</button>
+            <button class="dif-pill" data-dif="obra_fina">Obra fina</button>
+          </div>
+          <label style="display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;font-weight:800;cursor:pointer">
+            <input type="checkbox" id="chkUseTimer" checked style="accent-color:#EF3B39;width:16px;height:16px">
+            Modo cronómetro (15 seg)
+          </label>
+        </div>
+      </div>
+
+      <div id="rouletteStage" class="pm-card quiz-stage">
+        <div style="text-align:center;padding:28px 14px">
+          <img src="./cachai-o-no-data/img/maria_sonrisa.png" alt="María Estér" style="width:138px;height:auto;filter:drop-shadow(4px 5px 0 rgba(31,37,54,0.22))" onerror="this.style.display='none'">
+          <h2 class="pm-title" style="font-size:24px;margin:12px 0 6px">¡Pongamos a prueba tu oficio!</h2>
+          <p class="pm-tech-italic" style="font-size:13.5px;max-width:380px;margin:0 auto 14px">
+            120 preguntas reales basadas en OGUC, NCh, RIC y experiencia de obra chilena. Gira la ruleta para sacar una categoría al azar.
+          </p>
+          <span class="zine-badge" style="background:#FFD000">6 categorías · 3 etapas de obra</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== VISTA 3: MI CUADRILLA ==================== -->
+  <section id="view-profile" class="view">
+    <div class="pm-card cuadrilla-hero">
+      <span class="washi"></span>
+      <div>
+        <div class="pm-tech-italic">Tu rango actual en la obra</div>
+        <h2 class="pm-title" style="font-size:30px;margin:4px 0 4px" id="profRankTitle">Ayudante</h2>
+        <p style="margin:0;font-size:14px;color:var(--muted);font-weight:600" id="profRankDesc"></p>
+        <div class="rank-prog-track"><div class="rank-prog-fill" id="profRankBar"></div></div>
+        <div class="pm-tech-italic" id="profRankNext"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:stretch">
+        <button class="pm-btn red" id="btnShareProfileCard">
+          <svg class="ico ico-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Tarjeta Story Cuadrilla
+        </button>
+        <button class="pm-btn sm" id="btnResetStats">Reiniciar mi progreso</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="pm-card kpi-card"><div class="kpi-val" id="kpiStreak">0</div><div class="pm-tech-italic">Racha diaria</div></div>
+      <div class="pm-card kpi-card"><div class="kpi-val" id="kpiBestStreak">0</div><div class="pm-tech-italic">Mejor racha</div></div>
+      <div class="pm-card kpi-card"><div class="kpi-val" id="kpiCorrect">0</div><div class="pm-tech-italic">Aciertos totales</div></div>
+      <div class="pm-card kpi-card"><div class="kpi-val" id="kpiAcc">0%</div><div class="pm-tech-italic">Precisión</div></div>
+    </div>
+
+    <div class="pm-card" style="padding:18px">
+      <div class="pm-title" style="font-size:18px;margin-bottom:4px">Dominio por <span class="zine-accent">Categoría</span></div>
+      <div class="pm-tech-italic" style="margin-bottom:14px">Progreso acumulado sobre las 120 preguntas del banco oficial</div>
+      <div class="cat-stats-grid" id="catStatsGrid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- Modal Tarjeta Compartible Instagram Stories (1080x1920) -->
+<div class="modal-backdrop" id="storyModal" role="dialog" aria-modal="true">
+  <div class="pm-card modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div class="pm-title" style="font-size:18px">Tu tarjeta para Stories</div>
+      <button class="pm-btn sm" id="btnCloseModal">Cerrar</button>
+    </div>
+    <div class="pm-tech-italic" style="margin-top:3px">Formato 1080×1920 sin spoilear la respuesta · @pal_maestro</div>
+    <img id="storyPreviewImg" alt="Tarjeta para Instagram Stories">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+      <button class="pm-btn green" id="btnNativeShare" style="display:none">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Compartir
+      </button>
+      <a class="pm-btn yellow" id="btnDownloadStory" download="cachai-o-no-story.png" href="#">
+        <svg class="ico ico-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar PNG
+      </a>
+      <button class="pm-btn blue" id="btnCopySummary">Copiar texto</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Loader oficial de Pa'l Maestro (local o fallback GitHub Pages) -->
+<script src="../loader/palmaestro-loader.js" onerror="var s=document.createElement('script');s.src='https://shewinho.github.io/palmaestro-web/loader/palmaestro-loader.js';document.head.appendChild(s);"></script>
+
+<script>
+const FALLBACK_BANCO = {"version":3,"fecha_inicio":"2026-11-23","dificultades":{"obra_gruesa":"Obra gruesa","terminaciones":"Terminaciones","obra_fina":"Obra fina"},"categorias":[{"id":"ferreteria","nombre":"Ferretería","frase_maria":"¡Ferretería!","invitado":"julio"},{"id":"mitos","nombre":"Mitos","frase_maria":"¡Mitos!","invitado":null},{"id":"normativa","nombre":"Normativa","frase_maria":"¡Normativa!","invitado":null},{"id":"diagnostico","nombre":"Mi muro","frase_maria":"¡Mi muro!","invitado":null},{"id":"que_compro","nombre":"¿Qué compro?","frase_maria":"¡Qué compro!","invitado":"julio"},{"id":"error_obra","nombre":"Error en obra","frase_maria":"¡Error en obra!","invitado":null}],"preguntas":[{"id":"NOR-001","dia":1,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"¿Qué altura mínima de piso a cielo debe tener un dormitorio o un living, medida en obra terminada?","alternativas":{"A":"2,10 m","B":"2,30 m","C":"2,50 m"},"correcta":"B","explicacion":"La OGUC pide 2,30 m para locales habitables. Ojo: los 2,10 m son para vías de evacuación, no para piezas.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 4.1.1","pagina_pdf":184},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-001","dia":2,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a la ferretería por ese tubito plástico que se mete en la pared antes del tornillo para que agarre en concreto o ladrillo. ¿Cómo se pide en Chile?","alternativas":{"A":"Golilla","B":"Copla","C":"Tarugo (o taco de expansión)"},"correcta":"C","explicacion":"En Chile le decimos tarugo (de nylon o plástico). Ojo: siempre se pide por diámetro en milímetros (6, 8, 10 mm), igual que la broca que vas a usar.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"risa"}},{"id":"MIT-001","dia":3,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"mito_verdad","pregunta":"Mito o verdad: el hormigón recién echado hay que dejarlo que se seque lo más rápido posible.","alternativas":{"A":"Verdad","B":"Mito"},"correcta":"B","explicacion":"El hormigón no endurece por secarse. Hay que curarlo, es decir, mantenerlo húmedo, y evitar el secado temprano.","fuente":{"documento":"Manual de Inspección Técnica de Obras (MINVU, 2007)","referencia":"Pauta de control: \"cuidar curado (evitar secado)\"","pagina_pdf":120},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-001","dia":4,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a colgar un mueble de cocina pesado en un tabique de yeso-cartón y justo no calza con los montantes. ¿Qué fijación compras?","alternativas":{"A":"Tarugo plástico común de 6 mm","B":"Anclaje de mariposa / palanca metálica para tabique hueco","C":"Clavo acerado de 2 pulgadas"},"correcta":"B","explicacion":"Para cargas medias/altas en tabique hueco necesitas un anclaje abatible tipo mariposa o palanca que reparta la carga por detrás de la plancha (o idealmente poner un refuerzo de madera entre montantes).","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-001","dia":5,"categoria":"diagnostico","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"En la parte baja de un muro interior aparece un polvillo blanco cristalino y la pintura se sopla y descascara. ¿Qué es?","alternativas":{"A":"Salitre / eflorescencia por humedad que sube desde el suelo (capilaridad)","B":"Polvo acumulado del ambiente","C":"Falta de una mano de látex"},"correcta":"A","explicacion":"El agua del terreno sube por capilaridad por el muro, disuelve sales del ladrillo o mortero y al evaporarse las deja cristalizadas en la superficie como salitre.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-001","dia":6,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"En una obra ves a un maestro atornillando un interruptor de luz directo sobre el tabique de madera, sin caja eléctrica atrás. ¿Cuál es el error?","alternativas":{"A":"Ninguno, si los cables están bien apretados","B":"Está prohibido por norma: todo interruptor o enchufe lleva su caja","C":"Solo importa si es en el baño"},"correcta":"B","explicacion":"El RIC N°10 prohíbe instalar módulos de interruptores y enchufes sin su respectiva caja (salvo molduras o bandejas diseñadas para ello). Sin caja hay alto riesgo de incendio.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.2.6","pagina_pdf":4},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-002","dia":7,"categoria":"normativa","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Ya terminaron tu casa, pero falta la recepción final de la municipalidad. ¿Puedes irte a vivir?","alternativas":{"A":"Sí, si el dueño lo autoriza","B":"No, antes de la recepción definitiva no se puede habitar","C":"Sí, pasados 30 días"},"correcta":"B","explicacion":"Ninguna obra puede habitarse antes de su recepción definitiva, parcial o total.","fuente":{"documento":"LGUC (DFL 458, versión 12-ago-2026)","referencia":"Art. 145","pagina_pdf":null},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-002","dia":8,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Necesitas ese disco metálico plano con un hoyo al medio que va entre la tuerca y la pieza para repartir la presión. ¿Cómo se pide?","alternativas":{"A":"Golilla (arandela plana)","B":"Chaveta","C":"Buje"},"correcta":"A","explicacion":"En Chile se pide como golilla (plana o de presión/grover si quieres evitar que la tuerca se suelte con vibraciones).","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-002","dia":9,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"mito_verdad","pregunta":"Mito o verdad: si el hormigón se pone muy duro para trabajar, basta agregarle agua para que quede mejor.","alternativas":{"A":"Verdad","B":"Mito"},"correcta":"B","explicacion":"Más agua facilita trabajarlo, pero le quita resistencia y durabilidad.","fuente":null,"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-002","dia":10,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Tienes que sellar una junta exterior entre un marco de ventana de aluminio y un muro de hormigón estucado. ¿Qué sellador llevas?","alternativas":{"A":"Silicona acética de baño","B":"Pasta muro exterior","C":"Sellador de poliuretano o silicona neutra de construcción"},"correcta":"C","explicacion":"La silicona neutra de construcción o el sellador de poliuretano adhieren bien a hormigón y aluminio sin corroer ni despegarse con los movimientos térmicos.","fuente":{"documento":"Guía Maestra de Bolsillo (selladores)","referencia":"Silicona neutra multipropósito construcción","pagina_pdf":72},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-002","dia":11,"categoria":"diagnostico","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Aparecen manchas negras de moho justo en las esquinas superiores del dormitorio y detrás del clóset en invierno. ¿Cuál es la causa más probable?","alternativas":{"A":"Gotera del techo seguro","B":"Condensación por puente térmico y falta de ventilación","C":"Hongos que venían en la pintura"},"correcta":"B","explicacion":"Las esquinas y zonas detrás de muebles pegados al muro exterior están más frías y sin circulación de aire; ahí el vapor interior condensa y crece moho.","fuente":{"documento":"Manual de Ventilación V1","referencia":"Control de humedad relativa y renovación de aire","pagina_pdf":4},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-002","dia":12,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Ves una solera inferior de madera apoyada directo sobre el sobrecimiento de hormigón sin ninguna lámina debajo. ¿Qué va a pasar?","alternativas":{"A":"Solo se mancha el cemento","B":"Nada, el hormigón es seco","C":"La humedad del hormigón sube a la madera y la pudre (falta doble fieltro asfáltico)"},"correcta":"C","explicacion":"El hormigón transmite humedad por capilaridad. Toda solera en contacto con hormigón debe ser impregnada y llevar doble barrera de humedad (fieltro asfáltico).","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Fig. 8-2 y Fig. 8-59","pagina_pdf":148},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-003","dia":13,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"Se descascara la pintura y las terminaciones de tu casa nueva vienen malas. ¿Cuántos años tienes para reclamar?","alternativas":{"A":"1 año","B":"3 años","C":"10 años"},"correcta":"B","explicacion":"Terminaciones: 3 años, contados desde la inscripción del inmueble a tu nombre en el Conservador. Instalaciones y elementos constructivos: 5 años. Estructura: 10 años.","fuente":{"documento":"LGUC (DFL 458, versión 12-ago-2026)","referencia":"Art. 18 (plazos de prescripción)","pagina_pdf":8},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-003","dia":14,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Quieres un tornillo que en la punta trae como una mini broca para perforar directo perfiles de fierro sin hacer hoyo previo. ¿Cómo lo pides?","alternativas":{"A":"Tornillo punta fina","B":"Tornillo punta broca (autoperforante)","C":"Perno coche"},"correcta":"B","explicacion":"El tornillo punta broca perfora y rosca en un solo paso en acero estructural o perfiles gruesos; el punta fina es solo para metal delgado (0,5 mm) o madera.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-003","dia":15,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: hay que mojar el ladrillo antes de pegarlo.","alternativas":{"A":"Verdad, siempre","B":"Mito, nunca","C":"Depende de cuánto absorba"},"correcta":"C","explicacion":"Un ladrillo muy absorbente le chupa el agua al mortero. Se humedece, sin empaparlo.","fuente":null,"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-003","dia":16,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Necesitas perforar un muro de hormigón armado con taladro percutor para instalar unos pernos. ¿Qué broca pides?","alternativas":{"A":"Broca de widia (carburo de tungsteno) para concreto / SDS","B":"Broca HSS de acero rápido","C":"Broca paleta para madera"},"correcta":"A","explicacion":"Para hormigón necesitas punta de carburo de tungsteno (widia), idealmente SDS-Plus si usas rotomartillo; una HSS de metal se quema en segundos.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-003","dia":17,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Después de un temblor fuerte aparecen grietas diagonales (a 45°) que nacen justo en las esquinas de ventanas y puertas. ¿Qué indican?","alternativas":{"A":"Simple contracción de la pintura","B":"Exceso de humedad en el ambiente","C":"Esfuerzo de corte sísmico concentrado en las esquinas de los vanos"},"correcta":"C","explicacion":"Las esquinas de puertas y ventanas concentran tensiones durante un sismo, formando grietas a 45°. Si atraviesan el muro o son anchas, debe evaluarlas un ingeniero.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"sorpresa"}},{"id":"ERR-003","dia":18,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Un maestro está cortando perfiles metálicos con esmeril angular al que le sacó la guarda protectora y usa solo gafas de sol. ¿Cuántos errores graves hay?","alternativas":{"A":"Dos graves: jamás se quita la guarda y se requieren lentes de seguridad certificados (o careta)","B":"Ninguno si tiene buen pulso","C":"Solo falta usar guantes de lana"},"correcta":"A","explicacion":"Si el disco se revienta a 11.000 RPM sin guarda puede causar heridas fatales, y las gafas de sol no resisten impactos ni chispas calientes.","fuente":null,"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-004","dia":19,"categoria":"normativa","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Si la falla afecta la estructura soportante de la casa, ¿en cuántos años prescriben las acciones contra el primer vendedor?","alternativas":{"A":"3 años","B":"5 años","C":"10 años"},"correcta":"C","explicacion":"Fallas de la estructura soportante: 10 años, contados desde la recepción definitiva.","fuente":{"documento":"LGUC (DFL 458, versión 12-ago-2026)","referencia":"Art. 18 (plazos de prescripción)","pagina_pdf":8},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-004","dia":20,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"Buscas ese perno con cabeza redonda lisa tipo hongo y cuello cuadrado abajo que se clava en la madera para no girar al apretar la tuerca. ¿Cómo se pide?","alternativas":{"A":"Tirafondo","B":"Espárrago","C":"Perno coche"},"correcta":"C","explicacion":"Se llama perno coche (o perno carruaje). Su cuello cuadrado se incrusta en la madera y permite apretar la tuerca por el otro lado sin afirmar la cabeza.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-004","dia":21,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"La madera de construcción \"seca en cámara\" viene sin nada de agua. ¿Qué contenido de humedad tiene?","alternativas":{"A":"0%","B":"Entre 12 y 15%","C":"Cerca de 40%"},"correcta":"B","explicacion":"La madera siempre contiene agua. La estructural secada en cámara se vende con 12 a 15% de humedad.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Cap. 1 (madera de pino radiata clasificada)","pagina_pdf":9},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"COM-004","dia":22,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Vas a cortar porcelanato duro con esmeril angular y no quieres que se desportille el borde. ¿Qué disco compras?","alternativas":{"A":"Disco abrasivo de corte de fierro","B":"Disco diamantado de borde continuo (liso o turbo fino para porcelanato)","C":"Disco diamantado segmentado para hormigón"},"correcta":"B","explicacion":"El disco diamantado de borde continuo (o turbo extrafino para porcelanato) corta limpio sin astillar el esmalte; el segmentado es para concreto/ladrillo y pica los bordes.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-004","dia":23,"categoria":"diagnostico","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Al sacar el moldaje de un pilar de hormigón recién hecho se ven huecos donde quedó el ripio suelto sin pasta. ¿Cómo se llama esa falla?","alternativas":{"A":"Nido de piedra (o cangrejera)","B":"Eflorescencia","C":"Fisura capilar"},"correcta":"A","explicacion":"Los nidos de piedra aparecen por mal vibrado o exceso de congestión de fierros. El Manual ITO exige revisar nidos apenas se desmolda para repararlos con mortero estructural.","fuente":{"documento":"Manual de Inspección Técnica de Obras (MINVU, 2007)","referencia":"Pauta de control al desmoldar: verificar existencia de nidos","pagina_pdf":124},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"sorpresa"}},{"id":"ERR-004","dia":24,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"En un tablero eléctrico domiciliario ves 6 circuitos de enchufes e iluminación colgando de un solo protector diferencial. ¿Cuál es el error?","alternativas":{"A":"Faltan más circuitos para que rinda","B":"La norma permite máximo 3 circuitos por diferencial","C":"No es error si es de 30 mA"},"correcta":"B","explicacion":"El RIC N°10 limita a máximo 3 circuitos derivados por cada protector diferencial, y un solo diferencial no puede cortar el 100% de la instalación si agrupa más de uno.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.3.7","pagina_pdf":5},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-005","dia":25,"categoria":"normativa","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Quieres ampliar tu casa con una pieza nueva. ¿Necesitas permiso municipal?","alternativas":{"A":"No, si es dentro de tu terreno","B":"Sí, la ampliación requiere permiso de la Dirección de Obras","C":"Solo si pasa de dos pisos"},"correcta":"B","explicacion":"La ley exige permiso de la DOM para construir, reparar, alterar o ampliar. La OGUC solo señala excepciones puntuales.","fuente":{"documento":"LGUC (DFL 458, versión 12-ago-2026)","referencia":"Art. 116","pagina_pdf":null},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-005","dia":26,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Necesitas esa pieza de PVC o cobre recta que sirve para unir dos tubos del mismo diámetro en línea. ¿Cómo la pides?","alternativas":{"A":"Copla","B":"Codo","C":"Reducción"},"correcta":"A","explicacion":"La copla une dos tramos rectos del mismo diámetro; el codo cambia de dirección y la reducción une dos diámetros distintos.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-005","dia":27,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Mito o verdad: la madera impregnada se puede apoyar directo sobre el sobrecimiento de hormigón sin barrera de humedad.","alternativas":{"A":"Mito, siempre lleva doble fieltro asfáltico","B":"Solo en zonas secas del norte","C":"Verdad, por algo viene impregnada"},"correcta":"A","explicacion":"Aunque la solera sea impregnada, siempre debe aislarse del contacto directo con el hormigón usando doble barrera de humedad (fieltro asfáltico).","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Fig. 8-2 y Fig. 8-59","pagina_pdf":148},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-005","dia":28,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Vas a instalar un tabique dentro de un baño donde habrá bastante vapor y humedad. ¿Qué tipo de plancha de yeso-cartón compras?","alternativas":{"A":"Plancha de cartón piedra","B":"Plancha estándar (ST, cartón gris)","C":"Plancha resistente a la humedad (RH, cartón verde)"},"correcta":"C","explicacion":"Las planchas RH (verdes) traen aditivos hidrofugantes en el núcleo de yeso y papel tratado para resistir la humedad ambiental de baños y cocinas.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-005","dia":29,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Un estuco recién aplicado se llenó de una red de fisuras muy finas con forma de mapa o telaraña a los pocos días. ¿Qué pasó?","alternativas":{"A":"El muro se está hundiendo","B":"Retracción por secado rápido, falta de curado o exceso de agua/cemento","C":"Falta de pintura selladora"},"correcta":"B","explicacion":"Las fisuras tipo mapa son típicas de retracción plástica por pérdida rápida de agua (sol, viento, no curar durante los primeros 7 días o mezcla mal dosificada).","fuente":{"documento":"Guía Maestra de Bolsillo (enlucidos)","referencia":"Curado 7 días y control de fisuración","pagina_pdf":13},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-005","dia":30,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Ves una escalera de mano apoyada casi vertical contra un muro alto y sin amarrar arriba. ¿Qué regla básica de seguridad se está rompiendo?","alternativas":{"A":"Debe apoyarse completamente pegada al muro","B":"Solo importa si es de aluminio","C":"La regla 4 a 1: por cada 4 m de alto, la base debe separarse 1 m del muro"},"correcta":"C","explicacion":"Una escalera muy vertical se vuelca hacia atrás con el peso del cuerpo. La inclinación segura es relación 4:1 (~75°) y amarrada en la parte superior.","fuente":null,"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-006","dia":31,"categoria":"normativa","dificultad":"obra_fina","tipo":"opcion","pregunta":"Vas a mover un tabique interior que no es estructural. ¿Qué te piden?","alternativas":{"A":"Permiso de edificación antes de empezar","B":"No necesita permiso, pero al terminar se presenta un expediente a la DOM, firmado por el arquitecto","C":"No tienes que avisar nada"},"correcta":"B","explicacion":"Obras no estructurales interiores no requieren permiso, siempre que no amplíen superficie ni cambien destino ni carga de ocupación. Al terminar se presenta un expediente.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 5.1.2 N° 1","pagina_pdf":298},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-006","dia":32,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"Necesitas ese tornillo grueso con cabeza hexagonal (para llave o dado) que entra directo en madera o tarugo grande. ¿Cómo se pide?","alternativas":{"A":"Remache pop","B":"Tirafondo","C":"Perno roscalata"},"correcta":"B","explicacion":"Es el tirafondo (o perno tirafondo). Se aprieta con llave o dado y aguanta mucha más fuerza que un tornillo de cabeza cruz.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-006","dia":33,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Mito o verdad: mientras más cemento le eches a un estuco, menos se va a fisurar.","alternativas":{"A":"Verdad, queda más firme","B":"Mito, el exceso de cemento aumenta la retracción y las fisuras","C":"Solo si usas arena gruesa"},"correcta":"B","explicacion":"El exceso de cemento provoca mayor retracción al fraguar y genera grietas tipo mapa. La dosificación correcta y el curado por 7 días son la clave.","fuente":{"documento":"Guía Maestra de Bolsillo (morteros y enlucidos)","referencia":"Curado de enlucidos 7 días / no agregar mezcla seca","pagina_pdf":13},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-006","dia":34,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Tienes que anclar una barra roscada para un pilar metálico en un radier de hormigón cerca del borde. ¿Qué sistema compras?","alternativas":{"A":"Anclaje químico (resina inyectable) con varilla roscada","B":"Perno de expansión mecánica común","C":"Tarugo de nylon de 10 mm"},"correcta":"A","explicacion":"El anclaje químico no genera esfuerzos de expansión lateral que revienten el borde del hormigón, a diferencia del perno de expansión mecánica.","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Anclajes adhesivos vs distancia al borde","pagina_pdf":17},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-006","dia":35,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"La pintura de un muro se empieza a levantar en globos o ampollas blanditas, justo al otro lado de donde está la ducha. ¿Qué está pasando?","alternativas":{"A":"Pintura vencida","B":"Demasiado calor en la pieza","C":"Filtración de humedad atravesando el muro desde la ducha"},"correcta":"C","explicacion":"Cuando hay filtración por sellos rotos o cañería tras la ducha, el vapor y el agua empujan la película de pintura desde atrás formando ampollas.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-006","dia":36,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"En un baño nuevo ves una unidad combinada de interruptor + enchufe instalada al lado de la ducha en una casa de 80 m². ¿Cuál es el error?","alternativas":{"A":"El RIC N°10 solo permite unidades interruptor-enchufe en baños de viviendas menores a 30 m² (y con diferencial)","B":"Solo faltaba taparla con cinta","C":"Ninguno, ahorra espacio"},"correcta":"A","explicacion":"Las unidades interruptor-enchufe están restringidas por el RIC N°10 a casetas, kioscos y baños de viviendas de menos de 30 m², siempre con protección diferencial.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.2.10","pagina_pdf":4},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-007","dia":37,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"En una terraza con un desnivel de más de 30 cm, ¿qué altura mínima debe tener la baranda, incluido el pasamanos?","alternativas":{"A":"0,60 m","B":"0,95 m","C":"1,20 m"},"correcta":"B","explicacion":"0,95 m como mínimo, y que no sea escalable.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 2.2.8","pagina_pdf":118},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-007","dia":38,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a comprar la cinta blanca delgadita que se enrolla en los hilos de las llaves y fittings de agua para que no goteen. ¿Cómo se pide?","alternativas":{"A":"Huincha de papel","B":"Cinta aisladora","C":"Cinta de teflón (PTFE)"},"correcta":"C","explicacion":"Se pide como cinta de teflón (o PTFE). Tip de Julio: se enrolla siempre en el mismo sentido en que aprieta la rosca para que no se salga al atornillar.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"risa"}},{"id":"MIT-007","dia":39,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: la silicona transparente común de baño sirve igual para sellar grietas en hormigón o ladrillo.","alternativas":{"A":"Verdad, silicona es silicona","B":"Solo si se pinta encima","C":"Mito, la acética ataca el cemento; se usa neutra o poliuretano"},"correcta":"C","explicacion":"La silicona acética es para vidrio, aluminio y cerámica, pero libera ácido que daña sustratos cementicios. Para hormigón y ladrillo va silicona neutra o sellador de poliuretano.","fuente":{"documento":"Guía Maestra de Bolsillo (selladores)","referencia":"Silicona acética vs silicona neutra","pagina_pdf":70},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-007","dia":40,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Vas a atornillar planchas de yeso-cartón a perfiles metálicos delgados de tabiquería (0,5 mm). ¿Qué tornillo llevas?","alternativas":{"A":"Tornillo autoperforante punta broca para fierro grueso","B":"Tornillo punta fina hilo fino (tipo CRS) para metal liviano","C":"Tornillo para madera de hilo grueso"},"correcta":"B","explicacion":"Para perfiles metálicos delgados de 0,5 mm se usa tornillo trompeta punta fina e hilo fino; el punta broca es para perfiles estructurales más gruesos (0,85 mm o más).","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-007","dia":41,"categoria":"diagnostico","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"En un tabique de yeso-cartón recién pintado se marca una línea recta vertical justo donde se juntan dos planchas. ¿Por qué ocurrió?","alternativas":{"A":"Faltó cinta en la junta o no se respetaron los tiempos de secado de la masilla","B":"La pintura era muy brillante","C":"El muro está desnivelado"},"correcta":"A","explicacion":"Si no se coloca cinta de refuerzo en la junta o se aplica la siguiente capa antes de que seque la anterior, el compuesto se retrae y delata la unión.","fuente":{"documento":"Guía para Terminaciones Perfectas (tabiques yeso-cartón)","referencia":"Cinta en juntura y tiempos de secado","pagina_pdf":4},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-007","dia":42,"categoria":"error_obra","dificultad":"obra_fina","tipo":"opcion","pregunta":"Un instalador perfora el hormigón, inyecta resina química de inmediato sin soplar ni cepillar el polvo, y mete la varilla. ¿Qué va a pasar?","alternativas":{"A":"Fragua más rápido","B":"El anclaje pierde gran parte de su capacidad y puede salirse con carga","C":"Queda igual de firme"},"correcta":"B","explicacion":"El polvo en las paredes del hoyo actúa como lubricante entre la resina y el hormigón. Soplar y cepillar la perforación es crítico para la resistencia del anclaje.","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Limpieza y soplado de perforación","pagina_pdf":26},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-008","dia":43,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"¿Qué sensibilidad máxima debe tener el protector diferencial de los circuitos de enchufes e iluminación?","alternativas":{"A":"10 mA","B":"30 mA","C":"300 mA"},"correcta":"B","explicacion":"Todo circuito de alumbrado, incluidos los enchufes, lleva un diferencial de 30 mA o menos. Los de 300 mA solo acompañan a la protección general del tablero.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.3.5","pagina_pdf":5},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-008","dia":44,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"Pides una herramienta con hoja metálica plana que tiene dientes cuadrados en el borde para esparcir adhesivo de cerámica parejo. ¿Cómo se llama?","alternativas":{"A":"Llana dentada","B":"Espátula de emplastecer","C":"Plana de albañil"},"correcta":"A","explicacion":"Es la llana dentada. El tamaño del diente (6, 8, 10 o 12 mm) se elige según el tamaño de la palmeta de cerámica o porcelanato.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-008","dia":45,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Mito o verdad: si perforas hormigón para un anclaje químico, el polvillo que queda adentro ayuda a que pegue mejor.","alternativas":{"A":"Mito, el polvo arruina la adherencia y hay que soplar y cepillar","B":"Verdad, actúa como carga","C":"Da lo mismo si la resina es buena"},"correcta":"A","explicacion":"El polvo forma una capa suelta que impide que la resina se adhiera al hormigón. Limpiar con soplado y escobilla es obligatorio salvo brocas huecas con aspiración.","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Limpieza de perforación y soplado","pagina_pdf":26},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-008","dia":46,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Necesitas pegar porcelanato de gran formato (60×60 cm) sobre un radier existente. ¿Qué adhesivo compras?","alternativas":{"A":"Pegamento cerámico estándar en polvo","B":"Mortero común de cemento y arena","C":"Adhesivo flexible específico para porcelanato (tipo AC / C2)"},"correcta":"C","explicacion":"El porcelanato casi no absorbe agua (< 0,5%), por lo que necesita un adhesivo con polímeros específicos para porcelanato; el estándar no agarra y se despega.","fuente":{"documento":"Guía Maestra de Bolsillo (morteros de pega)","referencia":"Morteros específicos para porcelanato vs estándar","pagina_pdf":5},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-008","dia":47,"categoria":"diagnostico","dificultad":"obra_fina","tipo":"opcion","pregunta":"En una viga o losa de hormigón empiezan a salir manchas café-naranja de óxido y el recubrimiento de cemento se cae a pedazos. ¿Qué es?","alternativas":{"A":"Hongos de humedad","B":"Corrosión de la enfierradura interior (el fierro se expande y revienta el hormigón)","C":"Suciedad del aire"},"correcta":"B","explicacion":"Al oxidarse el acero de refuerzo aumenta varias veces su volumen, empujando y descascarando el recubrimiento de hormigón. Requiere reparación estructural.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"sorpresa"}},{"id":"ERR-008","dia":48,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Durante el llenado de un pilar de hormigón, ves que echan la mezcla desde arriba sin vibrador, golpeando apenas el moldaje con un martillo. ¿Cuál es el riesgo?","alternativas":{"A":"El hormigón se seca más lento","B":"Gastan menos cemento","C":"Quedan nidos de piedra y aire atrapado alrededor de las armaduras"},"correcta":"C","explicacion":"Sin vibrado mecánico adecuado quedan huecos (nidos) y mal recubrimiento del acero, comprometiendo la resistencia estructural del pilar.","fuente":{"documento":"Manual de Inspección Técnica de Obras (MINVU, 2007)","referencia":"Vibrado de hormigón en pilares y revisión de nidos","pagina_pdf":118},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-009","dia":49,"categoria":"normativa","dificultad":"obra_fina","tipo":"opcion","pregunta":"¿Cuántos circuitos como máximo se pueden derivar desde un mismo protector diferencial?","alternativas":{"A":"2","B":"3","C":"6"},"correcta":"B","explicacion":"Máximo 3 circuitos por diferencial, y si agrupa más de uno no puede operar sobre el 100% de la instalación.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.3.7","pagina_pdf":5},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-009","dia":50,"categoria":"ferreteria","dificultad":"obra_fina","tipo":"opcion","pregunta":"Necesitas esa varilla metálica completamente roscada de punta a punta, sin cabeza, para usar con anclaje químico y tuercas. ¿Cómo se pide?","alternativas":{"A":"Perno hexagonal","B":"Espárrago (o hilo corrido)","C":"Clavo lancero"},"correcta":"B","explicacion":"Se pide como hilo corrido (en tiras de 1 metro) o espárrago si viene cortado a medida. Se combina con tuercas y golillas en ambos extremos.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Espárrago de acero con hilo y tuerca","pagina_pdf":177},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-009","dia":51,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: si pintas con pintura antihongos sobre un muro con condensación, el moho desaparece para siempre.","alternativas":{"A":"Solo si das tres manos","B":"Mito, sin ventilación ni aislación el moho vuelve","C":"Verdad, lo sella definitivamente"},"correcta":"B","explicacion":"La pintura antihongos retrasa las manchas, pero no elimina el vapor ni el puente térmico. Si no ventilas o mejoras la aislación, el moho regresa.","fuente":{"documento":"Manual de Ventilación V1","referencia":"Renovación de aire y control de humedad al 60%","pagina_pdf":4},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"risa"}},{"id":"COM-009","dia":52,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a instalar la solera inferior de un tabique de madera sobre un sobrecimiento de hormigón. Además de los pernos, ¿qué compras para aislarla?","alternativas":{"A":"Fieltro asfáltico (15 lb) para poner en doble capa","B":"Solo pintura látex","C":"Cartón corrugado"},"correcta":"A","explicacion":"Entre el hormigón y la solera impregnada siempre va doble barrera de humedad de fieltro asfáltico para cortar la humedad por capilaridad.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Fig. 8-2 y Fig. 8-59 (doble fieltro 15 lb)","pagina_pdf":148},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-009","dia":53,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Cada mañana de invierno tus ventanas amanecen chorreando agua por el lado de adentro, formando pozas en el alféizar. ¿Qué fenómeno es?","alternativas":{"A":"Rotura de cañería","B":"Filtración por lluvia","C":"Condensación superficial del vapor interior sobre el vidrio frío"},"correcta":"C","explicacion":"El aire tibio y húmedo de la casa choca con la superficie fría del vidrio, bajando del punto de rocío y volviéndose agua líquida. Mejorar ventilación y usar termopanel ayuda a evitarlo.","fuente":{"documento":"Estándares de Construcción Sustentable Tomo II + Ventilación V1","referencia":"Ventilación y doble vidriado hermético","pagina_pdf":17},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-009","dia":54,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"Están instalando un enchufe de 10 A en un circuito protegido por un interruptor automático de 20 A. ¿Por qué es un error grave?","alternativas":{"A":"El enchufe puede recalentarse y quemarse antes de que salte el automático","B":"El automático saltará a cada rato","C":"No es error si el cable es grueso"},"correcta":"A","explicacion":"El RIC N°10 exige que la capacidad de corriente de los módulos de enchufe nunca sea inferior a la protección del circuito que los alimenta.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.2.9","pagina_pdf":4},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-010","dia":55,"categoria":"normativa","dificultad":"obra_fina","tipo":"opcion","pregunta":"¿Qué altura libre mínima se admite en el vano de una puerta de una vía de evacuación?","alternativas":{"A":"1,80 m","B":"2,00 m","C":"2,10 m"},"correcta":"B","explicacion":"La vía de evacuación pide 2,10 m libres, pero en los vanos de puertas se admite 2,00 m.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 4.2.6","pagina_pdf":229},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-010","dia":56,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"En tabiquería metálica, ¿cómo se llaman los dos perfiles básicos que arman el esqueleto: el horizontal que va en piso/cielo y el vertical?","alternativas":{"A":"Costanera y Cercha","B":"Viga y Pilar","C":"Canal (horizontal) y Montante (vertical)"},"correcta":"C","explicacion":"El perfil en U que va arriba y abajo es la Canal, y el perfil en C que va parado adentro es el Montante (o pie derecho metálico).","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-010","dia":57,"categoria":"mitos","dificultad":"obra_fina","tipo":"opcion","pregunta":"Mito o verdad: un protector diferencial salta cuando conectas demasiados artefactos y sobrecargas el enchufe.","alternativas":{"A":"Depende de la marca del tablero","B":"Verdad, protege contra sobrecargas","C":"Mito, eso lo hace el automático termomagnético"},"correcta":"C","explicacion":"El diferencial detecta fugas de corriente a tierra para salvar personas; las sobrecargas y cortocircuitos los corta el interruptor termomagnético.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Puntos 5.1.3.4 a 5.1.3.6","pagina_pdf":5},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sonrisa"}},{"id":"COM-010","dia":58,"categoria":"que_compro","dificultad":"obra_fina","tipo":"opcion","pregunta":"Quieres fijar una estructura liviana a un muro de ladrillo hueco (princesa/fiscal perforado) usando anclaje químico. ¿Qué accesorio clave no se te puede olvidar comprar?","alternativas":{"A":"Una golilla de goma","B":"Un tamiz o camisa perforada","C":"Cinta teflón"},"correcta":"B","explicacion":"Sin el tamiz (camisa perforada), la resina se cae por los huecos del ladrillo y no forma el bulbo de anclaje.","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Uso de tamiz en mampostería hueca","pagina_pdf":11},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-010","dia":59,"categoria":"diagnostico","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"En la base de un tabique de madera notas aserrín muy fino, galerías vacías dentro del pie derecho y la madera suena hueca al golpearla. ¿Qué puede ser?","alternativas":{"A":"Ataque de termitas subterráneas","B":"Mala calidad del barniz","C":"Secado natural del pino"},"correcta":"A","explicacion":"La humedad atrapada en la base del tabique crea el ambiente ideal para termitas subterráneas que destruyen solera inferior y pie derecho desde adentro.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Destrucción de pie derecho y solera por termitas","pagina_pdf":54},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"sorpresa"}},{"id":"ERR-010","dia":60,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"Para tapar una fisura en un muro exterior, el maestro aplica masilla directo encima sin abrir la grieta ni quitar el polvo suelto. ¿Qué pasará?","alternativas":{"A":"Ahorra material sin problema","B":"La masilla no penetra ni adhiere bien y la fisura vuelve a abrirse rápido","C":"Queda más lisa"},"correcta":"B","explicacion":"Las fisuras deben abrirse levemente en V, limpiarse de polvo y partes sueltas e imprimarse si corresponde antes de aplicar el sellador.","fuente":{"documento":"Guía Maestra de Bolsillo (sellado de fisuras)","referencia":"Preparación del sustrato para fisuras","pagina_pdf":53},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-011","dia":61,"categoria":"normativa","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Según la norma eléctrica chilena, ¿a qué altura sobre el piso terminado se deben instalar los interruptores de luz?","alternativas":{"A":"Entre 0,80 m y 1,40 m","B":"Entre 1,40 m y 1,80 m","C":"A cualquier altura cómoda"},"correcta":"A","explicacion":"El RIC N°10 fija la altura de montaje de los interruptores entre 0,80 m y 1,40 m sobre el nivel del piso terminado, en puntos accesibles.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.2.4","pagina_pdf":3},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-011","dia":62,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a buscar un 'caimán' a la ferretería. ¿Qué herramienta te va a pasar Julio por el mesón?","alternativas":{"A":"Un alicate de presión que queda bloqueado apretando firme","B":"Un serrucho de costilla","C":"Una llave inglesa ajustable"},"correcta":"A","explicacion":"El famoso caimán es el alicate de presión con tornillo regulador atrás; muerde tuercas rodadas o sujeta piezas metálicas para soldar sin soltarse.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"risa"}},{"id":"MIT-011","dia":63,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: la barrera de vapor en un tabique se instala siempre por el lado exterior, pegada al revestimiento de afuera.","alternativas":{"A":"Mito, va por el lado cálido (interior) y afuera va barrera de humedad","B":"Da igual en qué cara vaya","C":"Verdad, frena la lluvia"},"correcta":"A","explicacion":"La barrera de vapor (polietileno) va hacia el interior calefaccionado para frenar el vapor de la casa; hacia afuera va una membrana de humedad permeable al vapor.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Fig. 14-22 y Cap. 14.3","pagina_pdf":336},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-011","dia":64,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Tienes una fisura fina y sin movimiento en un muro interior pintado y quieres repararla y luego pintarla encima. ¿Qué sellador compras?","alternativas":{"A":"Espuma de poliuretano","B":"Silicona transparente común","C":"Masilla o sellador acrílico pintable"},"correcta":"C","explicacion":"La silicona común repele la pintura y queda manchada; el sellador acrílico plasto-elástico se puede lijar y pintar encima sin problemas.","fuente":{"documento":"Guía Maestra de Bolsillo (selladores acrílicos)","referencia":"Masilla plasto-elástica pintable para fisuras","pagina_pdf":52},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-011","dia":65,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Golpeas un muro estucado con los nudillos y una zona grande suena hueca, como tambor. ¿Qué significa?","alternativas":{"A":"Hay una cañería de agua detrás","B":"El estuco se desprendió de la base (sopladura) por mala adherencia o suciedad","C":"El muro es hueco por diseño"},"correcta":"B","explicacion":"El sonido hueco indica estuco soplado o desprendido, normalmente por no limpiar/humedecer la base o no usar puente de adherencia sobre hormigón liso. Hay que picar y rehacer.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-011","dia":66,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Están levantando una ampliación en tabiquería de madera de dos pisos sin colocar ningún tablero estructural (OSB/terciado) ni diagonales de arriostramiento. ¿Cuál es el peligro?","alternativas":{"A":"Solo entrará un poco de frío","B":"La pintura no va a pegar","C":"Ante un sismo o viento fuerte, el tabique puede deformarse y colapsar lateralmente"},"correcta":"C","explicacion":"Los tabiques de madera necesitan arriostramiento (tableros OSB, contrachapado fenólico o riostras) para resistir cargas horizontales de sismo y viento.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Arriostramientos estructurales","pagina_pdf":26},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-012","dia":67,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"En una escalera que forma parte de una vía de evacuación, ¿cuál es la altura máxima permitida para la contrahuella del peldaño?","alternativas":{"A":"0,15 m","B":"0,18 m","C":"0,22 m"},"correcta":"B","explicacion":"La OGUC exige contrahuella entre 0,13 m y 0,18 m, y una huella mínima de 0,28 m en proyección horizontal.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 4.2.10 N°2","pagina_pdf":231},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-012","dia":68,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"Quieres comprar ese tubito metálico que se pone con una pistola especial para unir dos latas cuando no tienes acceso por detrás. ¿Cómo se pide?","alternativas":{"A":"Chaveta","B":"Remache pop","C":"Perno pasante"},"correcta":"B","explicacion":"Es el remache pop (remache ciego), instalado con remachadora. Muy usado en hojalatería, canaletas y perfiles de aluminio.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-012","dia":69,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Mito o verdad: para fijar un muro de madera o estructura pesada en ladrillo hueco, conviene usar pernos de expansión metálicos.","alternativas":{"A":"Solo si usas tarugo de madera","B":"Mito, rompen las paredes del ladrillo; conviene anclaje químico con tamiz","C":"Verdad, expanden firme adentro"},"correcta":"B","explicacion":"La expansión mecánica puede fracturar las tabiquillas del ladrillo hueco. En mampostería hueca se recomienda anclaje adhesivo con tamiz (camisa perforada).","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Anclajes en ladrillo hueco y uso de tamiz","pagina_pdf":11},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-012","dia":70,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a armar un tabique perimetral de madera y necesitas rigidizarlo contra esfuerzos sísmicos. ¿Qué placa compras para arriostrarlo?","alternativas":{"A":"Tablero estructural OSB o contrachapado fenólico","B":"Plancha de yeso-cartón de 10 mm","C":"Cholguán de 3 mm"},"correcta":"A","explicacion":"El arriostramiento estructural en viviendas de madera se resuelve con tableros estructurales de OSB o contrachapado fenólico, no con placas decorativas.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Arriostramientos con OSB o contrachapado fenólico","pagina_pdf":26},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-012","dia":71,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Unas palmetas de cerámica del piso de repente se levantan formando una pequeña 'carpa' y suenan huecas al pisarlas. ¿Por qué pasa eso?","alternativas":{"A":"La cerámica era muy gruesa","B":"El trapeador tenía mucha agua","C":"Falta de juntas de dilatación o adhesivo mal aplicado sin doble encolado"},"correcta":"C","explicacion":"Los cambios de temperatura y la retracción del radier expanden el pavimento; sin juntas de dilatación perimetrales o con poco pegamento, las palmetas se despegan y levantan.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"sorpresa"}},{"id":"ERR-012","dia":72,"categoria":"error_obra","dificultad":"obra_fina","tipo":"opcion","pregunta":"Ves que instalaron un perno de anclaje de expansión a solo 2 cm del borde libre de una losa de hormigón. ¿Cuál es el error?","alternativas":{"A":"Al dar torque o aplicar carga, la expansión revienta la esquina del hormigón","B":"No se puede apretar con llave","C":"El perno se oxida más rápido"},"correcta":"A","explicacion":"Los anclajes de expansión requieren respetar la distancia crítica al borde del hormigón; muy cerca del borde provocan falla por desprendimiento lateral.","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Distancia crítica al borde","pagina_pdf":17},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-013","dia":73,"categoria":"normativa","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"¿Qué capacidad mínima de protección debe tener el empalme eléctrico de una vivienda en Chile?","alternativas":{"A":"16 A y cable de 2,5 mm²","B":"25 A y alimentador de 4 mm²","C":"40 A y cable de 6 mm²"},"correcta":"B","explicacion":"El RIC N°10 establece un empalme mínimo con protección de 25 A y conductores de alimentador de al menos 4 mm².","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.2","pagina_pdf":6},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-013","dia":74,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Necesitas esa pieza metálica con una guata en medio que se atornilla al muro para sujetar tubos eléctricos o cañerías. ¿Cómo la pides?","alternativas":{"A":"Escuadra L","B":"Bisagra cazoleta","C":"Abrazadera tipo omega (o caddy)"},"correcta":"C","explicacion":"La abrazadera omega tiene forma de letra Ω y dos orejas para atornillar al muro, sujetando firme tubos de PVC, conduit o cobre.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-013","dia":75,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: en tabiques de yeso-cartón basta dar una sola mano de masilla sobre la junta para dejar listo para pintar con luz rasante.","alternativas":{"A":"Verdad, con una buena espátula queda","B":"Solo si usas cinta de malla","C":"Mito, para pintura exigente se requiere nivel Q3 o Q4 con empaste completo"},"correcta":"C","explicacion":"Una mano sobre cinta es apenas nivel Q1 (básico). Para superficies exigentes o luz rasante se necesita nivel Q3 o Q4, aplicando capa fina sobre todo el tabique.","fuente":{"documento":"Guía para Terminaciones Perfectas (tabiques yeso-cartón)","referencia":"Niveles de terminación Q1 a Q4","pagina_pdf":4},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sonrisa"}},{"id":"COM-013","dia":76,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Vas a instalar un cielo falso de yeso-cartón con aislación térmica en una zona húmeda. ¿Qué lámina compras para poner por el lado interior antes de la plancha?","alternativas":{"A":"Fieltro sin traslape","B":"Polietileno de 0,2 mm como barrera de vapor","C":"Malla raschel"},"correcta":"B","explicacion":"El manual de madera especifica barrera de vapor de polietileno de 0,2 mm entre la plancha interior y la aislación térmica, con traslape mínimo de 15 cm.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Fig. 9-18 y Fig. 14-22 (polietileno 0,2 mm)","pagina_pdf":175},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-013","dia":77,"categoria":"diagnostico","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"En un muro interior aparece una mancha amarilla o café con borde bien marcado justo en el cielo raso, y crece solo cuando llueve. ¿Qué es?","alternativas":{"A":"Filtración puntual desde cubierta, canaleta o hojalatería","B":"Condensación por cocinar","C":"Humedad por capilaridad del suelo"},"correcta":"A","explicacion":"A diferencia de la condensación (que es difusa y en zonas frías), una mancha localizada en el cielo que crece con la lluvia delata filtración en techo o sellos de hojalatería.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-013","dia":78,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"En una vivienda con ventilación mecánica, instalaron el extractor en el baño pero dejaron la puerta sellada abajo sin celosía ni rebaje. ¿Qué falla?","alternativas":{"A":"Se calienta demasiado el agua","B":"El extractor no logra renovar el aire porque falta la abertura de paso","C":"El extractor gasta menos luz"},"correcta":"B","explicacion":"La ventilación funciona en 3 etapas: admisión en recintos secos, paso por celosías/rebajes en puertas interiores y extracción en baño/cocina. Sin paso de aire, el extractor trabaja en vacío.","fuente":{"documento":"Manual de Ventilación V1","referencia":"Aberturas de paso en puertas interiores","pagina_pdf":4},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-014","dia":79,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"En una pieza o living de más de 10 m², ¿cuántos centros de iluminación exige como mínimo la norma eléctrica?","alternativas":{"A":"Uno solo basta","B":"Dos centros como mínimo","C":"Tres centros obligatorios"},"correcta":"B","explicacion":"Hasta 10 m² basta un centro de luz; si el recinto supera los 10 m², el RIC N°10 exige al menos dos centros de iluminación.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.2 letra a)","pagina_pdf":6},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-014","dia":80,"categoria":"ferreteria","dificultad":"obra_fina","tipo":"opcion","pregunta":"Vas a la ferretería por un perno metálico que al apretar la tuerca abre una camisa o cuña adentro del hormigón. ¿Cómo se pide?","alternativas":{"A":"Perno de anclaje de expansión (tipo cuña o camisa)","B":"Perno coche","C":"Tornillo drywall"},"correcta":"A","explicacion":"Es el perno de anclaje de expansión de torque controlado. Ojo: requiere respetar el torque del fabricante y la distancia mínima al borde.","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Anclaje de expansión de torque controlado","pagina_pdf":18},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-014","dia":81,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Mito o verdad: si vibras el hormigón mucho rato seguido en el mismo punto, queda más resistente.","alternativas":{"A":"Mito, el sobrevibrado segrega la mezcla y deja la piedra abajo y el agua arriba","B":"Solo pasa en losas","C":"Verdad, sale todo el aire"},"correcta":"A","explicacion":"Vibrar de más separa el ripio de la pasta de cemento (segregación), debilitando el hormigón. Se vibra lo justo hasta que dejen de subir burbujas grandes.","fuente":{"documento":"Manual de Inspección Técnica de Obras (MINVU, 2007)","referencia":"Control de vibrado de hormigón","pagina_pdf":118},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-014","dia":82,"categoria":"que_compro","dificultad":"obra_fina","tipo":"opcion","pregunta":"Vas a unir un hormigón nuevo (sobrelosa o mortero) sobre un hormigón viejo y liso. ¿Qué producto compras para asegurar la pega?","alternativas":{"A":"Agua con cal","B":"Aceite desmoldante","C":"Puente de adherencia (emulsión acrílica o epóxica según carga)"},"correcta":"C","explicacion":"Un puente de adherencia (acrílico para morteros/enlucidos o epóxico para hormigón estructural) crea la liga química y mecánica entre el hormigón viejo y el nuevo.","fuente":{"documento":"Guía Maestra de Bolsillo (puentes de adherencia)","referencia":"Lechada / puente de adherencia","pagina_pdf":15},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-014","dia":83,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Pintaste un muro nuevo recién estucado y a las semanas la pintura se decolora a manchas y se pone harinosa (tiza). ¿Qué ocurrió?","alternativas":{"A":"Usaste rodillo de chiporro","B":"Pintaste antes de que fraguara el mortero o sin sellador antialcalino","C":"La habitación tiene poca luz"},"correcta":"B","explicacion":"El cemento fresco es muy alcalino y saponifica la pintura si no dejas curar el estuco ni aplicas un sellador/imprimante adecuado antes de pintar.","fuente":{"documento":"Guía Maestra de Bolsillo (acabados en paredes)","referencia":"Preparación de superficie sana, seca y sellador previo","pagina_pdf":61},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-014","dia":84,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"En una excavación para un radier, el maestro echa el hormigón directo sobre tierra vegetal con pasto y raíces sin compactar ni poner ripio. ¿Qué pasará?","alternativas":{"A":"Las raíces arman el hormigón","B":"Queda más ecológico","C":"El terreno se asienta de forma despareja, sube humedad y el radier se parte"},"correcta":"C","explicacion":"Siempre se retira la capa vegetal, se compacta el suelo, se coloca cama de ripio/grava compactada y polietileno como barrera de humedad antes del radier.","fuente":{"documento":"Manual de Inspección Técnica de Obras (MINVU, 2007)","referencia":"Partida 003.05 Relleno, Ripiado y Radier","pagina_pdf":99},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-015","dia":85,"categoria":"normativa","dificultad":"obra_fina","tipo":"opcion","pregunta":"¿Cuál es la abertura máxima permitida entre barrotes de una baranda para que no pase la cabeza de un niño?","alternativas":{"A":"No debe pasar una esfera de 12,5 cm","B":"No existe medida regulada","C":"Hasta 20 cm entre barrotes"},"correcta":"A","explicacion":"La OGUC exige que las barandas no permitan el paso de una esfera de 0,125 m (12,5 cm) de diámetro.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 4.2.7","pagina_pdf":230},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-015","dia":86,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"Necesitas una pieza de cobre o bronce que por un lado se suelda al tubo y por el otro tiene hilo para atornillar un flexible. ¿Cómo se pide?","alternativas":{"A":"Tapagorro","B":"Terminal (HI o HE según si el hilo es interior o exterior)","C":"Tee"},"correcta":"B","explicacion":"Se pide como terminal HI (hilo interior) o terminal HE (hilo exterior), indicando el diámetro del tubo y de la rosca (ej. 1/2\").","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-015","dia":87,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: el sol no le hace nada estructural a la madera, solo la pone gris por estética.","alternativas":{"A":"Verdad, es solo color","B":"Mito, los rayos UV descomponen la celulosa de la capa superficial","C":"Solo afecta al pino sin pintar"},"correcta":"B","explicacion":"La radiación UV descompone la celulosa superficial de la madera; aunque el avance es lento, degrada la superficie y favorece que entre agua.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Sección 2.3.1 Degradación por la luz","pagina_pdf":54},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sonrisa"}},{"id":"COM-015","dia":88,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Necesitas cortar una llave de paso general de agua fría en tu casa con un cuarto de giro rápido y confiable. ¿Qué válvula pides?","alternativas":{"A":"Válvula de bola (esférica)","B":"Válvula de retención","C":"Llave de jardín con hilo"},"correcta":"A","explicacion":"La válvula de bola abre y cierra en 90° (un cuarto de vuelta), tiene paso total sin pérdida de presión y dura mucho más que la llave de compuerta antigua.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-015","dia":89,"categoria":"diagnostico","dificultad":"obra_fina","tipo":"opcion","pregunta":"En un muro exterior aislado con EIFS o aislación discontinua, en invierno se marcan líneas oscuras de polvo/moho justo donde pasan los pilares o cadenas. ¿Por qué?","alternativas":{"A":"Los pilares están mojados por dentro","B":"El pintor pasó menos manos ahí","C":"Es un puente térmico: el hormigón conduce más frío y condensa humedad justo ahí"},"correcta":"C","explicacion":"Donde se corta la aislación (pilares, cadenas, vigas) se forma un puente térmico: esa franja interior está más fría, condensa vapor y atrapa polvo y moho.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-015","dia":90,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"Al empastar un muro recién hecho, el maestro ve que el mortero quedó algo aguado y le espolvorea cemento seco encima para secarlo rápido. ¿Qué provoca?","alternativas":{"A":"Fisuración superficial y desprendimiento de la capa","B":"Queda más impermeable","C":"Seca más parejo"},"correcta":"A","explicacion":"Agregar mezcla seca o cemento puro encima altera la relación agua/cemento en la superficie, generando contracción diferencial y fisuras.","fuente":{"documento":"Guía Maestra de Bolsillo (enlucidos)","referencia":"No adicionar mezcla seca para evitar fisuración","pagina_pdf":13},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-016","dia":91,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"¿Se puede diseñar un dormitorio con solo ventanas fijas selladas que no se abren?","alternativas":{"A":"Sí, si tiene aire acondicionado","B":"No, los dormitorios no admiten solo ventanas fijas selladas","C":"Sí, si es en segundo piso"},"correcta":"B","explicacion":"La OGUC solo permite ventanas fijas selladas con ventilación mecánica en otros recintos, pero nunca en dormitorios ni donde haya artefactos a combustión.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 4.1.2 / 4.1.3","pagina_pdf":184},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-016","dia":92,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"¿Qué significa cuando un maestro pide en el mesón una 'lija al agua grano 400' versus una 'lija grano 60'?","alternativas":{"A":"La 400 solo sirve para madera seca","B":"La 400 es más gruesa porque tiene el número más alto","C":"La 400 es mucho más fina (terminación) y la 60 es gruesa (desbaste)"},"correcta":"C","explicacion":"Mientras más alto el número, más fino el grano. Grano 40–80 es para desbastar; 120–180 intermedio; 220–400+ es para terminaciones finas y pulido.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-016","dia":93,"categoria":"mitos","dificultad":"obra_fina","tipo":"opcion","pregunta":"Mito o verdad: para diseñar anclajes en hormigón armado en zona sísmica se asume que el hormigón nunca se fisura.","alternativas":{"A":"Solo en edificios de más de 10 pisos","B":"Verdad, el hormigón sano no tiene fisuras","C":"Mito, los códigos asumen hormigón fisurado como condición estándar"},"correcta":"C","explicacion":"Tanto ACI 318 como el diseño sísmico asumen el hormigón fisurado como condición estándar, porque las microfisuras reducen la capacidad de un anclaje común.","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Concreto fisurado como condición estándar","pagina_pdf":17},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-016","dia":94,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Vas a sellar el encuentro de la tina con los azulejos del baño para que no se llene de manchas negras. ¿Qué pides en la ferretería?","alternativas":{"A":"Yeso rápido","B":"Silicona acética con fungicida (antihongos)","C":"Adhesivo de montaje"},"correcta":"B","explicacion":"Para superficies lisas de baño (cerámica, vidrio, tina) corresponde silicona con fungicida que resiste la humedad constante y retarda la formación de moho.","fuente":{"documento":"Guía Maestra de Bolsillo (selladores)","referencia":"Silicona de curado acético con fungicida","pagina_pdf":70},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-016","dia":95,"categoria":"diagnostico","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"En una casa de dos pisos aparece una grieta vertical limpia justo en el encuentro entre la casa original y una ampliación posterior. ¿Qué suele ser?","alternativas":{"A":"Asentamiento diferencial o falta de junta de dilatación entre ambas estructuras","B":"Falta de pintura","C":"Humedad del patio"},"correcta":"A","explicacion":"Una ampliación construida después asienta distinto a la casa original; si no se deja una junta de dilatación bien resuelta, el movimiento abre la unión.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-016","dia":96,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Ves a un trabajador parado sobre dos caballetes con una tabla suelta a más de 2 metros de altura sin barandas ni arnés. ¿Cuál es el error?","alternativas":{"A":"Solo falta ponerse casco","B":"Trabajo en altura (> 1,8 m) sin superficie asegurada ni sistema de protección contra caídas","C":"No es altura suficiente para arnés"},"correcta":"B","explicacion":"Sobre 1,8 m de altura se considera trabajo en altura: exige andamio normado con barandas/rodapié o sistema de detención de caídas con punto de anclaje certificado.","fuente":null,"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-017","dia":97,"categoria":"normativa","dificultad":"obra_fina","tipo":"opcion","pregunta":"En la norma sísmica chilena NCh 433, ¿qué tipo de suelo corresponde al de mejor comportamiento (roca o suelo cementado)?","alternativas":{"A":"Suelo Tipo A","B":"Suelo Tipo C","C":"Suelo Tipo E"},"correcta":"A","explicacion":"La NCh 433 clasifica los suelos de la A a la F: el Tipo A es roca o suelo cementado (Vs30 ≥ 900 m/s), el de menor amplificación sísmica.","fuente":{"documento":"NCh 433 Of.1996 Mod.2009 / DS 61","referencia":"Tabla 4.2","pagina_pdf":28},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-017","dia":98,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"Necesitas esa pieza metálica en forma de U o zapato que se clava a una viga madre para apoyar el extremo de una viga secundaria de madera. ¿Cómo se pide?","alternativas":{"A":"Colgador metálico de viga (conector de viga)","B":"Platina recta","C":"Bota de goma"},"correcta":"A","explicacion":"Son los colgadores metálicos (conectores estructurales), mucho más seguros y rápidos que calar la viga o clavarla solo de frente.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Fig. 7-2 Unión de vigas con colgadores metálicos","pagina_pdf":122},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-017","dia":99,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: las ventanas de doble vidriado hermético (termopanel) eliminan por sí solas todos los problemas de condensación de una casa.","alternativas":{"A":"Mito, si no ventilas, la humedad igual condensa en marcos o muros fríos","B":"Verdad, nunca más transpira nada","C":"Solo si el marco es de aluminio"},"correcta":"A","explicacion":"El termopanel reduce la pérdida de calor por el vidrio, pero si la humedad interior supera el 60% y hay puentes térmicos en muros o marcos, igual habrá condensación.","fuente":{"documento":"Estándares de Construcción Sustentable Tomo II + Ventilación V1","referencia":"DVH y control de humedad relativa 60%","pagina_pdf":17},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sonrisa"}},{"id":"COM-017","dia":100,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a instalar fijaciones metálicas en una casa en la costa (ambiente marino). ¿Qué tipo de acero compras para los pernos y tornillos?","alternativas":{"A":"Acero negro sin recubrimiento","B":"Acero zincado delgado interior","C":"Acero inoxidable (idealmente AISI 316)"},"correcta":"C","explicacion":"La brisa marina acelera la corrosión en acero común y zincado liviano; en ambientes costeros se recomienda acero inoxidable (AISI 316 en exposición directa).","fuente":{"documento":"Manual Técnico de Anclajes (2019)","referencia":"Sección 2.3.3 Protección ante la corrosión","pagina_pdf":14},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-017","dia":101,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"El sellador de la ducha se puso completamente negro y empieza a despegarse en tiras de la tina. ¿Qué pasó?","alternativas":{"A":"Falta ventilación en el living","B":"Era silicona vieja o sin fungicida, o se aplicó sobre superficie húmeda/con jabón","C":"El agua de la ducha está muy caliente"},"correcta":"B","explicacion":"La silicona sin fungicida o aplicada sobre restos de jabón y humedad pierde adherencia y junta moho. Hay que retirarla toda, desengrasar, secar y volver a sellar con silicona antihongos.","fuente":{"documento":"Guía Maestra de Bolsillo (selladores)","referencia":"Silicona con fungicida para cerámica y zonas húmedas","pagina_pdf":70},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-017","dia":102,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"Al instalar la barrera de vapor de polietileno en un tabique de madera, dejaron los paños apenas tocándose borde con borde sin traslapar ni sellar. ¿Cuál es el error?","alternativas":{"A":"Ayuda a que respire la lana","B":"Ahorra plástico sin afectar nada","C":"El vapor se cuela por las rendijas y condensa dentro del aislante; exige mínimo 15 cm de traslape"},"correcta":"C","explicacion":"El manual exige un traslape mínimo de 15 cm (y continuidad en perforaciones) para que la humedad no se cuele y moje la aislación térmica.","fuente":{"documento":"Manual de construcción de viviendas en madera","referencia":"Traslape mínimo de 15 cm en barrera de vapor","pagina_pdf":175},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-018","dia":103,"categoria":"normativa","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Según la norma eléctrica, ¿qué característica de seguridad deben tener todos los enchufes hembra que se instalen en una casa?","alternativas":{"A":"Interruptor individual en cada uno","B":"Color blanco obligatorio","C":"Alvéolos protegidos (seguro infantil)"},"correcta":"C","explicacion":"Todos los enchufes hembra deben ser de alvéolos protegidos para impedir que niños introduzcan objetos metálicos en un solo polo.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.1.2.8","pagina_pdf":4},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-018","dia":104,"categoria":"ferreteria","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Si en la ferretería pides una 'broca copa' (sierra copa), ¿para qué trabajo te sirve?","alternativas":{"A":"Pulir acero inoxidable","B":"Hacer perforaciones circulares grandes (ej. para chapas, focos o tuberías)","C":"Atornillar en rincones"},"correcta":"B","explicacion":"La sierra copa corta círculos de gran diámetro (desde 25 mm hasta más de 100 mm) en madera, yeso-cartón o metal según el tipo de dientes.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-018","dia":105,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Mito o verdad: en una casa puedes sacar la alimentación de una lámpara colgante directo desde el enchufe más cercano.","alternativas":{"A":"Verdad, ambos son 220 V","B":"Mito, la norma prohíbe alimentar centros de iluminación desde un enchufe","C":"Solo si el cable es de 1,5 mm²"},"correcta":"B","explicacion":"El RIC N°10 prohíbe expresamente alimentar centros de iluminación desde un enchufe; deben ir en su propio circuito con la protección adecuada.","fuente":{"documento":"RIC N°10 (Pliego Técnico Normativo)","referencia":"Punto 5.2 letra a)","pagina_pdf":6},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-018","dia":106,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"Quieres dejar un tabique de yeso-cartón con las esquinas exteriores súper rectas y protegidas contra golpes. ¿Qué compras?","alternativas":{"A":"Esquinero metálico o de polímero para tabiquería","B":"Cuarto rodón de pino","C":"Solo cinta de papel doblada"},"correcta":"A","explicacion":"Los esquineros (metálicos o de polímero reforzado) arman una arista recta y resistente a golpes antes de empastar y pintar.","fuente":{"documento":"Guía para Terminaciones Perfectas (tabiques yeso-cartón)","referencia":"Terminación de esquinas","pagina_pdf":6},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-018","dia":107,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Una puerta interior de madera que antes cerraba perfecto ahora se tranca en la parte superior solo en meses de lluvia. ¿Por qué?","alternativas":{"A":"La chapa se echó a perder","B":"Las bisagras se agrandaron","C":"La madera absorbe humedad ambiental y se hincha (movimiento higroscópico)"},"correcta":"C","explicacion":"La madera intercambia humedad con el aire; en invierno sube la humedad relativa y la hoja se hincha unos milímetros. Sellar también los cantos superior e inferior reduce mucho esto.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"sonrisa"}},{"id":"ERR-018","dia":108,"categoria":"error_obra","dificultad":"obra_fina","tipo":"opcion","pregunta":"En un departamento hicieron una junta eléctrica torciendo los cables con la mano y tapándolos con una vuelta de cinta aisladora suelta dentro de una pared, sin caja de derivación. ¿Cuál es el error?","alternativas":{"A":"Las uniones deben quedar accesibles dentro de cajas con conectores adecuados, nunca enterradas","B":"Solo importa si es cable grueso","C":"Faltó poner más cinta"},"correcta":"A","explicacion":"Los empalmes eléctricos flojos generan puntos calientes e incendios, y siempre deben quedar registrados en cajas accesibles con conectores certificados.","fuente":null,"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-019","dia":109,"categoria":"normativa","dificultad":"obra_fina","tipo":"opcion","pregunta":"En la NCh 433, ¿en cuántas zonas sísmicas se divide el territorio chileno para calcular la aceleración del suelo?","alternativas":{"A":"2 zonas","B":"3 zonas (1, 2 y 3)","C":"5 zonas"},"correcta":"B","explicacion":"Chile se divide en 3 zonas sísmicas: Zona 1 (0,20 g), Zona 2 (0,30 g) y Zona 3 (0,40 g, la costa, de mayor exigencia).","fuente":{"documento":"NCh 433 Of.1996 Mod.2009 / DS 61","referencia":"Tabla 6.2","pagina_pdf":45},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-019","dia":110,"categoria":"ferreteria","dificultad":"terminaciones","tipo":"opcion","pregunta":"Vas a comprar una 'unión americana' en gasfitería. ¿Para qué sirve esa pieza?","alternativas":{"A":"Bajar la presión del agua","B":"Cambiar el tubo en 90 grados","C":"Unir dos cañerías permitiendo desarmar la unión después sin cortar el tubo"},"correcta":"C","explicacion":"La unión americana trae una tuerca central con sello que permite desmontar bombas, calefonts o tramos de cañería sin tener que cortar ni desoldar.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-019","dia":111,"categoria":"mitos","dificultad":"terminaciones","tipo":"opcion","pregunta":"Mito o verdad: la cinta de fibra de vidrio autoadhesiva se puede pegar en tabiques sin ponerle masilla debajo y siempre evita grietas.","alternativas":{"A":"Solo sirve en techos","B":"Verdad, es más resistente que el papel","C":"Mito, la cinta de papel microperforado resiste mejor la tracción en esquinas y juntas"},"correcta":"C","explicacion":"La cinta de papel microperforado embebida en compuesto ofrece mayor resistencia a la tracción y menos fisuras en juntas y esquinas interiores que la malla.","fuente":{"documento":"Guía para Terminaciones Perfectas (tabiques yeso-cartón)","referencia":"Cinta de papel microperforado vs fibra de vidrio","pagina_pdf":5},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sonrisa"}},{"id":"COM-019","dia":112,"categoria":"que_compro","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Vas a fijar un poste de madera de 4×4 pulgadas a un poyete de hormigón en el patio. ¿Qué herraje compras para que no se pudra la base?","alternativas":{"A":"Enterrar la madera directo en cemento fresco","B":"Base metálica galvanizada elevada para pilar (soporte de poste)","C":"Dos escuadras chicas de mueble"},"correcta":"B","explicacion":"Una base metálica galvanizada separa la madera del hormigón y del agua estancada, evitando pudrición por humedad y ataque de hongos.","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-019","dia":113,"categoria":"diagnostico","dificultad":"obra_fina","tipo":"opcion","pregunta":"En un muro de albañilería aparecen grietas en escalera siguiendo exactamente las uniones de mortero entre ladrillos. ¿Qué indica?","alternativas":{"A":"Asentamiento del terreno o falla de adherencia del mortero de pega","B":"Falta de barniz en el ladrillo","C":"Exceso de sol en la tarde"},"correcta":"A","explicacion":"Las grietas escalonadas por las llagas y tendeles suelen deberse a asentamiento diferencial de fundaciones o a un mortero pobre/mal adherido. Si crece en el tiempo, requiere revisión estructural.","fuente":null,"pose_maria":{"pregunta":"sentada_pensando","respuesta":"sorpresa"}},{"id":"ERR-019","dia":114,"categoria":"error_obra","dificultad":"terminaciones","tipo":"opcion","pregunta":"Ves una escalera interior recién construida donde los peldaños tienen distintas alturas entre sí (unos de 16 cm y el último de 23 cm). ¿Por qué es un error grave?","alternativas":{"A":"Solo se ve feo","B":"Causa tropiezos constantes y rompe la norma de uniformidad y altura máxima (18 cm en evacuación)","C":"Ayuda a subir más rápido"},"correcta":"B","explicacion":"El cuerpo memoriza el ritmo del primer peldaño; cambiar la contrahuella provoca caídas graves. Además la OGUC fija rangos estrictos de contrahuella.","fuente":{"documento":"OGUC (DS 47, versión 2-oct-2026)","referencia":"Art. 4.2.10 N°2 (contrahuella 0,13 a 0,18 m)","pagina_pdf":231},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}},{"id":"NOR-020","dia":115,"categoria":"normativa","dificultad":"terminaciones","tipo":"opcion","pregunta":"En un sistema de ventilación mecánica para baños, ¿a qué porcentaje de humedad relativa se programa el extractor con higrostato?","alternativas":{"A":"Al 30% de humedad relativa","B":"Al 60% de humedad relativa","C":"Al 95% de humedad relativa"},"correcta":"B","explicacion":"Los extractores con higrostato en baños y cocinas se programan al 60% de humedad relativa para evacuar el vapor antes de que condense.","fuente":{"documento":"Manual de Ventilación V1","referencia":"Sección Extracción Mecánica","pagina_pdf":4},"pose_maria":{"pregunta":"senalando","respuesta":"sonrisa"}},{"id":"FER-020","dia":116,"categoria":"ferreteria","dificultad":"obra_fina","tipo":"opcion","pregunta":"¿Qué pides cuando necesitas esa pieza plástica en forma de cruz de 2 o 3 mm que se pone entre cerámicas para que todas las fraguas queden iguales?","alternativas":{"A":"Separadores (crucetas) para cerámica","B":"Cuñas de nivelación solamente","C":"Tarugos de cruz"},"correcta":"A","explicacion":"Se piden como separadores o crucetas (de 1,5 mm, 2 mm, 3 mm o más según si la palmeta es rectificada o tradicional).","fuente":null,"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"MIT-020","dia":117,"categoria":"mitos","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Mito o verdad: si aplicas un puente de adherencia sobre hormigón liso con polvo o restos de desmoldante, el producto lo absorbe y pega igual.","alternativas":{"A":"Mito, la superficie debe estar sana, firme y libre de polvo, grasa y curadores","B":"Verdad, para eso es el puente de adherencia","C":"Solo hay que diluirlo menos"},"correcta":"A","explicacion":"Ningún puente de adherencia pega sobre polvo, grasas o residuos de curadores/desmoldantes: siempre hay que limpiar y sanear la base primero.","fuente":{"documento":"Guía Maestra de Bolsillo (puentes de adherencia)","referencia":"Preparación de superficie para ligantes","pagina_pdf":17},"pose_maria":{"pregunta":"duda_lapiz","respuesta":"sorpresa"}},{"id":"COM-020","dia":118,"categoria":"que_compro","dificultad":"terminaciones","tipo":"opcion","pregunta":"En el baño sale mucho vapor y se te empañan los muros aunque abras un poco la puerta. ¿Qué extractor compras para automatizarlo?","alternativas":{"A":"Un ventilador de sobremesa","B":"Una rejilla fija sin motor","C":"Extractor mecánico con higrostato (sensor de humedad) de al menos 36 m³/h"},"correcta":"C","explicacion":"Un extractor con higrostato se enciende solo cuando la humedad pasa del 60% y cumple el caudal mínimo de 36 m³/h exigido para baños.","fuente":{"documento":"Manual de Ventilación V1","referencia":"Extractor con higrostato 60% y caudal 36 m³/h","pagina_pdf":6},"pose_maria":{"pregunta":"de_pie","respuesta":"sonrisa"}},{"id":"DIA-020","dia":119,"categoria":"diagnostico","dificultad":"terminaciones","tipo":"opcion","pregunta":"Las ventanas y puertas de una casa nueva silban cuando hay viento fuerte y entra aire helado aunque estén cerradas. ¿Cuál es el problema?","alternativas":{"A":"El vidrio es muy delgado","B":"Infiltración de aire por burletes malos, descuadre o falta de sellado perimetral","C":"Falta pintura exterior"},"correcta":"B","explicacion":"Las infiltraciones por marcos mal sellados o burletes defectuosos disparan las pérdidas de calor y el ruido. La envolvente debe ser hermética y la ventilación controlada.","fuente":{"documento":"Estándares de Construcción Sustentable Tomo II Energía","referencia":"Hermeticidad e infiltración de aire","pagina_pdf":36},"pose_maria":{"pregunta":"sentada_pensando","respuesta":"senalando"}},{"id":"ERR-020","dia":120,"categoria":"error_obra","dificultad":"obra_gruesa","tipo":"opcion","pregunta":"Al instalar una bandeja o ducto de ventilación que atraviesa un muro exterior, dejan un hueco alrededor sin sellar ni continuar la membrana de vapor/humedad. ¿Qué error es?","alternativas":{"A":"No importa si va tapado con rejilla","B":"Sirve como ventilación extra","C":"Se rompe la continuidad de la membrana, permitiendo infiltración de aire y humedad al muro"},"correcta":"C","explicacion":"Todo traspaso de ductos en muros debe sellarse cuidadosamente para mantener la continuidad de la barrera de vapor y humedad y evitar condensación interna.","fuente":{"documento":"Manual de Ventilación V1","referencia":"Punto 3.1 Perforación en muro y continuidad de membrana","pagina_pdf":6},"pose_maria":{"pregunta":"sorpresa","respuesta":"senalando"}}]};
+
+const CAT_META = {
+  ferreteria:  { nombre:'Ferretería',    corta:'FERRETERÍA',    color:'#FFD000', fg:'#1F2536', invitado:'julio', ctaLabel:'Ver compras recomendadas de Julio', ctaUrl:'https://www.palmaestro.xyz/p/compras-recomendadas.html' },
+  mitos:       { nombre:'Mitos',         corta:'MITOS',         color:'#EC4899', fg:'#FFFFFF', invitado:null,    ctaLabel:'Únete a la comunidad Pa\'l Maestro', ctaUrl:'https://www.palmaestro.xyz/p/unete-la-comunidad.html' },
+  normativa:   { nombre:'Normativa',     corta:'NORMATIVA',     color:'#38BDF8', fg:'#1F2536', invitado:null,    ctaLabel:'Abrir Excels y utilidades de obra',  ctaUrl:'https://www.palmaestro.xyz/p/utilidades-pamaestro.html' },
+  diagnostico: { nombre:'Mi muro',       corta:'MI MURO',       color:'#EF3B39', fg:'#FFFFFF', invitado:null,    ctaLabel:'Revisar utilidades y guías técnicas', ctaUrl:'https://www.palmaestro.xyz/p/utilidades-pamaestro.html' },
+  que_compro:  { nombre:'¿Qué compro?',  corta:'QUÉ COMPRO',    color:'#22C55E', fg:'#1F2536', invitado:'julio', ctaLabel:'Ver herramientas recomendadas',      ctaUrl:'https://www.palmaestro.xyz/p/compras-recomendadas.html' },
+  error_obra:  { nombre:'Error en obra', corta:'ERROR EN OBRA', color:'#FF5A1F', fg:'#FFFFFF', invitado:null,    ctaLabel:'Probar Dimensionador de Tablas',     ctaUrl:'https://www.palmaestro.xyz/p/dimensionador.html' }
+};
+const CAT_ORDER = ['ferreteria','mitos','normativa','diagnostico','que_compro','error_obra'];
+
+const RANKS = [
+  { min: 0,  name: 'Ayudante',           desc: 'Recién llegando a la obra con el termo listo. ¡A sumar experiencia!' },
+  { min: 10, name: 'Maestro de segunda', desc: 'Ya cubicas a ojo y no te pasan gato por liebre en la ferretería.' },
+  { min: 30, name: 'Maestro de primera', desc: 'Dominas la OGUC, los tarugos y las terminaciones al revés y al derecho.' },
+  { min: 70, name: 'Jefe de obra',       desc: 'Nivel máximo del mesón digital. Te llaman cuando se tranca la obra.' }
+];
+
+const IMG_BASE = './cachai-o-no-data/img/';
+const STORAGE_KEY = 'palmaestro_cachai_v1';
+
+let BANCO = null;
+let state = {
+  soundOn: true,
+  correctIds: [],
+  wrongIds: [],
+  dailyResults: {}, // { "1": { ok: true, chosen: "B", date: "2026-11-23" } }
+  streak: 0,
+  bestStreak: 0,
+  lastDailyISO: null,
+  totalAnswered: 0,
+  totalCorrect: 0
+};
+
+let currentDailyDay = 1;
+let viewingDailyDay = 1;
+let rouletteDif = 'all';
+let wheelAngle = 0;
+let spinning = false;
+let currentRouletteQ = null;
+let rouletteAnswered = false;
+let timerInterval = null;
+let sessionAsked = new Set();
+let lastStoryBlob = null;
+let lastShareSummary = '';
+
+const $ = id => document.getElementById(id);
+
+function loadState(){
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    state = Object.assign(state, raw);
+    if(!Array.isArray(state.correctIds)) state.correctIds = [];
+    if(!Array.isArray(state.wrongIds)) state.wrongIds = [];
+    if(!state.dailyResults || typeof state.dailyResults !== 'object') state.dailyResults = {};
+  } catch(e){}
+}
+function saveState(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+function showToast(txt){
+  const t = $('toast');
+  t.textContent = txt;
+  t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(()=> t.classList.remove('show'), 2400);
+}
+
+// ---------- AUDIO PROCEDURAL LIVIANO (WEB AUDIO API · 0 KB) ----------
+let ac = null;
+function getAC(){
+  if(!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+  if(ac.state === 'suspended') ac.resume().catch(()=>{});
+  return ac;
+}
+function playTone(type){
+  if(!state.soundOn) return;
+  try {
+    const c = getAC();
+    const now = c.currentTime;
+    if(type === 'tick'){
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'triangle'; o.frequency.setValueAtTime(860, now); o.frequency.exponentialRampToValueAtTime(240, now+0.04);
+      g.gain.setValueAtTime(0.18, now); g.gain.exponentialRampToValueAtTime(0.001, now+0.045);
+      o.connect(g); g.connect(c.destination); o.start(now); o.stop(now+0.05);
+    } else if(type === 'hit'){
+      [523.25, 659.25, 783.99, 1046.5].forEach((f,i)=>{
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i*0.045);
+        g.gain.setValueAtTime(0.15, now + i*0.045); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.045 + 0.35);
+        o.connect(g); g.connect(c.destination); o.start(now + i*0.045); o.stop(now + i*0.045 + 0.36);
+      });
+    } else if(type === 'ok'){
+      [523.25, 659.25, 783.99, 1046.5].forEach((f,i)=>{
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(f, now + i*0.06);
+        g.gain.setValueAtTime(0.18, now + i*0.06); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.06 + 0.42);
+        o.connect(g); g.connect(c.destination); o.start(now + i*0.06); o.stop(now + i*0.06 + 0.44);
+      });
+    } else if(type === 'bad'){
+      [290, 220].forEach((f,i)=>{
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = 'sawtooth'; o.frequency.setValueAtTime(f, now + i*0.12);
+        g.gain.setValueAtTime(0.10, now + i*0.12); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.12 + 0.22);
+        o.connect(g); g.connect(c.destination); o.start(now + i*0.12); o.stop(now + i*0.12 + 0.24);
+      });
+    } else if(type === 'clock'){
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'square'; o.frequency.setValueAtTime(980, now); o.frequency.exponentialRampToValueAtTime(480, now+0.035);
+      g.gain.setValueAtTime(0.08, now); g.gain.exponentialRampToValueAtTime(0.001, now+0.045);
+      o.connect(g); g.connect(c.destination); o.start(now); o.stop(now+0.05);
+    }
+  } catch(e){}
+}
+
+// ---------- CALENDARIO 120 DÍAS (SINCRONIZADO CON REELS) ----------
+function localTodayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function parseLocalISO(iso){
+  const [y,m,d] = String(iso || '2026-11-23').split('-').map(Number);
+  return new Date(y, (m||1)-1, d||1);
+}
+function calcTodayDayNumber(){
+  const start = parseLocalISO(BANCO.fecha_inicio || '2026-11-23');
+  const now = parseLocalISO(localTodayISO());
+  const diffDays = Math.floor((now - start) / 86400000);
+  const total = BANCO.preguntas.length || 120;
+  if(diffDays < 0) return 1;
+  return (diffDays % total) + 1;
+}
+function dateLabelForDay(dia){
+  const start = parseLocalISO(BANCO.fecha_inicio || '2026-11-23');
+  const dt = new Date(start.getFullYear(), start.getMonth(), start.getDate() + (dia - 1));
+  return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
+}
+function getQuestionForDay(dia){
+  return BANCO.preguntas.find(q => q.dia === dia) || BANCO.preguntas[(dia - 1) % BANCO.preguntas.length];
+}
+
+// ---------- RANGOS DE CUADRILLA ----------
+function getRankInfo(){
+  const score = state.correctIds.length;
+  let cur = RANKS[0], next = RANKS[1] || null;
+  for(let i = 0; i < RANKS.length; i++){
+    if(score >= RANKS[i].min){
+      cur = RANKS[i];
+      next = RANKS[i+1] || null;
+    }
+  }
+  const pct = next ? Math.min(100, Math.round(((score - cur.min) / (next.min - cur.min)) * 100)) : 100;
+  return { cur, next, score, pct };
+}
+
+function updateHeaderAndProfile(){
+  const rk = getRankInfo();
+  $('hdrStreak').textContent = state.streak;
+  $('hdrRank').textContent = rk.cur.name;
+  $('icoSoundOn').style.display = state.soundOn ? 'inline-block' : 'none';
+  $('icoSoundOff').style.display = state.soundOn ? 'none' : 'inline-block';
+
+  $('profRankTitle').textContent = rk.cur.name;
+  $('profRankDesc').textContent = rk.cur.desc;
+  $('profRankBar').style.width = rk.pct + '%';
+  $('profRankNext').textContent = rk.next
+    ? `${rk.score} / ${rk.next.min} preguntas dominadas para subir a ${rk.next.name}`
+    : `${rk.score} preguntas dominadas · ¡Rango máximo alcanzado!`;
+
+  $('kpiStreak').textContent = state.streak;
+  $('kpiBestStreak').textContent = state.bestStreak;
+  $('kpiCorrect').textContent = state.totalCorrect;
+  const acc = state.totalAnswered ? Math.round((state.totalCorrect / state.totalAnswered) * 100) : 0;
+  $('kpiAcc').textContent = acc + '%';
+
+  const grid = $('catStatsGrid');
+  grid.innerHTML = '';
+  CAT_ORDER.forEach(catId => {
+    const cm = CAT_META[catId];
+    const totalCat = BANCO.preguntas.filter(q => q.categoria === catId).length;
+    const doneCat = BANCO.preguntas.filter(q => q.categoria === catId && state.correctIds.includes(q.id)).length;
+    const p = totalCat ? Math.round((doneCat / totalCat) * 100) : 0;
+    const el = document.createElement('div');
+    el.className = 'pm-card cat-stat-item';
+    el.style.boxShadow = '3px 3px 0 #1F2536';
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span class="zine-badge" style="background:${cm.color};color:${cm.fg};transform:none">${cm.corta}</span>
+        <span class="pm-tech-italic" style="font-weight:800;color:#1F2536">${doneCat} / ${totalCat} (${p}%)</span>
+      </div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${p}%;background:${cm.color}"></div></div>
+    `;
+    grid.appendChild(el);
+  });
+}
+
+function recordAnswer(q, chosenKey, isDailyOfficial){
+  const ok = chosenKey === q.correcta;
+  state.totalAnswered++;
+  if(ok){
+    state.totalCorrect++;
+    if(!state.correctIds.includes(q.id)) state.correctIds.push(q.id);
+    state.wrongIds = state.wrongIds.filter(x => x !== q.id);
+  } else {
+    if(!state.correctIds.includes(q.id) && !state.wrongIds.includes(q.id)) state.wrongIds.push(q.id);
+  }
+
+  if(isDailyOfficial){
+    const today = localTodayISO();
+    state.dailyResults[String(viewingDailyDay)] = { ok, chosen: chosenKey, date: today, qId: q.id };
+    if(viewingDailyDay === currentDailyDay){
+      if(state.lastDailyISO !== today){
+        const prevDate = state.lastDailyISO ? parseLocalISO(state.lastDailyISO) : null;
+        const curDate = parseLocalISO(today);
+        const diff = prevDate ? Math.round((curDate - prevDate) / 86400000) : 99;
+        state.streak = (diff === 1) ? (state.streak + 1) : 1;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
+        state.lastDailyISO = today;
+      }
+    }
+  }
+  saveState();
+  updateHeaderAndProfile();
+  return ok;
+}
+
+// ---------- RENDER DE TARJETA DE PREGUNTA / RESPUESTA BLUEPRINT ----------
+function getCharImageForResult(q, ok){
+  const cm = CAT_META[q.categoria];
+  if(cm.invitado === 'julio'){
+    return { src: IMG_BASE + 'julio_retrato.png', label: 'Julio Venegas · Ferretería' };
+  }
+  const pose = ok ? (q.pose_maria?.respuesta === 'risa' ? 'maria_risa.png' : 'maria_sonrisa.png') : 'maria_sorpresa.png';
+  return { src: IMG_BASE + pose, label: 'María Estér · Ing. Construcción' };
+}
+
+function renderQuizInto(container, q, opts){
+  const cm = CAT_META[q.categoria];
+  const difLabel = (BANCO.dificultades && BANCO.dificultades[q.dificultad]) || q.dificultad;
+  const answered = !!opts.answered;
+  const chosenKey = opts.chosenKey || null;
+  const ok = answered && chosenKey === q.correcta;
+
+  container.classList.toggle('blueprint', answered);
+
+  const altsHtml = Object.entries(q.alternativas).map(([k, val])=>{
+    let cls = 'alt-btn';
+    let keyTxt = k;
+    let keyStyle = `background:${cm.color};color:${cm.fg}`;
+    if(answered){
+      if(k === q.correcta){
+        cls += ' is-correct pat-dots';
+        keyTxt = '✓';
+        keyStyle = '';
+      } else if(k === chosenKey){
+        cls += ' is-wrong';
+        keyTxt = '✕';
+        keyStyle = '';
+      } else {
+        cls += ' is-hidden';
+      }
+    }
+    return `
+      <button class="${cls}" data-alt="${k}" ${answered ? 'disabled' : ''}>
+        <span class="alt-key" style="${keyStyle}">${keyTxt}</span>
+        <span>${escapeHtml(val)}</span>
+      </button>
+    `;
+  }).join('');
+
+  let extraBottom = '';
+  if(!answered){
+    const hostSrc = cm.invitado === 'julio' ? (IMG_BASE + 'julio_retrato.png') : (IMG_BASE + 'maria_duda_lapiz.png');
+    const hostMsg = cm.invitado === 'julio'
+      ? 'Hoy nos acompaña Julio Venegas. Piénsala bien antes de responder.'
+      : 'María Estér te desafía: elige tu respuesta antes de ver la norma.';
+    extraBottom = `
+      <div class="question-host-row">
+        <img src="${hostSrc}" alt="Anfitrión" onerror="this.style.display='none'">
+        <div>
+          <div style="font-weight:900;font-size:13.5px">${cm.invitado === 'julio' ? 'Especial con Julio Venegas' : 'María Estér del Tránsito'}</div>
+          <div class="pm-tech-italic">${hostMsg}</div>
+        </div>
+      </div>
+    `;
+  } else {
+    const ch = getCharImageForResult(q, ok);
+    const fuenteTxt = q.fuente
+      ? `${q.fuente.documento} · ${q.fuente.referencia}${q.fuente.pagina_pdf ? ' (pág. ' + q.fuente.pagina_pdf + ')' : ''}`
+      : 'Criterio práctico de obra y ferretería chilena · Pa\'l Maestro';
+    const verdictHtml = ok
+      ? `<div class="verdict-banner ok"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>¡Le achuntaste!</div>`
+      : `<div class="verdict-banner bad"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>${chosenKey === 'TIMEOUT' ? 'Se acabó el tiempo' : 'Casi... la correcta era la ' + q.correcta}</div>`;
+
+    extraBottom = `
+      <div class="result-grid">
+        <div class="exp-card">
+          <span class="exp-tag">Dato del Maestro</span>
+          ${verdictHtml}
+          <p class="exp-text">${escapeHtml(q.explicacion)}</p>
+          <div class="source-line">
+            <svg class="ico" style="flex-shrink:0;margin-top:2px" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span class="pm-tech-italic">${escapeHtml(fuenteTxt)}</span>
+          </div>
+          <a class="blog-cta" href="${cm.ctaUrl}" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            ${escapeHtml(cm.ctaLabel)}
+          </a>
+        </div>
+        <div class="char-stage">
+          <img src="${ch.src}" alt="${escapeHtml(ch.label)}" onerror="this.style.display='none'">
+          <span class="char-caption">${escapeHtml(ch.label)}</span>
+        </div>
+      </div>
+      <div class="result-actions">
+        ${opts.mode === 'daily' ? `
+          <button class="pm-btn yellow" id="btnShareDailyStory">
+            <svg class="ico ico-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            Compartir resultado en Stories
+          </button>
+          ${viewingDailyDay !== currentDailyDay ? `
+            <button class="pm-btn green" id="btnBackToToday">
+              Volver a hoy (Día #${currentDailyDay})
+            </button>
+          ` : ''}
+          <button class="pm-btn blue" id="btnGoRoulette">
+            <svg class="ico ico-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+            Seguir jugando en la Ruleta
+          </button>
+        ` : `
+          <button class="pm-btn yellow" id="btnSpinAgain">
+            <svg class="ico ico-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
+            Girar por otra pregunta
+          </button>
+          <button class="pm-btn blue" id="btnShareRouletteStory">
+            Compartir mi progreso
+          </button>
+        `}
+      </div>
+    `;
+  }
+
+  const headerTag = opts.mode === 'daily'
+    ? `Día #${String(viewingDailyDay).padStart(3,'0')} · ${dateLabelForDay(viewingDailyDay)}`
+    : `Ruleta Libre · ${q.id}`;
+
+  container.innerHTML = `
+    <span class="washi ${answered ? 'blue' : ''}"></span>
+    <div class="q-meta-row">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="zine-badge" style="background:${cm.color};color:${cm.fg}">${cm.corta}</span>
+        <span class="dif-chip">${escapeHtml(difLabel)}</span>
+      </div>
+      <span class="pm-tech-italic" style="color:${answered ? '#E0F7FF' : 'var(--muted)'};font-weight:700">${headerTag}</span>
+    </div>
+    ${opts.showTimer && !answered ? `
+      <div class="timer-wrap">
+        <div class="timer-track"><div class="timer-fill" id="rTimerFill"></div></div>
+        <div class="timer-num" id="rTimerNum">15</div>
+      </div>
+    ` : ''}
+    <div class="q-box">
+      <p class="q-text">${escapeHtml(q.pregunta)}</p>
+    </div>
+    <div class="alts-list">${altsHtml}</div>
+    ${extraBottom}
+  `;
+
+  if(!answered){
+    container.querySelectorAll('.alt-btn').forEach(btn => {
+      btn.onclick = () => opts.onAnswer(btn.dataset.alt);
+    });
+  } else {
+    const bShare = container.querySelector('#btnShareDailyStory');
+    if(bShare) bShare.onclick = () => openStoryModal('daily', q, ok);
+    const bToday = container.querySelector('#btnBackToToday');
+    if(bToday) bToday.onclick = () => { viewingDailyDay = currentDailyDay; renderDailyView(); renderArchiveGrid(); };
+    const bGo = container.querySelector('#btnGoRoulette');
+    if(bGo) bGo.onclick = () => switchTab('roulette');
+    const bAgain = container.querySelector('#btnSpinAgain');
+    if(bAgain) bAgain.onclick = () => spinWheel();
+    const bShareR = container.querySelector('#btnShareRouletteStory');
+    if(bShareR) bShareR.onclick = () => openStoryModal('profile');
+  }
+}
+
+function escapeHtml(s){
+  return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ---------- MODO 1: PREGUNTA DEL DÍA ----------
+function renderDailyView(){
+  const q = getQuestionForDay(viewingDailyDay);
+  const saved = state.dailyResults[String(viewingDailyDay)];
+  renderQuizInto($('dailyStage'), q, {
+    mode: 'daily',
+    answered: !!saved,
+    chosenKey: saved ? saved.chosen : null,
+    showTimer: false,
+    onAnswer: (key) => {
+      const ok = recordAnswer(q, key, true);
+      playTone(ok ? 'ok' : 'bad');
+      renderDailyView();
+      renderArchiveGrid();
+    }
+  });
+}
+
+function renderArchiveGrid(){
+  const g = $('archiveGrid');
+  g.innerHTML = '';
+  const maxDay = Math.max(currentDailyDay, 10); // Mostrar hasta hoy (o al menos primeros 10 para explorar/probar)
+  const limit = Math.min(BANCO.preguntas.length, maxDay);
+  for(let d = 1; d <= limit; d++){
+    const res = state.dailyResults[String(d)];
+    const btn = document.createElement('button');
+    btn.className = 'day-tile' + (res ? (res.ok ? ' ok' : ' bad') : '') + (d === viewingDailyDay ? ' active' : '');
+    const mark = res ? (res.ok ? ' ✓' : ' ✕') : '';
+    btn.textContent = `Día ${d}${mark}`;
+    btn.onclick = () => {
+      viewingDailyDay = d;
+      renderDailyView();
+      renderArchiveGrid();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    g.appendChild(btn);
+  }
+}
+
+function startMidnightClock(){
+  function tick(){
+    const now = new Date();
+    const tom = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const s = Math.max(0, Math.floor((tom - now) / 1000));
+    const hh = String(Math.floor(s / 3600)).padStart(2,'0');
+    const mm = String(Math.floor((s % 3600) / 60)).padStart(2,'0');
+    const ss = String(s % 60).padStart(2,'0');
+    $('nextDayClock').textContent = `${hh}:${mm}:${ss}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+// ---------- MODO 2: RULETA SVG INTERACTIVA ----------
+function buildWheelSvg(){
+  const svg = $('wheelSvg');
+  const n = CAT_ORDER.length;
+  const slice = 360 / n;
+  const R = 140;
+  let inner = `<g id="wheelRotor">`;
+  inner += `<circle cx="0" cy="0" r="${R + 12}" fill="#1F2536"/>`;
+  inner += `<circle cx="0" cy="0" r="${R + 6}" fill="none" stroke="#FFD000" stroke-width="6"/>`;
+  for(let i = 0; i < n; i++){
+    const a0 = (i * slice - 90) * Math.PI / 180;
+    const a1 = ((i + 1) * slice - 90) * Math.PI / 180;
+    const x0 = Math.cos(a0) * R, y0 = Math.sin(a0) * R;
+    const x1 = Math.cos(a1) * R, y1 = Math.sin(a1) * R;
+    const cm = CAT_META[CAT_ORDER[i]];
+    const midDeg = i * slice + slice / 2 - 90;
+    inner += `<path d="M0,0 L${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 0,1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${cm.color}" stroke="#1F2536" stroke-width="3.5"/>`;
+    inner += `<g transform="rotate(${midDeg})"><text x="${R - 14}" y="5" text-anchor="end" fill="${cm.fg}" font-family="Allo,system-ui,sans-serif" font-weight="900" font-size="13.5">${cm.corta}</text></g>`;
+  }
+  for(let i = 0; i < n * 2; i++){
+    const a = (i * (360 / (n * 2))) * Math.PI / 180;
+    inner += `<circle cx="${(Math.cos(a)*(R+6)).toFixed(1)}" cy="${(Math.sin(a)*(R+6)).toFixed(1)}" r="3.5" fill="#FFFFFF" stroke="#1F2536" stroke-width="1.6"/>`;
+  }
+  inner += `<circle cx="0" cy="0" r="26" fill="#1F2536" stroke="#FFFFFF" stroke-width="4"/>`;
+  inner += `<text x="0" y="9" text-anchor="middle" fill="#FFD000" font-family="Allo,system-ui,sans-serif" font-weight="900" font-size="26">?</text>`;
+  inner += `</g>`;
+  svg.innerHTML = inner;
+}
+
+function stopRouletteTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+}
+
+function pickQuestionForCategory(catId){
+  let pool = BANCO.preguntas.filter(q => q.categoria === catId && (rouletteDif === 'all' || q.dificultad === rouletteDif));
+  if(!pool.length) pool = BANCO.preguntas.filter(q => q.categoria === catId);
+  let fresh = pool.filter(q => !sessionAsked.has(q.id));
+  if(!fresh.length){
+    pool.forEach(q => sessionAsked.delete(q.id));
+    fresh = pool;
+  }
+  const chosen = fresh[Math.floor(Math.random() * fresh.length)];
+  sessionAsked.add(chosen.id);
+  return chosen;
+}
+
+function spinWheel(){
+  if(spinning) return;
+  stopRouletteTimer();
+  spinning = true;
+  $('btnSpin').disabled = true;
+
+  const targetCatIdx = Math.floor(Math.random() * CAT_ORDER.length);
+  const targetCatId = CAT_ORDER[targetCatIdx];
+  const slice = 360 / CAT_ORDER.length;
+  // Queremos que el centro del gajo targetCatIdx quede arriba (0 deg relativo a -90)
+  const targetMod = (360 - (targetCatIdx * slice + slice / 2)) % 360;
+  const curMod = ((wheelAngle % 360) + 360) % 360;
+  let delta = targetMod - curMod;
+  if(delta <= 0) delta += 360;
+  const spins = 5 * 360 + delta + (Math.random() * 18 - 9);
+
+  const startAngle = wheelAngle;
+  const endAngle = startAngle + spins;
+  const durMs = 2850;
+  const t0 = performance.now();
+  let lastSliceTick = Math.floor(startAngle / slice);
+  const rotor = document.getElementById('wheelRotor');
+  const ptr = $('wheelPtr');
+  const banner = $('sobreBanner');
+
+  function step(now){
+    const u = Math.min(1, (now - t0) / durMs);
+    const ease = 1 - Math.pow(1 - u, 3);
+    wheelAngle = startAngle + (endAngle - startAngle) * ease;
+    if(rotor) rotor.setAttribute('transform', `rotate(${wheelAngle.toFixed(2)})`);
+
+    const extraEs = Math.min(7, Math.floor(u * 8));
+    banner.innerHTML = `<span class="zine-badge" style="background:#FFD000;font-style:italic">Sobr${'e'.repeat(1 + extraEs)}...</span>`;
+
+    const curSliceTick = Math.floor(wheelAngle / slice);
+    if(curSliceTick !== lastSliceTick){
+      lastSliceTick = curSliceTick;
+      playTone('tick');
+      ptr.classList.remove('kick');
+      void ptr.offsetWidth;
+      ptr.classList.add('kick');
+    }
+
+    if(u < 1){
+      requestAnimationFrame(step);
+    } else {
+      spinning = false;
+      $('btnSpin').disabled = false;
+      playTone('hit');
+      const cm = CAT_META[targetCatId];
+      banner.innerHTML = `<span class="zine-badge" style="background:${cm.color};color:${cm.fg}">¡${cm.corta}!</span>`;
+      launchRouletteQuestion(targetCatId);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function launchRouletteQuestion(catId){
+  const q = pickQuestionForCategory(catId);
+  currentRouletteQ = q;
+  rouletteAnswered = false;
+  const useTimer = $('chkUseTimer').checked;
+
+  function finishRoulette(key){
+    if(rouletteAnswered) return;
+    rouletteAnswered = true;
+    stopRouletteTimer();
+    const ok = recordAnswer(q, key, false);
+    playTone(ok ? 'ok' : 'bad');
+    renderQuizInto($('rouletteStage'), q, {
+      mode: 'roulette',
+      answered: true,
+      chosenKey: key,
+      showTimer: false
+    });
+  }
+
+  renderQuizInto($('rouletteStage'), q, {
+    mode: 'roulette',
+    answered: false,
+    showTimer: useTimer,
+    onAnswer: finishRoulette
+  });
+
+  if(useTimer){
+    let rem = 15.0;
+    let lastSec = 15;
+    timerInterval = setInterval(()=>{
+      rem = Math.max(0, rem - 0.1);
+      const fill = $('rTimerFill'), num = $('rTimerNum');
+      if(fill){
+        fill.style.width = ((rem / 15) * 100) + '%';
+        fill.classList.toggle('urgent', rem <= 4);
+      }
+      const secInt = Math.ceil(rem);
+      if(num){
+        num.textContent = String(secInt);
+        num.classList.toggle('urgent', rem <= 4);
+      }
+      if(secInt !== lastSec && secInt > 0 && secInt <= 5){
+        playTone('clock');
+      }
+      lastSec = secInt;
+      if(rem <= 0){
+        finishRoulette('TIMEOUT');
+      }
+    }, 100);
+  }
+}
+
+// ---------- GENERADOR DE TARJETA COMPARTIBLE 1080x1920 (INSTAGRAM STORIES) ----------
+function loadImgPromise(src){
+  return new Promise(res => {
+    const im = new Image();
+    if(location.protocol !== 'file:') im.crossOrigin = 'anonymous';
+    im.onload = () => res(im);
+    im.onerror = () => res(null);
+    im.src = src;
+  });
+}
+
+async function generateStoryCanvas(kind, q=null, ok=true, skipImages=false){
+  const W = 1080, H = 1920;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const c = cv.getContext('2d');
+  const rr = (x,y,w,h,r)=>{ c.beginPath(); c.roundRect(x,y,w,h,r); };
+  const card = (x,y,w,h,r,fill,sh=12)=>{
+    rr(x+sh,y+sh,w,h,r); c.fillStyle='#1F2536'; c.fill();
+    rr(x,y,w,h,r); c.fillStyle=fill; c.fill();
+    c.lineWidth=7; c.strokeStyle='#1F2536'; c.stroke();
+  };
+  const fitFont = (txt, maxW, startPx, minPx, style='900')=>{
+    let px = startPx;
+    while(px > minPx){
+      c.font = `${style} ${px}px Allo,system-ui,sans-serif`;
+      if(c.measureText(txt).width <= maxW) break;
+      px -= 2;
+    }
+    return px;
+  };
+
+  // Fondo Blueprint Técnico (#1C2754) + grilla + cinta de obra
+  c.fillStyle = '#1C2754'; c.fillRect(0,0,W,H);
+  c.strokeStyle = 'rgba(255,255,255,0.06)'; c.lineWidth = 1.5;
+  c.beginPath();
+  for(let x=0;x<=W;x+=28){ c.moveTo(x,0); c.lineTo(x,H); }
+  for(let y=0;y<=H;y+=28){ c.moveTo(0,y); c.lineTo(W,y); }
+  c.stroke();
+  c.strokeStyle = 'rgba(56,189,248,0.22)'; c.lineWidth = 2.5;
+  c.beginPath();
+  for(let x=0;x<=W;x+=112){ c.moveTo(x,0); c.lineTo(x,H); }
+  for(let y=0;y<=H;y+=112){ c.moveTo(0,y); c.lineTo(W,y); }
+  c.stroke();
+
+  // Cinta de obra arriba y abajo
+  c.fillStyle = '#FFD000'; c.fillRect(0,0,W,30); c.fillRect(0,H-30,W,30);
+  c.fillStyle = '#1F2536';
+  for(let x=-60;x<W+60;x+=56){
+    c.beginPath(); c.moveTo(x,0); c.lineTo(x+26,0); c.lineTo(x+10,30); c.lineTo(x-16,30); c.fill();
+    c.beginPath(); c.moveTo(x,H-30); c.lineTo(x+26,H-30); c.lineTo(x+10,H); c.lineTo(x-16,H); c.fill();
+  }
+
+  const [logoImg, charImg] = skipImages ? [null, null] : await Promise.all([
+    loadImgPromise(IMG_BASE + 'logo_cachai.png'),
+    loadImgPromise(kind === 'daily' && q ? getCharImageForResult(q, ok).src : (IMG_BASE + 'maria_risa.png'))
+  ]);
+
+  if(logoImg){
+    const lw = 700, lh = Math.round(lw * (logoImg.naturalHeight / logoImg.naturalWidth));
+    c.drawImage(logoImg, (W - lw)/2, 118, lw, lh);
+  } else {
+    c.save(); c.translate(W/2, 195); c.rotate(-0.02);
+    card(-340, -64, 680, 128, 24, '#FFD000', 10);
+    c.fillStyle = '#1F2536'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    fitFont('¿CACHAI O NO?', 620, 74, 40, '900');
+    c.fillText('¿CACHAI O NO?', 0, 4);
+    c.restore();
+  }
+
+  const rk = getRankInfo();
+  const cm = q ? CAT_META[q.categoria] : CAT_META.normativa;
+
+  // Tarjeta principal papel crema (#FFF8EE)
+  card(74, 330, W - 148, 860, 38, '#FFF8EE', 16);
+  // Washi tape arriba
+  c.save(); c.translate(W/2, 330); c.rotate(-0.03);
+  c.fillStyle = 'rgba(255,208,0,0.88)'; c.fillRect(-120, -22, 240, 44);
+  c.restore();
+
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+
+  if(kind === 'daily' && q){
+    // Sticker día + categoría
+    c.save(); c.translate(W/2, 435); c.rotate(-0.02);
+    const dayTag = `DÍA #${String(viewingDailyDay).padStart(3,'0')} · ${cm.corta}`;
+    card(-350, -42, 700, 84, 18, cm.color, 8);
+    c.fillStyle = cm.fg; fitFont(dayTag, 640, 36, 22, '900');
+    c.fillText(dayTag, 0, 2);
+    c.restore();
+
+    // Resultado grande sin spoiler
+    const bannerFill = ok ? '#22C55E' : '#FF5A1F';
+    const bannerTxt = ok ? '¡LE ACHUNTÉ!' : 'CASI... A MAESTREAR';
+    card(120, 540, W - 240, 155, 28, bannerFill, 10);
+    c.fillStyle = ok ? '#1F2536' : '#FFFFFF';
+    fitFont(bannerTxt, W - 300, 64, 34, '900');
+    c.fillText(bannerTxt, W/2, 620);
+
+    c.fillStyle = '#475569';
+    const subDay = `Pregunta del día (${dateLabelForDay(viewingDailyDay)}) · Sin spoilers`;
+    fitFont(subDay, W - 220, 31, 20, 'italic 600');
+    c.fillText(subDay, W/2, 760);
+
+    // 2 cajas métricas (Racha + Rango)
+    card(122, 825, 390, 180, 24, '#FFFFFF', 8);
+    c.fillStyle = '#EF3B39'; c.font = '900 72px Allo,system-ui,sans-serif';
+    c.fillText(String(state.streak), 317, 898);
+    c.fillStyle = '#475569'; c.font = 'italic 700 26px Allo,system-ui,sans-serif';
+    c.fillText('RACHA DIARIA', 317, 962);
+
+    card(568, 825, 390, 180, 24, '#FFD000', 8);
+    c.fillStyle = '#1F2536';
+    const rkUp = rk.cur.name.toUpperCase();
+    fitFont(rkUp, 350, 38, 22, '900');
+    c.fillText(rkUp, 763, 898);
+    c.fillStyle = '#1F2536'; c.font = 'italic 700 24px Allo,system-ui,sans-serif';
+    c.fillText('MI RANGO EN OBRA', 763, 962);
+
+    c.fillStyle = '#1F2536'; fitFont('¿Y tú cachai o no? Pruébalo gratis:', W - 220, 34, 22, '900');
+    c.fillText('¿Y tú cachai o no? Pruébalo gratis:', W/2, 1100);
+
+    lastShareSummary = `¿Cachai o no? · Día #${viewingDailyDay} (${cm.nombre})\n${ok ? '✅ ¡Le achunté!' : '🧱 Casi... a seguir maestreando'}\n🔥 Racha: ${state.streak} día(s) · 👷 Rango: ${rk.cur.name}\nJuega la pregunta de hoy en https://www.palmaestro.xyz/`;
+  } else {
+    // Carnet de Cuadrilla
+    c.save(); c.translate(W/2, 435); c.rotate(-0.02);
+    card(-340, -42, 680, 84, 18, '#FFD000', 8);
+    c.fillStyle = '#1F2536'; fitFont('CARNET DE CUADRILLA · CHILE', 620, 36, 22, '900');
+    c.fillText('CARNET DE CUADRILLA · CHILE', 0, 2);
+    c.restore();
+
+    card(120, 535, W - 240, 165, 28, '#38BDF8', 10);
+    c.fillStyle = '#1F2536';
+    const rkUp = rk.cur.name.toUpperCase();
+    fitFont(rkUp, W - 300, 66, 34, '900');
+    c.fillText(rkUp, W/2, 620);
+
+    const acc = state.totalAnswered ? Math.round((state.totalCorrect / state.totalAnswered) * 100) : 0;
+    card(122, 765, 260, 190, 24, '#FFFFFF', 8);
+    c.fillStyle = '#22C55E'; c.font = '900 68px Allo,system-ui,sans-serif'; c.fillText(String(state.totalCorrect), 252, 845);
+    c.fillStyle = '#475569'; c.font = 'italic 700 24px Allo,system-ui,sans-serif'; c.fillText('ACIERTOS', 252, 912);
+
+    card(410, 765, 260, 190, 24, '#FFFFFF', 8);
+    c.fillStyle = '#EF3B39'; c.font = '900 68px Allo,system-ui,sans-serif'; c.fillText(String(state.streak), 540, 845);
+    c.fillStyle = '#475569'; c.font = 'italic 700 24px Allo,system-ui,sans-serif'; c.fillText('RACHA', 540, 912);
+
+    card(698, 765, 260, 190, 24, '#FFFFFF', 8);
+    c.fillStyle = '#1F2536'; c.font = '900 62px Allo,system-ui,sans-serif'; c.fillText(acc + '%', 828, 845);
+    c.fillStyle = '#475569'; c.font = 'italic 700 24px Allo,system-ui,sans-serif'; c.fillText('PRECISIÓN', 828, 912);
+
+    c.fillStyle = '#1F2536'; fitFont('¿Puedes superar mi rango en obra?', W - 220, 34, 22, '900');
+    c.fillText('¿Puedes superar mi rango en obra?', W/2, 1085);
+
+    lastShareSummary = `Mi Carnet en ¿Cachai o no? (Pa'l Maestro)\n👷 Rango: ${rk.cur.name}\n✅ Aciertos: ${state.totalCorrect} · 🎯 Precisión: ${acc}% · 🔥 Racha: ${state.streak}\nJuega gratis en https://www.palmaestro.xyz/`;
+  }
+
+  // Botón CTA palmaestro.xyz (auto-ajustado con padding amplio)
+  card(110, 1240, W - 220, 114, 24, '#EF3B39', 12);
+  c.fillStyle = '#FFFFFF';
+  fitFont('palmaestro.xyz · @pal_maestro', W - 290, 44, 26, '900');
+  c.fillText('palmaestro.xyz · @pal_maestro', W/2, 1299);
+
+  // Personaje en primer plano abajo
+  if(charImg){
+    const chH = 470, chW = Math.round(chH * (charImg.naturalWidth / charImg.naturalHeight));
+    c.drawImage(charImg, (W - chW)/2, H - chH - 42, chW, chH);
+  } else {
+    // Sello vectorial de respaldo cuando se exporta desde file:///
+    c.save(); c.translate(W/2, 1610); c.rotate(-0.015);
+    card(-420, -76, 840, 152, 28, '#FFD000', 10);
+    c.fillStyle = '#1F2536'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    fitFont("PA'L MAESTRO · CANAL 3 CHILE", 760, 40, 24, '900');
+    c.fillText("PA'L MAESTRO · CANAL 3 CHILE", 0, -18);
+    fitFont('Mide dos veces, corta una', 740, 28, 18, 'italic 700');
+    c.fillText('Mide dos veces, corta una', 0, 30);
+    c.restore();
+  }
+
+  try {
+    const dataUrl = cv.toDataURL('image/png');
+    return await new Promise(res => cv.toBlob(blob => res({ dataUrl, blob }), 'image/png'));
+  } catch(err){
+    if(!skipImages) return generateStoryCanvas(kind, q, ok, true);
+    return { dataUrl: '', blob: null };
+  }
+}
+
+async function openStoryModal(kind, q=null, ok=true){
+  const { dataUrl, blob } = await generateStoryCanvas(kind, q, ok);
+  lastStoryBlob = blob;
+  $('storyPreviewImg').src = dataUrl;
+  $('btnDownloadStory').href = dataUrl;
+  $('btnDownloadStory').download = kind === 'daily' ? `cachai-dia-${String(viewingDailyDay).padStart(3,'0')}.png` : 'cachai-mi-cuadrilla.png';
+  $('btnNativeShare').style.display = (navigator.share && navigator.canShare) ? 'inline-flex' : 'none';
+  $('storyModal').classList.add('open');
+}
+
+// ---------- NAVEGACIÓN Y EVENTOS ----------
+function switchTab(name){
+  stopRouletteTimer();
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const active = b.dataset.tab === name;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('view-' + name).classList.add('active');
+  if(name === 'profile') updateHeaderAndProfile();
+}
+
+document.querySelectorAll('.tab-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+$('btnSound').onclick = () => {
+  state.soundOn = !state.soundOn;
+  saveState();
+  updateHeaderAndProfile();
+  showToast(state.soundOn ? 'Sonido activado' : 'Sonido silenciado');
+};
+$('btnToggleArchive').onclick = () => {
+  const c = $('archiveCard');
+  c.style.display = c.style.display === 'none' ? 'block' : 'none';
+};
+$('btnSpin').onclick = spinWheel;
+$('difPills').querySelectorAll('.dif-pill').forEach(btn => {
+  btn.onclick = () => {
+    rouletteDif = btn.dataset.dif;
+    $('difPills').querySelectorAll('.dif-pill').forEach(x => x.classList.toggle('active', x === btn));
+  };
+});
+$('btnShareProfileCard').onclick = () => openStoryModal('profile');
+$('btnResetStats').onclick = () => {
+  if(!confirm('¿Seguro que quieres borrar tu racha y progreso local?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = { soundOn: state.soundOn, correctIds:[], wrongIds:[], dailyResults:{}, streak:0, bestStreak:0, lastDailyISO:null, totalAnswered:0, totalCorrect:0 };
+  saveState();
+  updateHeaderAndProfile();
+  renderDailyView();
+  renderArchiveGrid();
+  showToast('Progreso reiniciado');
+};
+$('btnCloseModal').onclick = () => $('storyModal').classList.remove('open');
+$('storyModal').onclick = e => { if(e.target === $('storyModal')) $('storyModal').classList.remove('open'); };
+$('btnCopySummary').onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(lastShareSummary);
+    showToast('Resumen copiado (sin spoilers)');
+  } catch(e){
+    prompt('Copia tu resultado:', lastShareSummary);
+  }
+};
+$('btnNativeShare').onclick = async () => {
+  if(!lastStoryBlob || !navigator.share) return;
+  try {
+    const file = new File([lastStoryBlob], 'cachai-o-no-story.png', { type: 'image/png' });
+    if(navigator.canShare({ files: [file] })){
+      await navigator.share({ title: '¿Cachai o no? · Pa\'l Maestro', text: lastShareSummary, files: [file] });
+    } else {
+      await navigator.share({ title: '¿Cachai o no? · Pa\'l Maestro', text: lastShareSummary });
+    }
+  } catch(e){}
+};
+
+// ---------- INICIO (CARGA PREGUNTAS.JSON + LOADER OFICIAL TETERA Y MATE) ----------
+async function init(){
+  const loaderEl = $('pmBootLoader');
+  const setP = p => { try { if(loaderEl) loaderEl.setAttribute('progress', String(p)); } catch(e){} };
+  loadState();
+  setP(45);
+
+  try {
+    const res = await fetch('./cachai-o-no-data/preguntas.json', { cache: 'no-cache' });
+    if(res.ok) BANCO = await res.json();
+    else BANCO = FALLBACK_BANCO;
+  } catch(e){
+    BANCO = FALLBACK_BANCO;
+  }
+  setP(85);
+
+  currentDailyDay = calcTodayDayNumber();
+  viewingDailyDay = currentDailyDay;
+  buildWheelSvg();
+  updateHeaderAndProfile();
+  renderDailyView();
+  renderArchiveGrid();
+  startMidnightClock();
+
+  setP(100);
+  setTimeout(() => {
+    $('bootOverlay').classList.add('hide');
+    setTimeout(() => { $('bootOverlay').style.display = 'none'; }, 320);
+  }, 420);
+
+  // Modo embebido en Blogger (oculta cinta duplicada y ajusta altura del iframe)
+  if(window.self !== window.top){
+    document.body.classList.add('in-iframe');
+    const postH = () => {
+      try {
+        const h = Math.max(860, document.documentElement.scrollHeight + 16);
+        window.parent.postMessage({ type: 'pm-cachai-height', height: h }, '*');
+      } catch(e){}
+    };
+    postH();
+    if(window.ResizeObserver){
+      new ResizeObserver(postH).observe(document.body);
+    }
+    window.addEventListener('resize', postH);
+  }
+}
+init();
+</script>
+</body>
+</html>
