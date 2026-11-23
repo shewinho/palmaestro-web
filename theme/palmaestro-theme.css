@@ -308,51 +308,19 @@ img { max-width: 100%; height: auto; }
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
   transition: transform 200ms cubic-bezier(.34, 1.56, .64, 1), box-shadow 200ms ease;
 }
 .pm-brand:hover .pm-brand-badge,
-.pm-brand-badge.pm-grab {
-  transform: scale(1.09) rotate(4deg);
+.pm-brand-badge.pm-active {
+  transform: scale(1.08);
   box-shadow: 4px 4px 0 var(--pm-ink);
 }
 .pm-hand-svg {
   width: 52px;
   height: 52px;
-  overflow: visible;
   display: block;
-}
-.pm-hand-open {
-  transform-origin: 50px 58px;
-  transition: transform 240ms cubic-bezier(.34, 1.56, .64, 1), opacity 160ms ease;
-}
-.pm-hand-grip {
-  transform-origin: 50px 60px;
-  opacity: 0;
-  transform: scale(0.84) translateY(6px);
-  transition: transform 260ms cubic-bezier(.34, 1.56, .64, 1), opacity 170ms ease;
-}
-.pm-hand-prop {
-  opacity: 0;
-  transform-origin: 50px 55px;
-  transform: translateY(14px) scale(0.6);
-  transition: transform 300ms cubic-bezier(.34, 1.56, .64, 1), opacity 180ms ease;
-}
-.pm-brand:hover .pm-hand-open,
-.pm-brand-badge.pm-grab .pm-hand-open {
-  opacity: 0;
-  transform: scale(0.82) rotate(-8deg);
-}
-.pm-brand:hover .pm-hand-grip,
-.pm-brand-badge.pm-grab .pm-hand-grip {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-.pm-brand:hover .pm-hand-prop.active,
-.pm-brand-badge.pm-grab .pm-hand-prop.active {
-  opacity: 1;
-  transform: translateY(0) scale(1);
 }
 .pm-brand-title { font-size: 24px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .pm-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
