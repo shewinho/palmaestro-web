@@ -13,6 +13,7 @@
   "mascotHoverUrl": "https://i.imgur.com/im8u7vC.png",
   "marqueeItems": [
     "BIENVENIDO AL MESÓN DIGITAL DE PA´L MAESTRO",
+    "NUEVO JUEGO: ¿CACHAI O NO? · PREGUNTA DEL DÍA",
     "TETERA LISTA PARA CHASQUILLEAR",
     "DIMENSIONADOR DE TABLAS GRATIS",
     "PLAYLIST PA´ MAESTREAR ACTUALIZADA",
@@ -24,6 +25,18 @@
   },
   "matesBaseCount": 4821,
   "tools": [
+    {
+      "id": "cachai-o-no",
+      "title": "¿Cachai o no?",
+      "tech": "Quiz Diario · Ruleta 6 categorías · 120 preguntas Chile",
+      "description": "Pon a prueba tu oficio con la Pregunta del Día, sube tu rango de cuadrilla y comparte tu puntaje.",
+      "url": "https://www.palmaestro.xyz/p/giro-de-obra.html",
+      "badge": "Nuevo · Juego",
+      "badgeColor": "#EF3B39",
+      "badgeText": "#FFFFFF",
+      "theme": "yellow",
+      "icon": "wheel"
+    },
     {
       "id": "dimensionador",
       "title": "Dimensionador de Tablas",
@@ -59,19 +72,6 @@
       "badgeText": "#1F2536",
       "theme": "green",
       "icon": "chart"
-    },
-    {
-      "id": "mas-utilidades",
-      "title": "+ Más Utilidades",
-      "tech": "Calculadoras · Links útiles · Recursos propios",
-      "description": "Revisa todas las herramientas y nuevos programas HTML en camino.",
-      "url": "https://www.palmaestro.xyz/p/utilidades-pamaestro.html",
-      "badge": "Próximamente",
-      "badgeColor": "#FFFFFF",
-      "badgeText": "#1F2536",
-      "theme": "yellow",
-      "icon": "wrench",
-      "dashed": true
     }
   ],
   "stickers": [
