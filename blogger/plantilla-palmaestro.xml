@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:layoutsVersion='3' b:responsive='true' expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+  <meta charset='UTF-8'/>
+  <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+  <b:include data='blog' name='all-head-content'/>
+  <title><data:view.title.escaped/></title>
+
+  <!-- Google AdSense (Preservado de tu respaldo original) -->
+  <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9992214889101486'/>
+
+  <!-- Estética compartida desde tu repositorio GitHub (shewinho/palmaestro-web) -->
+  <link href='https://shewinho.github.io/palmaestro-web/theme/palmaestro-theme.css' rel='stylesheet'/>
+
+  <!-- Skin mínimo requerido por Blogger -->
+  <b:skin><![CDATA[
+    /* Pa´l Maestro — Plantilla conectada a https://github.com/shewinho/palmaestro-web
+       Para cambiar colores, menú, herramientas o tipografía, edita el repo en GitHub. */
+    .quickedit, .item-control { display: none !important; }
+  ]]></b:skin>
+</head>
+
+<body expr:class='(data:view.isPage ? &quot;pm-page-view&quot; : (data:view.isPost ? &quot;pm-item-view&quot; : &quot;pm-home-view&quot;))'>
+
+  <!-- ==================== CINTA DE OBRA / MARQUESINA ANIMADA ==================== -->
+  <div class='pm-marquee-bar'>
+    <div class='pm-hazard'/>
+    <div class='pm-marquee-view'>
+      <div class='pm-marquee-track' id='pm-marquee-track'>
+        <span>• BIENVENIDO AL MESÓN DIGITAL DE PA´L MAESTRO</span>
+        <span>• TETERA LISTA PARA CHASQUILLEAR</span>
+        <span>• DIMENSIONADOR DE TABLAS GRATIS</span>
+        <span>• PLAYLIST PA´ MAESTREAR</span>
+        <span>• SÍGUENOS EN @PAL_MAESTRO</span>
+        <span>• BIENVENIDO AL MESÓN DIGITAL DE PA´L MAESTRO</span>
+        <span>• TETERA LISTA PARA CHASQUILLEAR</span>
+        <span>• DIMENSIONADOR DE TABLAS GRATIS</span>
+        <span>• PLAYLIST PA´ MAESTREAR</span>
+        <span>• SÍGUENOS EN @PAL_MAESTRO</span>
+      </div>
+    </div>
+    <div class='pm-hazard'/>
+  </div>
+
+  <div class='pm-shell'>
+
+    <!-- ==================== CABECERA PRINCIPAL ==================== -->
+    <header class='pm-card pm-header'>
+      <a class='pm-brand' expr:href='data:blog.homepageUrl'>
+        <div class='pm-brand-badge'>
+          <svg height='30' viewBox='0 0 40 40' width='30'>
+            <path d='M 11 16 C 5 16, 4 24, 9 27' fill='none' stroke='#FFFFFF' stroke-linecap='round' stroke-width='3'/>
+            <path d='M 27 20 C 31 19, 34 16, 36 13 L 38 15 C 36 20, 32 24, 28 25 Z' fill='#FFD000'/>
+            <path d='M 13 13 C 9 15, 8 24, 10 30 L 30 30 C 32 24, 31 15, 27 13 Z' fill='#FFFFFF'/>
+            <circle cx='20' cy='9' fill='#FFD000' r='2.8'/>
+          </svg>
+        </div>
+        <div>
+          <div class='pm-title-xl pm-brand-title'>
+            <span>Pa´l Maestro</span>
+            <span class='pm-badge' style='background:#38BDF8; transform:rotate(-2deg);'>.XYZ</span>
+          </div>
+          <div class='pm-tech-italic'>Construcción · Arquitectura · Chasquillería hecha en Chile</div>
+        </div>
+      </a>
+
+      <nav class='pm-nav'>
+        <a class='pat-trigger pm-btn' href='/#herramientas' style='background:#FFD000;'>
+          <svg class='ico-svg ico-wrench' fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' viewBox='0 0 24 24' width='15'><path d='M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'/></svg>
+          Herramientas
+        </a>
+        <a class='pat-trigger pm-btn' href='/#blog' style='background:#38BDF8;'>
+          <svg class='ico-svg' fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' viewBox='0 0 24 24' width='15'><path d='M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z'/><path d='M10 6h8v4h-8V6Z'/></svg>
+          Artículos
+        </a>
+        <a class='pat-trigger pm-btn' href='https://www.palmaestro.xyz/p/compras-recomendadas.html' style='background:#FF5A1F; color:#FFFFFF;'>
+          <svg class='ico-svg ico-tag' fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' viewBox='0 0 24 24' width='15'><path d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/></svg>
+          Recomendados
+        </a>
+        <form class='pm-search-form' expr:action='data:blog.searchUrl' method='get'>
+          <input name='q' placeholder='Buscar...' type='text'/>
+          <button aria-label='Buscar' type='submit'>
+            <svg fill='none' height='15' stroke='#1F2536' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' viewBox='0 0 24 24' width='15'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.3-4.3'/></svg>
+          </button>
+        </form>
+      </nav>
+    </header>
+
+    <!-- ==================== PORTADA: MESÓN DIGITAL (SOLO EN INICIO) ==================== -->
+    <b:if cond='data:view.isHomepage'>
+      <section class='pm-bento' id='herramientas'>
+        <!-- COLUMNA IZQUIERDA: CAJA DE HERRAMIENTAS + CONTADOR LED + STICKERS -->
+        <div>
+          <div class='pm-card pm-toolbox-card'>
+            <div class='pm-washi'/>
+            <span class='pm-badge' style='background:#EF3B39; color:#FFFFFF;'>Menú Principal</span>
+            <h1 class='pm-title-xl' style='font-size:30px; margin:8px 0 4px;'>Caja de Herramientas</h1>
+            <div class='pm-tech-italic'>Utilidades gratuitas en HTML · Actualizadas desde GitHub</div>
+            <div class='pm-tools-grid' id='pm-tools-slot'/>
+          </div>
+
+          <div class='pm-card pm-led-card' id='stickers'>
+            <div>
+              <div class='pm-tech-italic' style='text-transform:uppercase; font-size:10.5px;'>Mates servidos en el mesón</div>
+              <div style='display:flex; align-items:center; gap:9px; margin-top:5px;'>
+                <div class='pm-led-screen' id='pm-led-counter'>004821</div>
+                <button class='pm-btn' id='pm-btn-mate' style='background:#8D4B26; color:#FFFFFF; padding:6px 12px; font-size:12px;' type='button'>
+                  <svg fill='none' height='15' viewBox='0 0 24 24' width='15'><path d='M15 8L19 3' stroke='#E2E8F0' stroke-linecap='round' stroke-width='2.2'/><path d='M5 10C5 15 6 19 8 20L10 18.5L12 20L14 18.5L16 20C18 19 19 15 19 10Z' fill='#FFF8EE'/><rect fill='#FFD000' height='2.6' rx='1.3' width='15' x='4.5' y='8'/></svg>
+                  +1 Mate
+                </button>
+              </div>
+            </div>
+            <div class='pm-sticker-row' id='pm-stickers-slot'/>
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: PLAYLIST SPOTIFY + VIDEO + MASCOTA ÚNETE + IG + NOTA -->
+        <div class='pm-side-stack'>
+          <!-- Playlist real de Spotify + Video del personaje escuchando música -->
+          <div class='pat-trigger pm-card pm-radio-card'>
+            <div class='pm-washi blue'/>
+            <div style='display:flex; justify-content:space-between; align-items:center; gap:8px;'>
+              <span class='pm-badge' style='background:#FFD000; color:#1F2536;'>SIDE A · PLAYLIST</span>
+              <span class='pm-tech-italic' style='color:#7DD3FC;'>Playlist pa´ maestrear</span>
+            </div>
+            <div class='pm-radio-body'>
+              <iframe allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture' frameborder='0' height='152' loading='lazy' src='https://open.spotify.com/embed/playlist/5Q0M7po6pOm2tTCV2frJnq?utm_source=generator&amp;theme=0' style='border-radius:12px;' width='100%'/>
+              <div class='pm-radio-char'>
+                <video autoplay='autoplay' class='pm-radio-video' loop='loop' muted='muted' playsinline='playsinline' src='https://i.imgur.com/r1K8RJY.mp4'/>
+                <a class='pm-btn' href='https://www.instagram.com/pal_maestro/' rel='noopener' style='background:#FFD000; padding:6px 10px; font-size:11px; text-align:center; line-height:1.2;' target='_blank'>
+                  Sugerir<br/>Canción
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Par: Tu Mascota Sticker Ofreciendo Mate + Sticker Instagram -->
+          <div class='pm-mini-pair'>
+            <a class='pm-card pm-card-hover pm-mascot-card' href='https://www.palmaestro.xyz/p/unete-la-comunidad.html'>
+              <span class='pm-badge' style='background:#FFF3B0;'>Comunidad</span>
+              <div class='pm-mascot-frame'>
+                <img alt='Personaje Pa´l Maestro' class='img-normal' src='https://i.imgur.com/UC74mKB.png'/>
+                <img alt='Personaje ofreciendo mate' class='img-hover' src='https://i.imgur.com/im8u7vC.png'/>
+              </div>
+              <span class='pm-btn' style='background:#EF3B39; color:#FFFFFF; padding:6px 18px; font-size:12px;'>ÚNETE</span>
+            </a>
+
+            <a class='pat-trigger pat-ig pm-sticker pm-ig-card' href='https://www.instagram.com/pal_maestro?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==' rel='noopener' target='_blank'>
+              <div style='display:flex; justify-content:space-between; align-items:center;'>
+                <svg class='ico-svg' fill='none' height='24' stroke='#FFFFFF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.2' viewBox='0 0 24 24' width='24'><rect height='20' rx='5' width='20' x='2' y='2'/><circle class='ico-cam-lens' cx='12' cy='12' r='4'/><circle cx='17.5' cy='6.5' fill='#FFFFFF' r='1'/></svg>
+                <span style='font-size:10px; font-weight:800; background:rgba(255,255,255,0.25); padding:2px 8px; border-radius:99px;'>IG</span>
+              </div>
+              <div style='margin-top:14px;'>
+                <div class='pm-title-xl' style='font-size:19px; color:#FFFFFF;'>Pa´l Maestro en IG</div>
+                <div class='pm-tech-italic' style='color:rgba(255,255,255,0.92); margin-top:4px;'>@pal_maestro →</div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Nota rápida editable desde config.json -->
+          <div class='pm-card pm-note-card'>
+            <div class='pm-washi red'/>
+            <div id='pm-note-label' style='font-size:11px; font-weight:800; color:#8D4B26; text-transform:uppercase;'>Nota rápida del mesón</div>
+            <p id='pm-note-text' style='font-size:12.5px; margin:6px 0 0; line-height:1.48;'>Hola maquinon@s, busquen y vean lo que quieran, se los permito.</p>
+          </div>
+        </div>
+      </section>
+    </b:if>
+
+    <!-- ==================== SECCIÓN PRINCIPAL DE BLOGGER (POSTS / ARTÍCULOS / APPS) ==================== -->
+    <main id='blog'>
+      <b:section class='pm-main-section' id='main' maxwidgets='1' showaddelement='no'>
+        <b:widget id='Blog1' locked='true' title='Entradas del blog' type='Blog' version='2'>
+          <b:includable id='main'>
+
+            <!-- MODO LISTADO (Inicio, Etiquetas, Búsqueda) -->
+            <b:if cond='data:view.isMultipleItems'>
+              <div class='pm-section-head'>
+                <div>
+                  <span class='pm-badge' style='background:#22C55E; color:#FFFFFF;'>Blogger Feed</span>
+                  <h2 class='pm-title-xl' style='font-size:30px; margin:8px 0 4px;'>
+                    <b:if cond='data:view.isLabelSearch'>
+                      Etiqueta: <data:view.search.label/>
+                    <b:elseif cond='data:view.isSearch'/>
+                      Resultados para: <data:view.search.query/>
+                    <b:else/>
+                      Pa´ leer e indagar
+                    </b:if>
+                  </h2>
+                  <div class='pm-tech-italic'>Artículos, ensayos de obra y curiosidades de diseño</div>
+                </div>
+              </div>
+
+              <div class='pm-posts-grid'>
+                <b:loop index='idx' values='data:posts' var='post'>
+                  <article class='pat-trigger pm-card pm-card-hover pm-post-card'>
+                    <a expr:class='&quot;pm-post-cover &quot; + (data:idx % 3 == 0 ? &quot;pat-blue&quot; : (data:idx % 3 == 1 ? &quot;pat-orange&quot; : &quot;pat-green&quot;))' expr:href='data:post.url'>
+                      <b:if cond='data:post.labels and data:post.labels.first'>
+                        <span class='pm-badge pm-post-cover-tag' style='background:#FFD000; color:#1F2536;'><data:post.labels.first.name/></span>
+                      </b:if>
+                      <b:if cond='data:post.featuredImage'>
+                        <img expr:alt='data:post.title' expr:src='resizeImage(data:post.featuredImage, 640)' loading='lazy'/>
+                      <b:else/>
+                        <svg class='ico-svg ico-ruler' fill='none' height='42' stroke='#1F2536' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' width='42'><path d='M2 20h20'/><path d='M5 20V8l7-4 7 4v12'/><path d='M9 20v-5h6v5'/></svg>
+                      </b:if>
+                    </a>
+                    <div class='pm-post-body'>
+                      <div>
+                        <h3 class='pm-title-xl pm-post-title'>
+                          <a expr:href='data:post.url'><data:post.title/></a>
+                        </h3>
+                        <div class='pm-tech-italic' style='margin-top:6px;'>
+                          <data:post.date/>
+                          <b:if cond='data:post.labels and data:post.labels.first'> · <data:post.labels.first.name/></b:if>
+                        </div>
+                        <p class='pm-post-snippet'>
+                          <b:eval expr='snippet(data:post.body, { length: 135, links: false, linebreaks: false })'/>
+                        </p>
+                      </div>
+                      <div class='pm-post-foot'>
+                        <span class='pm-tech-italic'>Artículo</span>
+                        <a expr:href='data:post.url' style='font-weight:800; color:#EF3B39;'>Leer recorte →</a>
+                      </div>
+                    </div>
+                  </article>
+                </b:loop>
+              </div>
+
+              <!-- Paginación -->
+              <div class='pm-pager'>
+                <b:if cond='data:newerPageUrl'>
+                  <a class='pm-btn' expr:href='data:newerPageUrl'>← Más recientes</a>
+                <b:else/>
+                  <span/>
+                </b:if>
+                <b:if cond='data:olderPageUrl'>
+                  <a class='pm-btn' expr:href='data:olderPageUrl'>Entradas anteriores →</a>
+                </b:if>
+              </div>
+
+            <b:else/>
+              <!-- MODO ARTÍCULO INDIVIDUAL O PÁGINA DE APP (/p/...) -->
+              <b:loop values='data:posts' var='post'>
+                <article class='pm-card pm-article-wrap'>
+                  <div class='pm-washi'/>
+                  <div style='display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;'>
+                    <a class='pm-btn' expr:href='data:blog.homepageUrl' style='background:#FFF3B0; padding:5px 12px; font-size:12px;'>← Volver al Mesón</a>
+                    <b:if cond='data:post.labels'>
+                      <div style='display:flex; flex-wrap:wrap; gap:6px;'>
+                        <b:loop values='data:post.labels' var='label'>
+                          <a class='pm-badge' expr:href='data:label.url' style='background:#38BDF8; color:#1F2536;'><data:label.name/></a>
+                        </b:loop>
+                      </div>
+                    </b:if>
+                  </div>
+
+                  <h1 class='pm-title-xl' style='font-size:32px; margin:8px 0 6px;'><data:post.title/></h1>
+                  <b:if cond='data:view.isPost'>
+                    <div class='pm-tech-italic'>Publicado el <data:post.date/> · Pa´l Maestro</div>
+                  </b:if>
+
+                  <div class='pm-article-content'>
+                    <data:post.body/>
+                  </div>
+                </article>
+              </b:loop>
+            </b:if>
+
+          </b:includable>
+        </b:widget>
+      </b:section>
+    </main>
+
+    <!-- ==================== SECCIÓN EXTRAS (LO MÁS MEJOR + ETIQUETAS + INSTAGRAM WIDGET) ==================== -->
+    <b:if cond='data:view.isHomepage'>
+      <section class='pm-extras-grid'>
+        <b:section class='pm-card pm-widget-box' id='extras-left' showaddelement='yes'>
+          <b:widget id='PopularPosts1' locked='false' title='Lo más mejor' type='PopularPosts' version='2'>
+            <b:widget-settings>
+              <b:widget-setting name='numItemsToShow'>3</b:widget-setting>
+              <b:widget-setting name='showThumbnails'>true</b:widget-setting>
+              <b:widget-setting name='showSnippets'>false</b:widget-setting>
+              <b:widget-setting name='timeRange'>LAST_YEAR</b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main'>
+              <h2><data:title/></h2>
+              <ul class='pm-popular-list'>
+                <b:loop values='data:posts' var='post'>
+                  <li>
+                    <b:if cond='data:post.featuredImage'>
+                      <img expr:alt='data:post.title' expr:src='resizeImage(data:post.featuredImage, 120, &quot;1:1&quot;)' loading='lazy'/>
+                    </b:if>
+                    <div>
+                      <a class='pm-title-xl' expr:href='data:post.href' style='font-size:15px; display:block;'><data:post.title/></a>
+                      <span class='pm-tech-italic'>Destacado del año</span>
+                    </div>
+                  </li>
+                </b:loop>
+              </ul>
+            </b:includable>
+          </b:widget>
+        </b:section>
+
+        <b:section class='pm-card pm-widget-box' id='extras-right' showaddelement='yes'>
+          <b:widget id='Label1' locked='false' title='Temas del mesón' type='Label' version='2'>
+            <b:includable id='main'>
+              <h2><data:title/></h2>
+              <div class='pm-labels-cloud'>
+                <b:loop values='data:labels' var='label'>
+                  <a expr:href='data:label.url'><data:label.name/></a>
+                </b:loop>
+              </div>
+            </b:includable>
+          </b:widget>
+        </b:section>
+      </section>
+
+      <!-- Tu feed de Instagram de CommonNinja preservado -->
+      <section class='pm-card pm-widget-box' style='margin-top:22px;'>
+        <h2 class='pm-title-xl' style='font-size:22px; margin:0 0 12px;'>Pa´l Maestro en INSTAGRAAAM</h2>
+        <script defer='defer' src='https://cdn.commoninja.com/sdk/latest/commonninja.js'/>
+        <div class='commonninja_component pid-4dfbf880-b8d1-423e-bd3b-7993d2021188'/>
+      </section>
+    </b:if>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class='pm-footer'>
+      <div><strong>Pa´l Maestro</strong> · Hecho en Chile con mate, planos y código libre sobre Blogger.</div>
+      <div class='pm-tech-italic' style='color:#7DD3FC;'>
+        <a href='https://www.palmaestro.xyz'>palmaestro.xyz</a> · <a href='https://www.instagram.com/pal_maestro/' rel='noopener' target='_blank'>@pal_maestro</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== BARRA INFERIOR MÓVIL TIPO APP ==================== -->
+  <nav class='pm-mobile-bar'>
+    <a href='/#herramientas' style='color:#EF3B39;'>
+      <svg fill='none' height='19' stroke='currentColor' stroke-width='2.3' viewBox='0 0 24 24' width='19'><path d='M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'/></svg>
+      Tools
+    </a>
+    <a href='/#blog'>
+      <svg fill='none' height='19' stroke='currentColor' stroke-width='2.3' viewBox='0 0 24 24' width='19'><path d='M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z'/><path d='M10 6h8v4h-8V6Z'/></svg>
+      Blog
+    </a>
+    <a href='https://www.palmaestro.xyz/p/compras-recomendadas.html'>
+      <svg fill='none' height='19' stroke='currentColor' stroke-width='2.3' viewBox='0 0 24 24' width='19'><path d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/></svg>
+      Compras
+    </a>
+    <a href='https://www.instagram.com/pal_maestro/' rel='noopener' style='color:#EC4899;' target='_blank'>
+      <svg fill='none' height='19' stroke='currentColor' stroke-width='2.3' viewBox='0 0 24 24' width='19'><rect height='20' rx='5' width='20' x='2' y='2'/><circle cx='12' cy='12' r='4'/></svg>
+      IG
+    </a>
+  </nav>
+
+  <!-- Scripts compartidos desde tu repositorio GitHub -->
+  <script defer='defer' src='https://shewinho.github.io/palmaestro-web/loader/palmaestro-loader.js'/>
+  <script defer='defer' src='https://shewinho.github.io/palmaestro-web/theme/palmaestro-ui.js'/>
+</body>
+</html>

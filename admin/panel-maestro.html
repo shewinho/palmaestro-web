@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Local — Pa´l Maestro (Admin del Mesón)</title>
+  <link rel="stylesheet" href="../theme/palmaestro-theme.css" />
+  <style>
+    .adm-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .adm-tab-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+      background: #FFFFFF;
+    }
+    .adm-tab-btn.active {
+      background: #EF3B39;
+      color: #FFFFFF;
+    }
+    .adm-panel { display: none; }
+    .adm-panel.active { display: block; }
+    .adm-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .adm-box { padding: 20px; }
+    .adm-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    .adm-field label { font-size: 12px; font-weight: 800; color: var(--pm-ink); }
+    .adm-input, .adm-textarea, .adm-select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 2px solid var(--pm-ink);
+      border-radius: 10px;
+      font-family: var(--pm-font);
+      font-size: 13px;
+      background: #FFFDF9;
+      color: var(--pm-ink);
+    }
+    .adm-textarea { min-height: 92px; resize: vertical; line-height: 1.5; }
+    .adm-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .adm-item-card {
+      border: 2px solid var(--pm-ink);
+      border-radius: 12px;
+      padding: 12px;
+      background: #FFFDF8;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .adm-code {
+      width: 100%;
+      min-height: 180px;
+      background: #141824;
+      color: #E2E8F0;
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid var(--pm-ink);
+      resize: vertical;
+    }
+    .adm-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .adm-chip {
+      padding: 5px 10px;
+      font-size: 11.5px;
+      background: #FFF3B0;
+    }
+    @media (max-width: 900px) {
+      .adm-grid, .adm-row-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pm-shell">
+    <!-- Cabecera del Panel Local -->
+    <header class="pm-card pm-header">
+      <div class="pm-brand">
+        <div class="pm-brand-badge">
+          <svg viewBox="0 0 40 40" width="30" height="30">
+            <path d="M 11 16 C 5 16, 4 24, 9 27" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+            <path d="M 27 20 C 31 19, 34 16, 36 13 L 38 15 C 36 20, 32 24, 28 25 Z" fill="#FFD000"/>
+            <path d="M 13 13 C 9 15, 8 24, 10 30 L 30 30 C 32 24, 31 15, 27 13 Z" fill="#FFFFFF"/>
+            <circle cx="20" cy="9" r="2.8" fill="#FFD000"/>
+          </svg>
+        </div>
+        <div>
+          <div class="pm-title-xl pm-brand-title">
+            Panel Local · Pa´l Maestro
+            <span class="pm-badge" style="background:#FFD000;">ADMIN</span>
+          </div>
+          <div class="pm-tech-italic">Gestiona herramientas, stickers, artículos de Blogger y apps HTML sin tocar código</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <button id="btn-open-json" class="pm-btn" style="background:#38BDF8; padding:8px 13px; font-size:12px;">Abrir config.json</button>
+        <button id="btn-save-json" class="pm-btn" style="background:#22C55E; color:#FFF; padding:8px 14px; font-size:12px;">Guardar config.json</button>
+      </div>
+    </header>
+
+    <!-- Pestañas -->
+    <div class="adm-tabs">
+      <button class="pm-btn adm-tab-btn active" data-tab="tab-tools">1. Herramientas, Cinta y Stickers</button>
+      <button class="pm-btn adm-tab-btn" data-tab="tab-article">2. Redactor de Artículos (Blogger)</button>
+      <button class="pm-btn adm-tab-btn" data-tab="tab-app">3. Incrustar Nueva App HTML</button>
+    </div>
+
+    <!-- ==================== PESTAÑA 1: HERRAMIENTAS Y CONFIG ==================== -->
+    <section id="tab-tools" class="adm-panel active">
+      <div class="adm-grid">
+        <!-- Formulario -->
+        <div class="pm-card adm-box">
+          <div class="pm-washi"></div>
+          <h2 class="pm-title-xl" style="font-size:24px; margin:0 0 4px;">Agregar o editar herramienta</h2>
+          <div class="pm-tech-italic" style="margin-bottom:16px;">Al guardar config.json y hacer git push, se actualiza sola en palmaestro.xyz</div>
+
+          <div class="adm-row-2">
+            <div class="adm-field">
+              <label>Nombre principal (título grande)</label>
+              <input id="t-title" class="adm-input" placeholder="Ej: Calculadora de Pintura" />
+            </div>
+            <div class="adm-field">
+              <label>Etiqueta de estado</label>
+              <input id="t-badge" class="adm-input" placeholder="Ej: Activa / En proceso / Planillas" value="Activa" />
+            </div>
+          </div>
+
+          <div class="adm-field">
+            <label>Línea técnica (cursiva seria)</label>
+            <input id="t-tech" class="adm-input" placeholder="Ej: Rendimiento m² · Litros estimados · HTML" />
+          </div>
+
+          <div class="adm-field">
+            <label>Descripción corta</label>
+            <input id="t-desc" class="adm-input" placeholder="Ej: Calcula cuántos tarros necesitas antes de comprar." />
+          </div>
+
+          <div class="adm-field">
+            <label>Enlace / URL de la herramienta</label>
+            <input id="t-url" class="adm-input" placeholder="https://www.palmaestro.xyz/p/mi-herramienta.html" />
+          </div>
+
+          <div class="adm-row-2">
+            <div class="adm-field">
+              <label>Color y patrón en movimiento</label>
+              <select id="t-theme" class="adm-select">
+                <option value="blue">Celeste Plano (cuadrícula)</option>
+                <option value="orange">Naranja Obra (rayas diagonales)</option>
+                <option value="green">Verde Excel (puntos halftone)</option>
+                <option value="yellow">Amarillo Taller (cruces +)</option>
+              </select>
+            </div>
+            <div class="adm-field">
+              <label>Ícono SVG animado</label>
+              <select id="t-icon" class="adm-select">
+                <option value="ruler">Regla / Escuadra</option>
+                <option value="download">Flecha de Descarga</option>
+                <option value="chart">Gráfico / Planilla</option>
+                <option value="wrench">Llave Inglesa</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="btn-add-tool" class="pm-btn" style="background:#EF3B39; color:#FFF; padding:10px 18px; font-size:13px;">+ Agregar a la Caja de Herramientas</button>
+
+          <hr style="border:none; border-top:2px dashed rgba(31,37,54,0.18); margin:20px 0;" />
+
+          <h3 class="pm-title-xl" style="font-size:19px; margin:0 0 8px;">Cinta de obra (una frase por línea)</h3>
+          <textarea id="cfg-marquee" class="adm-textarea"></textarea>
+
+          <div class="adm-field" style="margin-top:12px;">
+            <label>Nota rápida del mesón (Post-it amarillo)</label>
+            <textarea id="cfg-note" class="adm-textarea" style="min-height:66px;"></textarea>
+          </div>
+        </div>
+
+        <!-- Lista actual + Vista previa -->
+        <div class="pm-card adm-box">
+          <div class="pm-washi blue"></div>
+          <h2 class="pm-title-xl" style="font-size:22px; margin:0 0 4px;">Herramientas actuales</h2>
+          <div class="pm-tech-italic" style="margin-bottom:14px;">Puedes subir, bajar o quitar cualquier herramienta</div>
+          <div id="tools-list"></div>
+
+          <div style="margin-top:16px; padding:12px; background:#FFF3B0; border:2px dashed #1F2536; border-radius:12px; font-size:12px; line-height:1.5;">
+            <strong>Cómo se publica:</strong><br/>
+            1. Haz clic en <strong>Guardar config.json</strong> arriba (sobreescribe <code>palmaestro-web/config/palmaestro-config.json</code>).<br/>
+            2. Sube el cambio a GitHub (<code>git push</code> o arrastrando el archivo en github.com/shewinho/palmaestro-web).<br/>
+            3. En ~30 segundos aparece solo en <strong>palmaestro.xyz</strong>.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PESTAÑA 2: REDACTOR DE ARTÍCULOS PARA BLOGGER ==================== -->
+    <section id="tab-article" class="adm-panel">
+      <div class="adm-grid">
+        <div class="pm-card adm-box">
+          <div class="pm-washi"></div>
+          <h2 class="pm-title-xl" style="font-size:24px; margin:0 0 4px;">Redactor de Artículos Pa´l Maestro</h2>
+          <div class="pm-tech-italic" style="margin-bottom:14px;">Escribe acá, revisa cómo queda y copia el HTML listo para pegar en Blogger</div>
+
+          <div class="adm-field">
+            <label>Bajada técnica del artículo (cursiva seria)</label>
+            <input id="art-tech" class="adm-input" placeholder="Ej: Lectura 4 min · Carpintería en casa · Planchas 15 mm" value="Lectura 4 min · Taller en casa · Nivel básico" />
+          </div>
+
+          <div class="adm-toolbar">
+            <button type="button" class="pm-btn adm-chip" onclick="insertSnippet('h2')">+ Subtítulo</button>
+            <button type="button" class="pm-btn adm-chip" onclick="insertSnippet('tip')">+ Dato del Maestro</button>
+            <button type="button" class="pm-btn adm-chip" onclick="insertSnippet('mat')">+ Lista de Materiales</button>
+            <button type="button" class="pm-btn adm-chip" onclick="insertSnippet('btn')">+ Botón a Herramienta</button>
+          </div>
+
+          <div class="adm-field">
+            <label>Contenido del artículo (puedes escribir texto normal o usar los botones de arriba)</label>
+            <textarea id="art-body" class="adm-textarea" style="min-height:220px;" placeholder="Escribe aquí tu artículo...">Antes de partir a la barraca conviene tener todas las medidas claras para no perder cortes ni plata.
+
+[TIP] Mide dos veces y corta una. Deja siempre 3 mm extra por el espesor de la sierra.
+
+[MATERIALES]
+- 1 plancha de terciado estructural 15 mm (1,22 × 2,44 m)
+- Huincha de medir y escuadra carpintera
+- Lápiz mina o marcador fino
+
+[BOTON: Abrir Dimensionador de Tablas | https://www.palmaestro.xyz/p/dimensionador.html]</textarea>
+          </div>
+
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <button id="btn-copy-article" class="pm-btn" style="background:#EF3B39; color:#FFF; padding:10px 16px; font-size:13px;">Copiar HTML listo para Blogger</button>
+            <a href="https://www.blogger.com/" target="_blank" rel="noopener" class="pm-btn" style="background:#FFD000; padding:10px 14px; font-size:13px;">Abrir Blogger →</a>
+          </div>
+        </div>
+
+        <div class="pm-card adm-box">
+          <div class="pm-washi red"></div>
+          <span class="pm-badge" style="background:#38BDF8;">Vista previa exacta</span>
+          <div id="art-preview" class="pm-article-content" style="margin-top:12px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PESTAÑA 3: INCRUSTAR NUEVA APP HTML ==================== -->
+    <section id="tab-app" class="adm-panel">
+      <div class="pm-card adm-box" style="max-width:820px; margin:0 auto;">
+        <div class="pm-washi blue"></div>
+        <h2 class="pm-title-xl" style="font-size:24px; margin:0 0 4px;">Publicar una nueva App HTML en Blogger</h2>
+        <div class="pm-tech-italic" style="margin-bottom:16px;">Genera el código con ancho completo y tu animación de carga de tetera + mate</div>
+
+        <div class="adm-row-2">
+          <div class="adm-field">
+            <label>Nombre del archivo HTML en tu carpeta apps/ de GitHub</label>
+            <input id="app-file" class="adm-input" value="dimensionador.html" placeholder="Ej: calculadora-pintura.html" />
+          </div>
+          <div class="adm-field">
+            <label>Alto mínimo de la app (px)</label>
+            <input id="app-height" class="adm-input" type="number" value="850" />
+          </div>
+        </div>
+
+        <div class="adm-field">
+          <label>Código listo para pegar en Blogger → Páginas → Nueva página (Vista HTML)</label>
+          <textarea id="app-output" class="adm-code" readonly></textarea>
+        </div>
+
+        <button id="btn-copy-app" class="pm-btn" style="background:#22C55E; color:#FFF; padding:10px 18px; font-size:13px;">Copiar código para Página de Blogger</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="pm-toast"></div>
+  <script src="../loader/palmaestro-loader.js"></script>
+  <script>
+    let config = {
+      siteName: "Pa´l Maestro",
+      domain: "palmaestro.xyz",
+      tagline: "Construcción · Arquitectura · Chasquillería hecha en Chile",
+      instagramUrl: "https://www.instagram.com/pal_maestro?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+      instagramHandle: "@pal_maestro",
+      communityUrl: "https://www.palmaestro.xyz/p/unete-la-comunidad.html",
+      recommendedUrl: "https://www.palmaestro.xyz/p/compras-recomendadas.html",
+      utilitiesPageUrl: "https://www.palmaestro.xyz/p/utilidades-pamaestro.html",
+      spotifyEmbedUrl: "https://open.spotify.com/embed/playlist/5Q0M7po6pOm2tTCV2frJnq?utm_source=generator&theme=0",
+      spotifyVideoUrl: "https://i.imgur.com/r1K8RJY.mp4",
+      mascotNormalUrl: "https://i.imgur.com/UC74mKB.png",
+      mascotHoverUrl: "https://i.imgur.com/im8u7vC.png",
+      marqueeItems: [
+        "BIENVENIDO AL MESÓN DIGITAL DE PA´L MAESTRO",
+        "TETERA LISTA PARA CHASQUILLEAR",
+        "DIMENSIONADOR DE TABLAS GRATIS",
+        "PLAYLIST PA´ MAESTREAR ACTUALIZADA",
+        "SÍGUENOS EN @PAL_MAESTRO"
+      ],
+      quickNote: {
+        label: "Nota rápida del mesón",
+        text: "Hola maquinon@s, busquen y vean lo que quieran, se los permito. Todas las herramientas son gratuitas y pensadas para el taller o la casa."
+      },
+      matesBaseCount: 4821,
+      tools: [
+        { id: "dimensionador", title: "Dimensionador de Tablas", tech: "Planchas 1,22×2,44 m · Optimización de cortes · HTML", description: "Calcula tus cortes de madera antes de ir a la barraca y ahorra material.", url: "https://www.palmaestro.xyz/p/dimensionador.html", badge: "Activa", badgeColor: "#22C55E", badgeText: "#FFFFFF", theme: "blue", icon: "ruler" },
+        { id: "descargador", title: "Descargador de Videos", tech: "Respaldo rápido · MP4 / Audio · Sin publicidad", description: "Guarda tutoriales y referencias técnicas para verlos incluso sin señal.", url: "https://www.palmaestro.xyz/p/descargar-videos-gratis.html", badge: "En proceso", badgeColor: "#FFD000", badgeText: "#1F2536", theme: "orange", icon: "download" },
+        { id: "excels", title: "Excels Útiles", tech: "Formato .xlsx / Sheets · Cubicaciones y presupuestos", description: "Tablas probadas en obra para ordenar materiales, costos y avances.", url: "https://www.palmaestro.xyz/p/utilidades-pamaestro.html", badge: "Planillas", badgeColor: "#FFFFFF", badgeText: "#1F2536", theme: "green", icon: "chart" },
+        { id: "mas-utilidades", title: "+ Más Utilidades", tech: "Calculadoras · Links útiles · Recursos propios", description: "Revisa todas las herramientas y nuevos programas HTML en camino.", url: "https://www.palmaestro.xyz/p/utilidades-pamaestro.html", badge: "Próximamente", badgeColor: "#FFFFFF", badgeText: "#1F2536", theme: "yellow", icon: "wrench", dashed: true }
+      ],
+      stickers: [
+        { label: '3/4"', bg: "#FFD000", color: "#1F2536", rotate: -6, icon: "ruler", message: "Consejo del maestro: «Mide dos veces, corta una»." },
+        { label: "80°C", bg: "#EF3B39", color: "#FFFFFF", rotate: 4, icon: "flame", message: "Agua a 80°C en la tetera, nunca hervida para el mate." },
+        { label: "Chasquilla", bg: "#38BDF8", color: "#1F2536", rotate: -3, icon: "wrench", message: "Regla de oro: un buen plano evita 3 viajes a la ferretería." }
+      ]
+    };
+
+    let fileHandle = null;
+    const toast = document.getElementById('pm-toast');
+    let toastT = null;
+    function notify(msg) {
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      clearTimeout(toastT);
+      toastT = setTimeout(() => { toast.style.display = 'none'; }, 2800);
+    }
+
+    // Tabs
+    document.querySelectorAll('.adm-tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.adm-tab-btn').forEach((b) => b.classList.remove('active'));
+        document.querySelectorAll('.adm-panel').forEach((p) => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Renderizar configuración
+    function syncUI() {
+      document.getElementById('cfg-marquee').value = (config.marqueeItems || []).join('\n');
+      document.getElementById('cfg-note').value = (config.quickNote && config.quickNote.text) || '';
+      const list = document.getElementById('tools-list');
+      list.innerHTML = config.tools.map((t, i) => `
+        <div class="adm-item-card">
+          <div>
+            <div class="pm-title-xl" style="font-size:17px;">${t.title} <span class="pm-badge" style="background:${t.badgeColor}; color:${t.badgeText}; font-size:9.5px;">${t.badge}</span></div>
+            <div class="pm-tech-italic" style="margin-top:2px;">${t.tech}</div>
+            <div style="font-size:11.5px; color:#64748B; margin-top:4px; word-break:break-all;">${t.url}</div>
+          </div>
+          <div style="display:flex; gap:5px; flex-shrink:0;">
+            <button class="pm-btn" style="padding:4px 8px; font-size:11px; background:#FFF;" onclick="moveTool(${i}, -1)">↑</button>
+            <button class="pm-btn" style="padding:4px 8px; font-size:11px; background:#FFF;" onclick="moveTool(${i}, 1)">↓</button>
+            <button class="pm-btn" style="padding:4px 8px; font-size:11px; background:#FEE2E2; color:#B91C1C;" onclick="removeTool(${i})">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.moveTool = (idx, dir) => {
+      const target = idx + dir;
+      if (target < 0 || target >= config.tools.length) return;
+      [config.tools[idx], config.tools[target]] = [config.tools[target], config.tools[idx]];
+      syncUI();
+    };
+    window.removeTool = (idx) => {
+      config.tools.splice(idx, 1);
+      syncUI();
+      notify('Herramienta eliminada de la lista');
+    };
+
+    document.getElementById('btn-add-tool').addEventListener('click', () => {
+      const title = document.getElementById('t-title').value.trim();
+      const url = document.getElementById('t-url').value.trim();
+      if (!title || !url) { notify('Completa al menos el nombre y la URL'); return; }
+      const badge = document.getElementById('t-badge').value.trim() || 'Nueva';
+      const isActiva = badge.toLowerCase().includes('activ');
+      config.tools.unshift({
+        id: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        title,
+        tech: document.getElementById('t-tech').value.trim() || 'Herramienta gratuita · HTML',
+        description: document.getElementById('t-desc').value.trim() || 'Utilidad práctica de Pa´l Maestro.',
+        url,
+        badge,
+        badgeColor: isActiva ? '#22C55E' : '#FFD000',
+        badgeText: isActiva ? '#FFFFFF' : '#1F2536',
+        theme: document.getElementById('t-theme').value,
+        icon: document.getElementById('t-icon').value
+      });
+      document.getElementById('t-title').value = '';
+      document.getElementById('t-tech').value = '';
+      document.getElementById('t-desc').value = '';
+      document.getElementById('t-url').value = '';
+      syncUI();
+      notify('¡Herramienta agregada! Ahora guarda config.json');
+    });
+
+    function collectConfig() {
+      config.marqueeItems = document.getElementById('cfg-marquee').value
+        .split('\n').map((s) => s.trim()).filter(Boolean);
+      config.quickNote = {
+        label: 'Nota rápida del mesón',
+        text: document.getElementById('cfg-note').value.trim()
+      };
+      return JSON.stringify(config, null, 2);
+    }
+
+    // Abrir y guardar archivo local (Chrome/Edge File System Access API + descarga fallback)
+    document.getElementById('btn-open-json').addEventListener('click', async () => {
+      if (window.showOpenFilePicker) {
+        try {
+          const [handle] = await window.showOpenFilePicker({
+            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+          });
+          fileHandle = handle;
+          const file = await handle.getFile();
+          config = JSON.parse(await file.text());
+          syncUI();
+          notify('Archivo config.json cargado correctamente');
+        } catch (_) {}
+      } else {
+        notify('Tu navegador no permite abrir directo; edita acá y descarga config.json');
+      }
+    });
+
+    document.getElementById('btn-save-json').addEventListener('click', async () => {
+      const content = collectConfig();
+      if (fileHandle && fileHandle.createWritable) {
+        try {
+          const w = await fileHandle.createWritable();
+          await w.write(content);
+          await w.close();
+          notify('¡Guardado directo en config.json! Ya puedes subirlo a GitHub.');
+          return;
+        } catch (_) {}
+      }
+      const blob = new Blob([content], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'palmaestro-config.json';
+      a.click();
+      notify('Se descargó palmaestro-config.json — reemplázalo en palmaestro-web/config/');
+    });
+
+    // ==================== REDACTOR DE ARTÍCULOS ====================
+    const artTech = document.getElementById('art-tech');
+    const artBody = document.getElementById('art-body');
+    const artPreview = document.getElementById('art-preview');
+
+    window.insertSnippet = (kind) => {
+      const map = {
+        h2: '\n\n## Subtítulo de sección\n',
+        tip: '\n\n[TIP] Escribe aquí tu consejo o dato práctico del maestro.\n',
+        mat: '\n\n[MATERIALES]\n- Material 1\n- Material 2\n',
+        btn: '\n\n[BOTON: Abrir Herramienta | https://www.palmaestro.xyz/p/dimensionador.html]\n'
+      };
+      artBody.value += map[kind] || '';
+      renderArticle();
+    };
+
+    function buildArticleHTML() {
+      const tech = artTech.value.trim();
+      const blocks = artBody.value.trim().split(/\n\s*\n/);
+      let out = tech ? `<p class="pm-tech-italic" style="margin-bottom:16px;">${tech}</p>\n` : '';
+      blocks.forEach((b) => {
+        const line = b.trim();
+        if (line.startsWith('## ')) {
+          out += `<h2>${line.slice(3)}</h2>\n`;
+        } else if (line.startsWith('[TIP]')) {
+          out += `<div class="pm-tip-box"><strong>Dato del maestro:</strong> ${line.replace('[TIP]', '').trim()}</div>\n`;
+        } else if (line.startsWith('[MATERIALES]')) {
+          const items = line.split('\n').slice(1).map((l) => `<li>${l.replace(/^[-*]\s*/, '')}</li>`).join('');
+          out += `<div class="pm-materials-box"><strong>Materiales y herramientas:</strong><ul>${items}</ul></div>\n`;
+        } else if (line.startsWith('[BOTON:')) {
+          const inner = line.slice(7, -1).split('|');
+          const txt = (inner[0] || 'Abrir').trim();
+          const href = (inner[1] || '#').trim();
+          out += `<p style="margin:18px 0;"><a class="pm-btn" href="${href}" style="background:#FFD000; padding:10px 18px;">${txt} →</a></p>\n`;
+        } else {
+          out += `<p>${line.replace(/\n/g, '<br/>')}</p>\n`;
+        }
+      });
+      return out;
+    }
+
+    function renderArticle() {
+      artPreview.innerHTML = buildArticleHTML();
+    }
+    artTech.addEventListener('input', renderArticle);
+    artBody.addEventListener('input', renderArticle);
+
+    document.getElementById('btn-copy-article').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(buildArticleHTML());
+      notify('HTML copiado. Pégalo en Blogger → Nueva entrada → Vista HTML');
+    });
+
+    // ==================== GENERADOR DE EMBED PARA NUEVA APP ====================
+    const appFile = document.getElementById('app-file');
+    const appHeight = document.getElementById('app-height');
+    const appOutput = document.getElementById('app-output');
+
+    function updateAppSnippet() {
+      const f = appFile.value.trim() || 'mi-app.html';
+      const h = appHeight.value || 850;
+      const url = f.startsWith('http') ? f : `https://shewinho.github.io/palmaestro-web/apps/${f}`;
+      appOutput.value = `<div style="position:relative;">
+  <div id="pm-app-loading" style="display:flex; justify-content:center; padding:32px 0;">
+    <palmaestro-loader loop size="240" show-status></palmaestro-loader>
+  </div>
+  <iframe class="iframe-wrapper-maestro"
+    src="${url}"
+    style="min-height:${h}px; display:none;"
+    onload="document.getElementById('pm-app-loading').style.display='none'; this.style.display='block';"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>`;
+    }
+    appFile.addEventListener('input', updateAppSnippet);
+    appHeight.addEventListener('input', updateAppSnippet);
+    document.getElementById('btn-copy-app').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(appOutput.value);
+      notify('Código copiado. Pégalo en Blogger → Páginas → Nueva página (Vista HTML)');
+    });
+
+    syncUI();
+    renderArticle();
+    updateAppSnippet();
+  </script>
+</body>
+</html>
