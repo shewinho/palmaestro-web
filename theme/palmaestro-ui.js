@@ -212,7 +212,117 @@
     });
   }
 
+  function initHandLogo() {
+    const badges = document.querySelectorAll('.pm-brand-badge');
+    if (!badges.length) return;
+
+    const PROP_NAMES = ['Matecito', 'Martillo', 'Llave inglesa', 'Lápiz carpintero'];
+
+    badges.forEach((badge, bIdx) => {
+      const clipId = `pm-hand-clip-${bIdx}`;
+      badge.innerHTML = `
+        <svg class="pm-hand-svg" viewBox="0 0 100 100" aria-label="Logo mano Pa´l Maestro">
+          <defs>
+            <clipPath id="${clipId}"><circle cx="50" cy="50" r="47" /></clipPath>
+          </defs>
+
+          <!-- Estado 1: Mano abierta original Pa´l Maestro -->
+          <g class="pm-hand-open" clip-path="url(#${clipId})">
+            <g transform="rotate(-20 50 58)">
+              <rect x="24" y="32" width="9.5" height="30" rx="4.75" fill="#FFFFFF" />
+              <rect x="35.5" y="21" width="10" height="39" rx="5" fill="#FFFFFF" />
+              <rect x="47.5" y="18" width="10" height="42" rx="5" fill="#FFFFFF" />
+              <rect x="59.5" y="24" width="9.5" height="37" rx="4.75" fill="#FFFFFF" />
+              <path d="M 24 52 L 69 52 L 69 72 C 69 81, 63 87, 54 87 L 39 87 C 30 87, 24 81, 24 71 Z" fill="#FFFFFF" />
+              <path d="M 65 65 L 77 50 C 80 46, 87 47, 88 52 C 89 56, 86 60, 82 65 L 67 83 Z" fill="#FFFFFF" />
+              <rect x="32" y="80" width="28" height="32" fill="#FFFFFF" />
+            </g>
+          </g>
+
+          <!-- Estado 2: Mano agarrando objeto al hacer hover -->
+          <g class="pm-hand-grip">
+            <!-- Muñeca y palma trasera -->
+            <g clip-path="url(#${clipId})">
+              <rect x="36" y="72" width="28" height="34" rx="6" fill="#FFFFFF" />
+              <rect x="28" y="45" width="44" height="34" rx="14" fill="#FFFFFF" />
+            </g>
+
+            <!-- Objeto 0: Mate café con bombilla -->
+            <g class="pm-hand-prop active" data-prop="0">
+              <path d="M 55 32 L 72 6" stroke="#E2E8F0" stroke-width="5" stroke-linecap="round" />
+              <circle cx="72" cy="6" r="3.2" fill="#F59E0B" />
+              <ellipse cx="50" cy="30" rx="19" ry="5.5" fill="#4E8A35" />
+              <ellipse cx="45" cy="30.5" rx="10" ry="3" fill="#38BDF8" />
+              <path d="M 31 32 C 29 48, 33 62, 50 64 C 67 62, 71 48, 69 32 Z" fill="#8D4B26" stroke="#1F2536" stroke-width="2" />
+              <path d="M 53 32 L 69 32 C 70 46, 67 60, 50 64 C 58 55, 59 43, 53 32 Z" fill="#683316" />
+              <rect x="29.5" y="28" width="41" height="6.5" rx="3.2" fill="#E2E8F0" stroke="#1F2536" stroke-width="1.8" />
+              <rect x="31" y="34" width="38" height="2.4" rx="1.2" fill="#F59E0B" />
+            </g>
+
+            <!-- Objeto 1: Martillo de obra -->
+            <g class="pm-hand-prop" data-prop="1">
+              <rect x="44" y="18" width="12" height="64" rx="4" fill="#D97706" stroke="#1F2536" stroke-width="2" />
+              <rect x="46.5" y="22" width="3" height="54" rx="1.5" fill="#FBBF24" opacity="0.8" />
+              <path d="M 24 8 L 62 8 C 72 8, 79 13, 82 22 L 73 24 C 70 19, 65 18, 60 18 L 24 18 Z" fill="#EF3B39" stroke="#1F2536" stroke-width="2.2" stroke-linejoin="round" />
+              <rect x="20" y="6" width="9" height="14" rx="2.5" fill="#E2E8F0" stroke="#1F2536" stroke-width="2" />
+            </g>
+
+            <!-- Objeto 2: Llave inglesa celeste -->
+            <g class="pm-hand-prop" data-prop="2">
+              <rect x="43" y="22" width="14" height="60" rx="5" fill="#38BDF8" stroke="#1F2536" stroke-width="2.2" />
+              <path d="M 34 10 C 31 18, 35 28, 43 30 L 57 30 C 65 28, 69 18, 66 10 L 58 17 L 42 17 Z" fill="#E2E8F0" stroke="#1F2536" stroke-width="2.2" stroke-linejoin="round" />
+              <rect x="47.5" y="32" width="5" height="34" rx="2.5" fill="#E0F7FF" opacity="0.75" />
+            </g>
+
+            <!-- Objeto 3: Lápiz carpintero amarillo -->
+            <g class="pm-hand-prop" data-prop="3">
+              <rect x="42" y="20" width="16" height="60" rx="2" fill="#FFD000" stroke="#1F2536" stroke-width="2.2" />
+              <rect x="47" y="20" width="6" height="60" fill="#F59E0B" opacity="0.55" />
+              <polygon points="42,20 58,20 50,3" fill="#FDE68A" stroke="#1F2536" stroke-width="2" stroke-linejoin="round" />
+              <polygon points="47.2,9 52.8,9 50,3" fill="#1F2536" />
+              <rect x="42" y="74" width="16" height="8" rx="2" fill="#EF3B39" stroke="#1F2536" stroke-width="2" />
+            </g>
+
+            <!-- Dedos blancos cerrados POR DELANTE agarrando el objeto -->
+            <g stroke="#3B2212" stroke-width="1.8">
+              <rect x="53" y="45" width="21" height="9.2" rx="4.6" fill="#FFFFFF" />
+              <rect x="54" y="53.5" width="21" height="9.2" rx="4.6" fill="#FFFFFF" />
+              <rect x="53" y="62" width="20" height="9.2" rx="4.6" fill="#FFFFFF" />
+              <rect x="51" y="70.5" width="18" height="8.5" rx="4.2" fill="#FFFFFF" />
+              <!-- Pulgar abrazando desde la izquierda -->
+              <rect x="26" y="46" width="28" height="11" rx="5.5" transform="rotate(14 40 51)" fill="#FFFFFF" />
+            </g>
+          </g>
+        </svg>
+      `;
+
+      const props = Array.from(badge.querySelectorAll('.pm-hand-prop'));
+      let current = 0;
+      const host = badge.closest('.pm-brand') || badge;
+
+      function setProp(idx) {
+        props.forEach((el, i) => el.classList.toggle('active', i === idx));
+        badge.setAttribute('title', `Pa´l Maestro · ${PROP_NAMES[idx]}`);
+      }
+      setProp(0);
+
+      host.addEventListener('mouseenter', () => {
+        setProp(current);
+      });
+      host.addEventListener('mouseleave', () => {
+        current = (current + 1) % props.length;
+      });
+      badge.addEventListener('touchstart', () => {
+        badge.classList.add('pm-grab');
+        setProp(current);
+        current = (current + 1) % props.length;
+        setTimeout(() => badge.classList.remove('pm-grab'), 1100);
+      }, { passive: true });
+    });
+  }
+
   async function boot() {
+    initHandLogo();
     let cfg = FALLBACK_CONFIG;
     try {
       const res = await fetch(`${BASE_URL}/config/palmaestro-config.json?v=${Math.floor(Date.now() / 60000)}`);

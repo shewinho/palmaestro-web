@@ -298,16 +298,61 @@ img { max-width: 100%; height: auto; }
   text-decoration: none;
 }
 .pm-brand-badge {
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
-  background: var(--pm-red);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #3B2212;
   border: 2.5px solid var(--pm-ink);
   box-shadow: 3px 3px 0 var(--pm-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: visible;
+  position: relative;
+  transition: transform 200ms cubic-bezier(.34, 1.56, .64, 1), box-shadow 200ms ease;
+}
+.pm-brand:hover .pm-brand-badge,
+.pm-brand-badge.pm-grab {
+  transform: scale(1.09) rotate(4deg);
+  box-shadow: 4px 4px 0 var(--pm-ink);
+}
+.pm-hand-svg {
+  width: 52px;
+  height: 52px;
+  overflow: visible;
+  display: block;
+}
+.pm-hand-open {
+  transform-origin: 50px 58px;
+  transition: transform 240ms cubic-bezier(.34, 1.56, .64, 1), opacity 160ms ease;
+}
+.pm-hand-grip {
+  transform-origin: 50px 60px;
+  opacity: 0;
+  transform: scale(0.84) translateY(6px);
+  transition: transform 260ms cubic-bezier(.34, 1.56, .64, 1), opacity 170ms ease;
+}
+.pm-hand-prop {
+  opacity: 0;
+  transform-origin: 50px 55px;
+  transform: translateY(14px) scale(0.6);
+  transition: transform 300ms cubic-bezier(.34, 1.56, .64, 1), opacity 180ms ease;
+}
+.pm-brand:hover .pm-hand-open,
+.pm-brand-badge.pm-grab .pm-hand-open {
+  opacity: 0;
+  transform: scale(0.82) rotate(-8deg);
+}
+.pm-brand:hover .pm-hand-grip,
+.pm-brand-badge.pm-grab .pm-hand-grip {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+.pm-brand:hover .pm-hand-prop.active,
+.pm-brand-badge.pm-grab .pm-hand-prop.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 .pm-brand-title { font-size: 24px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .pm-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -544,7 +589,41 @@ img { max-width: 100%; height: auto; }
 .pm-post-title { font-size: 21px; margin: 0; }
 .pm-post-title a { color: var(--pm-ink); }
 .pm-post-title a:hover { color: var(--pm-red); }
-.pm-post-snippet { font-size: 13px; color: #334155; margin: 6px 0 0; line-height: 1.5; }
+.pm-post-snippet {
+  font-family: var(--pm-font) !important;
+  font-size: 13px !important;
+  font-weight: 450 !important;
+  font-style: normal !important;
+  color: #334155 !important;
+  margin: 8px 0 0 !important;
+  line-height: 1.5 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* Normaliza textos antiguos de Blogger que traían Times New Roman, tamaños gigantes o colores inline */
+.pm-post-snippet *,
+.pm-post-snippet h1,
+.pm-post-snippet h2,
+.pm-post-snippet h3,
+.pm-post-snippet p,
+.pm-post-snippet span,
+.pm-post-snippet font,
+.pm-post-snippet b,
+.pm-post-snippet strong,
+.pm-post-snippet i,
+.pm-post-snippet em {
+  font-family: var(--pm-font) !important;
+  font-size: 13px !important;
+  font-weight: 450 !important;
+  line-height: 1.5 !important;
+  color: #334155 !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline !important;
+}
 .pm-post-foot {
   padding-top: 10px;
   border-top: 1.5px dashed rgba(31, 37, 54, 0.2);
@@ -565,16 +644,38 @@ img { max-width: 100%; height: auto; }
   padding: 22px 24px;
 }
 .pm-article-content {
+  font-family: var(--pm-font) !important;
   font-size: 16px;
   line-height: 1.72;
   color: #1E293B;
   margin-top: 18px;
 }
+/* Normaliza entradas antiguas del tema Watermark (Times New Roman / texto crema claro) */
+.pm-item-view .pm-article-content p,
+.pm-item-view .pm-article-content div:not(.pm-tip-box):not(.pm-materials-box),
+.pm-item-view .pm-article-content span,
+.pm-item-view .pm-article-content font,
+.pm-item-view .pm-article-content li {
+  font-family: var(--pm-font) !important;
+  color: #1E293B !important;
+  background-color: transparent !important;
+}
+.pm-item-view .pm-article-content a {
+  color: var(--pm-red) !important;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.pm-item-view .pm-article-content a.pm-btn {
+  color: var(--pm-ink) !important;
+  text-decoration: none !important;
+}
 .pm-article-content h2, .pm-article-content h3 {
-  font-weight: 900;
+  font-family: var(--pm-font) !important;
+  font-weight: 900 !important;
   font-variation-settings: "ROND" 100;
-  color: var(--pm-ink);
+  color: var(--pm-ink) !important;
   margin-top: 1.5em;
+  line-height: 1.15;
 }
 .pm-article-content img {
   border-radius: 12px;
