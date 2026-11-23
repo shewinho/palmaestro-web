@@ -10,7 +10,7 @@
     instagramUrl: 'https://www.instagram.com/pal_maestro?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
     instagramHandle: '@pal_maestro',
     communityUrl: 'https://www.palmaestro.xyz/p/unete-la-comunidad.html',
-    recommendedUrl: 'https://www.palmaestro.xyz/p/compras-recomendadas.html',
+    recommendedUrl: 'https://www.palmaestro.xyz/p/la-ferre-de-julio.html',
     spotifyEmbedUrl: 'https://open.spotify.com/embed/playlist/5Q0M7po6pOm2tTCV2frJnq?utm_source=generator&theme=0',
     spotifyVideoUrl: 'https://i.imgur.com/r1K8RJY.mp4',
     mascotNormalUrl: 'https://i.imgur.com/UC74mKB.png',
@@ -427,6 +427,11 @@
     renderStickers(cfg.stickers);
     initMateCounter(cfg.matesBaseCount);
     renderQuickNote(cfg.quickNote);
+    if (cfg.recommendedUrl) {
+      document.querySelectorAll('a[href*="compras-recomendadas.html"]').forEach((a) => {
+        a.setAttribute('href', cfg.recommendedUrl);
+      });
+    }
     wireLoaderTransitions();
   }
 

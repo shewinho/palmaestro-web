@@ -74,7 +74,7 @@
           <svg class='ico-svg' fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' viewBox='0 0 24 24' width='15'><path d='M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z'/><path d='M10 6h8v4h-8V6Z'/></svg>
           Artículos
         </a>
-        <a class='pat-trigger pm-btn' href='https://www.palmaestro.xyz/p/compras-recomendadas.html' style='background:#FF5A1F; color:#FFFFFF;'>
+        <a class='pat-trigger pm-btn' href='https://www.palmaestro.xyz/p/la-ferre-de-julio.html' style='background:#FF5A1F; color:#FFFFFF;'>
           <svg class='ico-svg ico-tag' fill='none' height='15' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' viewBox='0 0 24 24' width='15'><path d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/></svg>
           Recomendados
         </a>
@@ -343,7 +343,7 @@
       <svg fill='none' height='19' stroke='currentColor' stroke-width='2.3' viewBox='0 0 24 24' width='19'><path d='M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z'/><path d='M10 6h8v4h-8V6Z'/></svg>
       Blog
     </a>
-    <a href='https://www.palmaestro.xyz/p/compras-recomendadas.html'>
+    <a href='https://www.palmaestro.xyz/p/la-ferre-de-julio.html'>
       <svg fill='none' height='19' stroke='currentColor' stroke-width='2.3' viewBox='0 0 24 24' width='19'><path d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/></svg>
       Compras
     </a>
