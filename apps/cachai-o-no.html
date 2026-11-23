@@ -1774,7 +1774,7 @@ async function generateStoryCanvas(kind, q=null, ok=true, skipImages=false){
     c.fillStyle = '#1F2536'; fitFont('¿Y tú cachai o no? Pruébalo gratis:', W - 220, 34, 22, '900');
     c.fillText('¿Y tú cachai o no? Pruébalo gratis:', W/2, 1100);
 
-    lastShareSummary = `¿Cachai o no? · Día #${viewingDailyDay} (${cm.nombre})\n${ok ? '✅ ¡Le achunté!' : '🧱 Casi... a seguir maestreando'}\n🔥 Racha: ${state.streak} día(s) · 👷 Rango: ${rk.cur.name}\nJuega la pregunta de hoy en https://www.palmaestro.xyz/p/giro-de-obra.html`;
+    lastShareSummary = `¿Cachai o no? · Día #${viewingDailyDay} (${cm.nombre})\n${ok ? '✅ ¡Le achunté!' : '🧱 Casi... a seguir maestreando'}\n🔥 Racha: ${state.streak} día(s) · 👷 Rango: ${rk.cur.name}\nJuega la pregunta de hoy en https://www.palmaestro.xyz/p/cachaiono.html`;
   } else {
     // Carnet de Cuadrilla
     c.save(); c.translate(W/2, 435); c.rotate(-0.02);
@@ -1805,7 +1805,7 @@ async function generateStoryCanvas(kind, q=null, ok=true, skipImages=false){
     c.fillStyle = '#1F2536'; fitFont('¿Puedes superar mi rango en obra?', W - 220, 34, 22, '900');
     c.fillText('¿Puedes superar mi rango en obra?', W/2, 1085);
 
-    lastShareSummary = `Mi Carnet en ¿Cachai o no? (Pa'l Maestro)\n👷 Rango: ${rk.cur.name}\n✅ Aciertos: ${state.totalCorrect} · 🎯 Precisión: ${acc}% · 🔥 Racha: ${state.streak}\nJuega gratis en https://www.palmaestro.xyz/p/giro-de-obra.html`;
+    lastShareSummary = `Mi Carnet en ¿Cachai o no? (Pa'l Maestro)\n👷 Rango: ${rk.cur.name}\n✅ Aciertos: ${state.totalCorrect} · 🎯 Precisión: ${acc}% · 🔥 Racha: ${state.streak}\nJuega gratis en https://www.palmaestro.xyz/p/cachaiono.html`;
   }
 
   // Botón CTA palmaestro.xyz (auto-ajustado con padding amplio)
