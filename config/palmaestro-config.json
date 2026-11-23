@@ -13,6 +13,7 @@
   "mascotHoverUrl": "https://i.imgur.com/im8u7vC.png",
   "marqueeItems": [
     "BIENVENIDO AL MESÓN DIGITAL DE PA´L MAESTRO",
+    "NUEVA APP: EL MESÓN GRÁFICO · STICKERS, TAGS Y QUITA FONDOS GRATIS",
     "NUEVO JUEGO: ¿CACHAI O NO? · PREGUNTA DEL DÍA",
     "TETERA LISTA PARA CHASQUILLEAR",
     "DIMENSIONADOR DE TABLAS GRATIS",
@@ -36,6 +37,18 @@
       "badgeText": "#FFFFFF",
       "theme": "yellow",
       "icon": "wheel"
+    },
+    {
+      "id": "meson-grafico",
+      "title": "El Mesón Gráfico",
+      "tech": "Estilos UI · Social & MineTag · Stickers · Quita Fondos IA",
+      "description": "Crea gráficas animadas, chats, stickers die-cut y quita fondos en PNG 4K o WebM transparente.",
+      "url": "https://www.palmaestro.xyz/p/meson-grafico.html",
+      "badge": "Nuevo · Estudio",
+      "badgeColor": "#EF3B39",
+      "badgeText": "#FFFFFF",
+      "theme": "orange",
+      "icon": "sparkles"
     },
     {
       "id": "dimensionador",

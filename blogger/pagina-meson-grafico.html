@@ -1,0 +1,55 @@
+<!-- =========================================================================
+     PA'L MAESTRO · EL MESÓN GRÁFICO — CÓDIGO LISTO PARA BLOGGER
+     Instrucciones:
+       1. Primero sube los cambios de palmaestro-web a GitHub (git push)
+       2. En Blogger ve a: Páginas → Nueva página
+       3. Título sugerido: El Mesón Gráfico
+          (Enlace permanente personalizado: meson-grafico -> /p/meson-grafico.html)
+       4. Cambia el editor a "Vista HTML" (ícono <> arriba a la izquierda)
+       5. Pega TODO este bloque y presiona "Publicar"
+       6. Publicada en: https://www.palmaestro.xyz/p/meson-grafico.html
+     ========================================================================= -->
+<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin:0 0 14px;">
+  <p class="pm-tech-italic" style="margin:0; flex:1; min-width:220px;">
+    Estudio gráfico gratuito de Pa'l Maestro · 34 plantillas UI, Chats animados, Social &amp; MineTag, Overlays CTA, Stickers Die-Cut y Quita Fondos IA 100% local en tu navegador.
+  </p>
+  <a
+    href="https://shewinho.github.io/palmaestro-web/apps/meson-grafico/"
+    target="_blank"
+    rel="noopener"
+    class="pm-btn"
+    style="display:inline-flex; align-items:center; gap:6px; background:#FFD000; color:#1F2536; padding:8px 14px; font-weight:900; font-size:12.5px; text-decoration:none; border:2.2px solid #1F2536; border-radius:10px; box-shadow:3px 3px 0 #1F2536;"
+  >
+    Abrir en pantalla completa ↗
+  </a>
+</div>
+
+<div style="position:relative;">
+  <div id="pm-meson-loading" style="display:flex; justify-content:center; padding:36px 0;">
+    <palmaestro-loader loop size="230" show-status></palmaestro-loader>
+  </div>
+  <iframe
+    id="pm-meson-frame"
+    class="iframe-wrapper-maestro"
+    src="https://shewinho.github.io/palmaestro-web/apps/meson-grafico/"
+    title="El Mesón Gráfico · Suite Creativa de Pa'l Maestro"
+    style="width:100%; min-height:840px; height:860px; display:none; border:2.5px solid #1F2536; border-radius:16px; background:#FFF8EE; box-shadow:5px 5px 0 #1F2536;"
+    onload="document.getElementById('pm-meson-loading').style.display='none'; this.style.display='block';"
+    frameborder="0"
+    allow="clipboard-write; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<script>
+(function(){
+  var fr = document.getElementById('pm-meson-frame');
+  if(!fr) return;
+  window.addEventListener('message', function(ev){
+    if(ev.origin !== 'https://shewinho.github.io') return;
+    if(ev.data && ev.data.type === 'pm-meson-height' && ev.data.height){
+      fr.style.height = Math.max(820, Math.min(2800, Number(ev.data.height))) + 'px';
+    }
+  });
+})();
+</script>
