@@ -341,8 +341,77 @@
     });
   }
 
+  function initRansomWordmark() {
+    const brandTitles = document.querySelectorAll('.pm-brand-title');
+    brandTitles.forEach((el) => {
+      el.innerHTML = `
+        <span class="pm-ransom-wordmark" aria-label="Pa´l Maestro">
+          <span class="pm-cut cut-p">p</span>
+          <span class="pm-cut cut-a1">a</span>
+          <span class="pm-cut cut-apos">&rsquo;</span>
+          <span class="pm-cut cut-L">L</span>
+          <span class="pm-cut cut-m">m</span>
+          <span class="pm-cut cut-a2">a</span>
+          <span class="pm-cut cut-e">e</span>
+          <span class="pm-cut cut-s">s</span>
+          <span class="pm-cut cut-t">t</span>
+          <span class="pm-cut cut-R">R</span>
+          <span class="pm-cut cut-o">o</span>
+        </span>
+      `;
+
+      const wm = el.querySelector('.pm-ransom-wordmark');
+      const cuts = Array.from(wm.querySelectorAll('.pm-cut'));
+
+      function pop(letter) {
+        if (!letter || !letter.classList.contains('pm-cut')) return;
+        letter.classList.add('pop');
+        clearTimeout(letter._t);
+        letter._t = setTimeout(() => letter.classList.remove('pop'), 340);
+      }
+
+      cuts.forEach((c) => {
+        c.addEventListener('mouseenter', () => pop(c));
+      });
+
+      wm.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        const hit = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (hit && hit.classList.contains('pm-cut')) pop(hit);
+      }, { passive: true });
+
+      wm.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        const hit = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (hit && hit.classList.contains('pm-cut')) pop(hit);
+      }, { passive: true });
+
+      // Ola sutil de bienvenida al entrar al sitio
+      setTimeout(() => {
+        cuts.forEach((c, i) => setTimeout(() => pop(c), i * 50));
+      }, 380);
+    });
+
+    // Aplica el guiño de recorte fanzine en los títulos principales de sección
+    document.querySelectorAll('h1.pm-title-xl, h2.pm-title-xl, #extras-left h2, #extras-right h2').forEach((h) => {
+      const txt = h.textContent.trim();
+      if (txt === 'Caja de Herramientas') {
+        h.innerHTML = 'Caja de <span class="pm-zine-accent">Herramientas</span>';
+      } else if (txt === 'Pa´ leer e indagar') {
+        h.innerHTML = 'Pa´ leer e <span class="pm-zine-accent pink">indagar</span>';
+      } else if (txt === 'Lo más mejor') {
+        h.innerHTML = 'Lo más <span class="pm-zine-accent navy">mejor</span>';
+      } else if (txt === 'Temas del mesón') {
+        h.innerHTML = 'Temas del <span class="pm-zine-accent">mesón</span>';
+      }
+    });
+  }
+
   async function boot() {
     initHandLogo();
+    initRansomWordmark();
     let cfg = FALLBACK_CONFIG;
     try {
       const res = await fetch(`${BASE_URL}/config/palmaestro-config.json?v=${Math.floor(Date.now() / 60000)}`);

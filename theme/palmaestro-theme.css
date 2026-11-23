@@ -160,11 +160,151 @@ img { max-width: 100%; height: auto; }
   font-size: 10.5px;
   font-weight: 800;
   font-variation-settings: "ROND" 0;
-  padding: 2px 8px;
-  border-radius: 6px;
+  padding: 3px 9px;
+  border-radius: 3px;
   border: 1.5px solid var(--pm-ink);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  clip-path: polygon(2% 6%, 98% 0%, 99% 94%, 0% 100%);
+  transform: rotate(-1.6deg);
+  transition: transform 180ms cubic-bezier(.34, 1.56, .64, 1);
+}
+.pm-badge:hover,
+.pat-trigger:hover .pm-badge {
+  transform: rotate(2deg) scale(1.06);
+}
+
+/* ==================== WORDMARK COLLAGE / RECORTE "pa'L maestRo" ==================== */
+.pm-ransom-wordmark {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  user-select: none;
+  touch-action: pan-y;
+  padding: 4px 2px;
+  gap: 0;
+}
+.pm-cut {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  cursor: pointer;
+  transform: rotate(var(--rot, 0deg)) translateY(var(--ty, 0px));
+  transition: transform 240ms cubic-bezier(.34, 1.8, .64, 1), filter 180ms ease;
+  filter: drop-shadow(1.5px 2.5px 0 rgba(31, 37, 54, 0.25));
+  will-change: transform;
+}
+.pm-cut.pop {
+  transform: rotate(var(--pop-rot, 8deg)) translateY(-9px) scale(1.16);
+  z-index: 20;
+  filter: drop-shadow(2.5px 7px 0 rgba(31, 37, 54, 0.28));
+}
+.cut-p {
+  width: 30px; height: 40px;
+  background: #1B1E24; color: #27B858;
+  font-family: Georgia, 'Times New Roman', serif; font-weight: 900; font-size: 32px;
+  clip-path: polygon(4% 6%, 94% 0%, 100% 94%, 8% 100%);
+  box-shadow: inset 3px 0 0 #EF3B39;
+  --rot: -6deg; --ty: 1px; --pop-rot: 7deg; margin-right: -2px;
+}
+.cut-a1 {
+  width: 25px; height: 29px;
+  background: #FFD426; color: #A61B4D;
+  font-family: Georgia, serif; font-style: italic; font-weight: 900; font-size: 27px;
+  clip-path: polygon(6% 4%, 96% 0%, 100% 96%, 0% 100%);
+  --rot: 5deg; --ty: 6px; --pop-rot: -9deg; margin-right: -3px; z-index: 2;
+}
+.cut-apos {
+  width: 14px; height: 19px;
+  background: #2EB85C; color: #1F2536;
+  font-family: Georgia, serif; font-weight: 900; font-size: 21px; padding-top: 3px;
+  clip-path: polygon(0% 10%, 92% 0%, 100% 88%, 12% 100%);
+  --rot: -14deg; --ty: -11px; --pop-rot: 16deg; margin-right: -5px; z-index: 4;
+}
+.cut-L {
+  width: 31px; height: 40px;
+  background: #1C2754; color: #F5A623;
+  font-family: 'Trebuchet MS', system-ui, sans-serif; font-weight: 900; font-size: 31px;
+  clip-path: polygon(0% 0%, 100% 8%, 94% 100%, 4% 96%);
+  --rot: 3deg; --ty: 0px; --pop-rot: -7deg; margin-right: 8px;
+}
+.cut-m {
+  width: 40px; height: 36px;
+  background: #E574B4; color: #364E8A;
+  font-family: system-ui, 'Segoe UI', sans-serif; font-weight: 900; font-size: 32px;
+  clip-path: polygon(2% 4%, 98% 0%, 96% 96%, 0% 100%);
+  box-shadow: inset 0 -3px 0 #27B858;
+  --rot: -3deg; --ty: 2px; --pop-rot: 6deg; margin-right: -3px;
+}
+.cut-a2 {
+  width: 26px; height: 29px;
+  background: #FFD426; color: #A61B4D;
+  font-family: Georgia, serif; font-style: italic; font-weight: 900; font-size: 27px;
+  clip-path: polygon(4% 0%, 100% 6%, 96% 100%, 0% 95%);
+  --rot: 6deg; --ty: 5px; --pop-rot: -8deg; margin-right: -3px; z-index: 2;
+}
+.cut-e {
+  width: 25px; height: 28px;
+  background: #7C6D62; color: #FFFFFF;
+  font-family: Georgia, serif; font-weight: 900; font-size: 27px;
+  border-radius: 44% 56% 48% 52% / 52% 45% 55% 48%;
+  --rot: -7deg; --ty: 1px; --pop-rot: 10deg; margin-right: -3px; z-index: 3;
+}
+.cut-s {
+  width: 29px; height: 32px;
+  background: transparent; color: #FFD000;
+  font-family: Georgia, 'Times New Roman', serif; font-weight: 900; font-size: 37px;
+  -webkit-text-stroke: 2.2px #1F2536;
+  text-shadow: 1.5px 2px 0 #1F2536;
+  --rot: 5deg; --ty: 3px; --pop-rot: -10deg; margin-right: -4px; z-index: 4;
+}
+.cut-t {
+  width: 25px; height: 39px;
+  background: #CC8E7D; color: #5C3D2E;
+  font-family: Georgia, serif; font-weight: 900; font-size: 35px;
+  clip-path: polygon(22% 0%, 100% 4%, 82% 32%, 98% 48%, 86% 96%, 8% 100%, 2% 38%);
+  --rot: -4deg; --ty: -3px; --pop-rot: 9deg; margin-right: -3px; z-index: 2;
+}
+.cut-R {
+  width: 25px; height: 32px;
+  background: #1C2754; color: #F5A623;
+  font-family: 'Trebuchet MS', system-ui, sans-serif; font-weight: 900; font-size: 25px;
+  clip-path: polygon(4% 0%, 100% 8%, 94% 100%, 0% 96%);
+  --rot: 4deg; --ty: 4px; --pop-rot: -8deg; margin-right: -3px; z-index: 3;
+}
+.cut-o {
+  width: 29px; height: 29px;
+  background: #EAE2D3; color: #745D4B;
+  font-family: Georgia, serif; font-weight: 900; font-size: 25px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(92, 61, 46, 0.25);
+  --rot: -5deg; --ty: 3px; --pop-rot: 12deg; z-index: 2;
+}
+
+/* Acento recorte fanzine para palabras destacadas en títulos de sección */
+.pm-zine-accent {
+  display: inline-block;
+  padding: 1px 10px 3px;
+  margin-left: 4px;
+  background: #FFD426;
+  color: #1C2754;
+  clip-path: polygon(2% 6%, 98% 0%, 99% 94%, 0% 100%);
+  transform: rotate(-1.5deg);
+  box-shadow: 3px 3px 0 var(--pm-ink);
+  transition: transform 200ms cubic-bezier(.34, 1.56, .64, 1);
+}
+.pm-zine-accent.pink { background: #E574B4; color: #1C2754; transform: rotate(1.4deg); }
+.pm-zine-accent.navy { background: #1C2754; color: #F5A623; transform: rotate(-1.2deg); }
+.pm-zine-accent:hover { transform: rotate(2.5deg) scale(1.05); }
+
+@media (max-width: 520px) {
+  .pm-ransom-wordmark {
+    transform: scale(0.8);
+    transform-origin: left center;
+    margin-right: -54px;
+  }
 }
 .pm-washi {
   position: absolute;
