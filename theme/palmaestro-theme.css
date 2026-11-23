@@ -610,11 +610,21 @@ img { max-width: 100%; height: auto; }
 }
 
 /* 14. WIDGETS INFERIORES (LO MÁS MEJOR, IG COMMONNINJA, ETIQUETAS) */
+/* Oculta widgets duplicados que Blogger migra automáticamente desde la plantilla anterior */
+#main > .widget:not(#Blog1),
+#extras-left > .widget:not(#PopularPosts1),
+#extras-right > .widget:not(#Label1),
+#Navbar1,
+.navbar {
+  display: none !important;
+}
+
 .pm-extras-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-top: 30px;
+  align-items: start;
 }
 .pm-widget-box { padding: 18px; }
 .pm-widget-box h2 { font-size: 20px; font-weight: 900; font-variation-settings: "ROND" 100; margin: 0 0 12px; }
