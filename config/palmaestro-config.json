@@ -13,6 +13,7 @@
   "mascotHoverUrl": "https://i.imgur.com/im8u7vC.png",
   "marqueeItems": [
     "BIENVENIDO AL MESÓN DIGITAL DE PA´L MAESTRO",
+    "NUEVA APP: ENCUADRANDO ANDO · PÓSTERS A4/A3, PLACAS Y LLAVEROS CON QR GRATIS",
     "NUEVA APP: EL MESÓN GRÁFICO · STICKERS, TAGS Y QUITA FONDOS GRATIS",
     "NUEVO JUEGO: ¿CACHAI O NO? · PREGUNTA DEL DÍA",
     "TETERA LISTA PARA CHASQUILLEAR",
@@ -26,6 +27,18 @@
   },
   "matesBaseCount": 4821,
   "tools": [
+    {
+      "id": "encuadrando-ando",
+      "title": "Encuadrando ando",
+      "tech": "Pósters A5/A4/A3 · Placa Reproductor · Llaveros · QR Spotify / IMDb",
+      "description": "Diseña y descarga gratis cuadros y llaveros de música, películas, series o regalos con tu foto y QR divertido.",
+      "url": "https://www.palmaestro.xyz/p/encuadrando-ando.html",
+      "badge": "Nuevo · Gratis",
+      "badgeColor": "#EF3B39",
+      "badgeText": "#FFFFFF",
+      "theme": "blue",
+      "icon": "frame"
+    },
     {
       "id": "cachai-o-no",
       "title": "¿Cachai o no?",

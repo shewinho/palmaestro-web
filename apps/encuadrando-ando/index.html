@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encuadrando ando · Pa'l Maestro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,500;0,700;0,800;0,900;1,500;1,700;1,800&family=Oswald:wght@500;700&family=Plus+Jakarta+Sans:ital,wght@0,500;0,700;0,800;1,500;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../theme/palmaestro-theme.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.9.2/lib/qr-code-styling.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="ea-app" id="eaApp">
+    <!-- Encabezado compacto estilo Pa'l Maestro -->
+    <header class="ea-header">
+      <div class="ea-brand">
+        <div class="ea-brand-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2.5"></rect>
+            <rect x="6.5" y="6.5" width="11" height="8" rx="1"></rect>
+            <line x1="6.5" y1="17.5" x2="12.5" y2="17.5"></line>
+            <circle cx="16.5" cy="17.5" r="1"></circle>
+          </svg>
+        </div>
+        <div>
+          <div class="ea-brand-row">
+            <h1 class="ea-title">Encuadrando ando</h1>
+            <span class="ea-pill">Gratis · 300 DPI</span>
+          </div>
+          <p class="ea-subtitle">Crea pósters A4/A3, placas reproductor y llaveros doble cara de música, películas, series o regalos con tu propia foto y QR divertido.</p>
+        </div>
+      </div>
+
+      <div class="ea-header-actions">
+        <button type="button" class="ea-chip-btn" data-demo="album" title="Cargar ejemplo de álbum">🎵 Álbum</button>
+        <button type="button" class="ea-chip-btn" data-demo="movie" title="Cargar ejemplo de película">🎬 Película</button>
+        <button type="button" class="ea-chip-btn" data-demo="series" title="Cargar ejemplo de serie">📺 Serie</button>
+        <button type="button" class="ea-chip-btn ea-chip-gift" data-demo="gift" title="Cargar plantilla de regalo personalizado">🎁 Regalo</button>
+      </div>
+    </header>
+
+    <!-- Selector principal de plantilla (siempre visible) -->
+    <section class="ea-template-bar" aria-label="Tipo de diseño">
+      <button type="button" class="ea-tpl-card is-active" data-template="poster">
+        <span class="ea-tpl-ico" aria-hidden="true">🖼️</span>
+        <span class="ea-tpl-text">
+          <strong>Póster / Cuadro</strong>
+          <small>Álbum, película o serie · A5/A4/A3</small>
+        </span>
+      </button>
+      <button type="button" class="ea-tpl-card" data-template="player">
+        <span class="ea-tpl-ico" aria-hidden="true">⏯️</span>
+        <span class="ea-tpl-text">
+          <strong>Placa Reproductor</strong>
+          <small>Canción o regalo con barra y QR</small>
+        </span>
+      </button>
+      <button type="button" class="ea-tpl-card" data-template="keychain">
+        <span class="ea-tpl-ico" aria-hidden="true">🔑</span>
+        <span class="ea-tpl-text">
+          <strong>Llavero Doble Cara</strong>
+          <small>Cápsula anverso + reverso a escala</small>
+        </span>
+      </button>
+    </section>
+
+    <!-- Cuerpo principal: Controles izquierda + Vista previa derecha -->
+    <main class="ea-workspace">
+      <!-- PANEL DE CONTROLES -->
+      <aside class="ea-controls">
+        <nav class="ea-tabs" role="tablist" aria-label="Secciones del editor">
+          <button type="button" class="ea-tab is-active" data-tab="search" role="tab" aria-selected="true">1. Buscar</button>
+          <button type="button" class="ea-tab" data-tab="content" role="tab" aria-selected="false">2. Textos y Foto</button>
+          <button type="button" class="ea-tab" data-tab="qr" role="tab" aria-selected="false">3. QR Divertido</button>
+          <button type="button" class="ea-tab" data-tab="style" role="tab" aria-selected="false">4. Hoja y Estilo</button>
+        </nav>
+
+        <!-- TAB 1: BUSCAR -->
+        <section class="ea-panel is-active" id="panel-search">
+          <div class="ea-field">
+            <label class="ea-label">¿Qué quieres encuadrar?</label>
+            <div class="ea-seg-group" id="searchTypeGroup">
+              <button type="button" class="ea-seg is-active" data-search-type="album">💿 Álbum</button>
+              <button type="button" class="ea-seg" data-search-type="song">🎵 Canción</button>
+              <button type="button" class="ea-seg" data-search-type="movie">🎬 Película</button>
+              <button type="button" class="ea-seg" data-search-type="series">📺 Serie</button>
+            </div>
+          </div>
+
+          <form class="ea-search-form" id="searchForm">
+            <input
+              type="text"
+              id="searchInput"
+              class="ea-input"
+              placeholder="Ej: Curtain Call Eminem, Bad Bunny, Interstellar..."
+              autocomplete="off"
+            />
+            <button type="submit" id="searchBtn" class="ea-btn ea-btn-primary">Buscar</button>
+          </form>
+
+          <p class="ea-hint" id="searchStatus">
+            Escribe un álbum, canción, película o serie. Cargamos portada, duración, canciones/episodios y enlace de Spotify o IMDb automáticamente.
+          </p>
+
+          <div id="seasonPickerWrap" class="ea-season-box" hidden>
+            <label class="ea-label" for="seasonSelect">Temporada para mostrar en el póster:</label>
+            <select id="seasonSelect" class="ea-select"></select>
+          </div>
+
+          <div id="searchResults" class="ea-results" aria-live="polite"></div>
+
+          <div class="ea-gift-banner">
+            <div>
+              <strong>¿Es un regalo personalizado?</strong>
+              <p>No necesitas buscar nada: sube una foto tuya en <em>2. Textos y Foto</em>, cambia la dedicatoria y pon el link que quieras en el QR.</p>
+            </div>
+            <button type="button" class="ea-btn ea-btn-yellow" id="btnGoToPhoto">Subir mi foto →</button>
+          </div>
+        </section>
+
+        <!-- TAB 2: TEXTOS Y FOTO -->
+        <section class="ea-panel" id="panel-content">
+          <div class="ea-group-title">Portada / Foto principal</div>
+          <div class="ea-photo-box">
+            <div class="ea-photo-actions">
+              <label class="ea-btn ea-btn-yellow ea-file-btn">
+                📷 Subir foto propia
+                <input type="file" id="inpMainPhoto" accept="image/*" hidden />
+              </label>
+              <button type="button" class="ea-btn ea-btn-ghost" id="btnExtractPalette" title="Sacar 5 colores de la imagen actual">🎨 Sacar paleta</button>
+              <button type="button" class="ea-btn ea-btn-ghost" id="btnResetPhotoCrop" title="Centrar foto">↺ Centrar</button>
+            </div>
+
+            <div class="ea-sliders-grid">
+              <label class="ea-mini-field">
+                <span>Zoom <b id="lblMainZoom">100%</b></span>
+                <input type="range" id="rngMainZoom" min="100" max="260" value="100" />
+              </label>
+              <label class="ea-mini-field">
+                <span>Mover X</span>
+                <input type="range" id="rngMainX" min="-100" max="100" value="0" />
+              </label>
+              <label class="ea-mini-field">
+                <span>Mover Y</span>
+                <input type="range" id="rngMainY" min="-100" max="100" value="0" />
+              </label>
+            </div>
+
+            <div class="ea-toggles-row">
+              <label class="ea-check"><input type="checkbox" id="chkFitContain" /> Mostrar póster completo (sin recortar)</label>
+              <label class="ea-check"><input type="checkbox" id="chkGrayscale" /> Blanco y Negro</label>
+              <label class="ea-check"><input type="checkbox" id="chkExplicit" /> Sello "Parental Advisory"</label>
+            </div>
+          </div>
+
+          <!-- Segunda foto solo para Llavero -->
+          <div id="secondPhotoWrap" class="ea-photo-box ea-second-photo" hidden>
+            <div class="ea-group-title" style="margin-top:0;">Foto del reverso (Llavero Cara B)</div>
+            <div class="ea-photo-actions">
+              <label class="ea-btn ea-btn-blue ea-file-btn">
+                📷 Subir 2ª foto
+                <input type="file" id="inpSecondPhoto" accept="image/*" hidden />
+              </label>
+              <button type="button" class="ea-btn ea-btn-ghost" id="btnUseSamePhoto">Usar la misma</button>
+            </div>
+            <div class="ea-sliders-grid">
+              <label class="ea-mini-field">
+                <span>Zoom <b id="lblSecondZoom">100%</b></span>
+                <input type="range" id="rngSecondZoom" min="100" max="260" value="100" />
+              </label>
+              <label class="ea-mini-field">
+                <span>Mover X</span>
+                <input type="range" id="rngSecondX" min="-100" max="100" value="0" />
+              </label>
+              <label class="ea-mini-field">
+                <span>Mover Y</span>
+                <input type="range" id="rngSecondY" min="-100" max="100" value="0" />
+              </label>
+            </div>
+          </div>
+
+          <div class="ea-group-title">Textos principales</div>
+          <div class="ea-grid-2">
+            <div class="ea-field">
+              <label class="ea-label" for="inpTitle">Título (Álbum / Canción / Película)</label>
+              <input type="text" id="inpTitle" class="ea-input" />
+            </div>
+            <div class="ea-field">
+              <label class="ea-label" for="inpSubtitle">Artista / Director / Dedicatoria</label>
+              <input type="text" id="inpSubtitle" class="ea-input" />
+            </div>
+          </div>
+
+          <div class="ea-grid-2" id="posterHeaderExtras">
+            <div class="ea-field">
+              <label class="ea-label" for="inpYear">Año / Fecha</label>
+              <input type="text" id="inpYear" class="ea-input" placeholder="2005" />
+            </div>
+            <div class="ea-field">
+              <label class="ea-label" for="inpCredit">Frase / Crédito bajo portada</label>
+              <input type="text" id="inpCredit" class="ea-input" placeholder="PRODUCED BY..." />
+            </div>
+          </div>
+
+          <!-- Campos para Póster (Modo Lista de canciones/episodios vs Ficha Cine) -->
+          <div id="posterBodyControls">
+            <div class="ea-field">
+              <label class="ea-label">Bloque inferior del póster</label>
+              <div class="ea-seg-group" id="posterBodyModeGroup">
+                <button type="button" class="ea-seg is-active" data-body-mode="tracks">🎵 Lista (Canciones / Episodios)</button>
+                <button type="button" class="ea-seg" data-body-mode="cinema">🎬 Ficha (Película / Serie)</button>
+              </div>
+            </div>
+
+            <div id="fieldTracksWrap" class="ea-field">
+              <label class="ea-label" for="inpTracks">Lista de canciones o episodios <small>(una por línea: <code>Nombre | 3:45</code>)</small></label>
+              <textarea id="inpTracks" class="ea-textarea" rows="7" placeholder="Intro | 0:33&#10;Lose Yourself | 5:26"></textarea>
+            </div>
+
+            <div id="fieldMovieWrap" hidden>
+              <div class="ea-grid-3">
+                <div class="ea-field">
+                  <label class="ea-label" for="inpDuration">Duración</label>
+                  <input type="text" id="inpDuration" class="ea-input" placeholder="2h 49m" />
+                </div>
+                <div class="ea-field">
+                  <label class="ea-label" for="inpGenre">Género</label>
+                  <input type="text" id="inpGenre" class="ea-input" placeholder="Sci-Fi · Drama" />
+                </div>
+                <div class="ea-field">
+                  <label class="ea-label" for="inpRating">Nota / Temp.</label>
+                  <input type="text" id="inpRating" class="ea-input" placeholder="★ 8.7 IMDb" />
+                </div>
+              </div>
+              <div class="ea-field">
+                <label class="ea-label" for="inpSynopsis">Sinopsis o dedicatoria larga</label>
+                <textarea id="inpSynopsis" class="ea-textarea" rows="4" placeholder="Escribe una reseña corta, sinopsis o mensaje especial..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campos exclusivos Placa Reproductor -->
+          <div id="fieldPlayerWrap" hidden>
+            <div class="ea-group-title">Controles del reproductor</div>
+            <div class="ea-grid-2">
+              <div class="ea-field">
+                <label class="ea-label" for="inpCurrentTime">Minuto actual</label>
+                <input type="text" id="inpCurrentTime" class="ea-input" placeholder="2:22" />
+              </div>
+              <div class="ea-field">
+                <label class="ea-label" for="inpTotalTime">Duración total</label>
+                <input type="text" id="inpTotalTime" class="ea-input" placeholder="4:50" />
+              </div>
+            </div>
+            <label class="ea-mini-field" style="margin-bottom:10px;">
+              <span>Posición de la barra <b id="lblProgressPct">49%</b></span>
+              <input type="range" id="inpProgressRange" min="0" max="100" value="49" />
+            </label>
+            <div class="ea-grid-3">
+              <div class="ea-field">
+                <label class="ea-label" for="selFavIcon">Ícono favorito</label>
+                <select id="selFavIcon" class="ea-select">
+                  <option value="star">★ Estrella</option>
+                  <option value="heart">♥ Corazón</option>
+                  <option value="fire">🔥 Fuego</option>
+                  <option value="none">Ninguno</option>
+                </select>
+              </div>
+              <div class="ea-field">
+                <label class="ea-label" for="selPlayState">Botón central</label>
+                <select id="selPlayState" class="ea-select">
+                  <option value="pause">⏸ Pausa</option>
+                  <option value="play">▶ Play</option>
+                </select>
+              </div>
+              <div class="ea-field">
+                <label class="ea-label" for="inpBadgeRight">Firma derecha</label>
+                <input type="text" id="inpBadgeRight" class="ea-input" placeholder="PM" maxlength="10" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Paleta de 5 colores -->
+          <div id="paletteSection">
+            <div class="ea-group-title">Paleta de 5 colores <small>(clic para cambiar)</small></div>
+            <div class="ea-palette-row" id="paletteEditor">
+              <label class="ea-swatch"><input type="color" id="palColor0" value="#102542" /><span>1</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor1" value="#1B2A41" /><span>2</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor2" value="#244A26" /><span>3</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor3" value="#7EB36A" /><span>4</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor4" value="#A85568" /><span>5</span></label>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: QR DIVERTIDO -->
+        <section class="ea-panel" id="panel-qr">
+          <div class="ea-toggles-row" style="margin-bottom:12px;">
+            <label class="ea-check ea-check-big"><input type="checkbox" id="chkShowQr" checked /> Incluir código QR escaneable</label>
+          </div>
+
+          <div class="ea-field">
+            <div class="ea-label-row">
+              <label class="ea-label" for="inpQrUrl">Enlace al que dirige el QR</label>
+              <span class="ea-qr-badge" id="qrUrlBadge">Spotify</span>
+            </div>
+            <input type="url" id="inpQrUrl" class="ea-input" placeholder="https://open.spotify.com/... o https://www.imdb.com/..." />
+            <small class="ea-hint">Puedes pegar cualquier link: Spotify, IMDb, YouTube, Netflix o un video de regalo.</small>
+          </div>
+
+          <div class="ea-field">
+            <label class="ea-label" for="inpQrLabel">Texto pequeño bajo el QR <small>(opcional)</small></label>
+            <input type="text" id="inpQrLabel" class="ea-input" placeholder="ESCANEA EN SPOTIFY" maxlength="28" />
+          </div>
+
+          <div class="ea-grid-2">
+            <div class="ea-field">
+              <label class="ea-label" for="selQrDots">Forma de los puntos</label>
+              <select id="selQrDots" class="ea-select">
+                <option value="dots">● Bolitas divertidas</option>
+                <option value="extra-rounded" selected>🫧 Burbujas suaves</option>
+                <option value="rounded">▢ Redondeado</option>
+                <option value="classy-rounded">✦ Orgánico fluido</option>
+                <option value="classy">◆ Clásico editorial</option>
+                <option value="square">■ Cuadrado retro</option>
+              </select>
+            </div>
+            <div class="ea-field">
+              <label class="ea-label" for="selQrCorners">Esquinas del QR</label>
+              <select id="selQrCorners" class="ea-select">
+                <option value="extra-rounded" selected>Redondeadas</option>
+                <option value="dot">Circulares</option>
+                <option value="square">Cuadradas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="ea-grid-2">
+            <div class="ea-field">
+              <label class="ea-label" for="selQrIcon">Ícono en el centro</label>
+              <select id="selQrIcon" class="ea-select">
+                <option value="auto" selected>✨ Automático</option>
+                <option value="spotify">🟢 Ondas Spotify</option>
+                <option value="imdb">🎬 Claqueta Cine / IMDb</option>
+                <option value="heart">❤️ Corazón</option>
+                <option value="star">⭐ Estrella</option>
+                <option value="music">🎵 Nota musical</option>
+                <option value="gift">🎁 Regalo</option>
+                <option value="none">Sin ícono</option>
+              </select>
+            </div>
+            <div class="ea-field">
+              <label class="ea-label" for="selQrColorMode">Color del QR</label>
+              <select id="selQrColorMode" class="ea-select">
+                <option value="ink" selected>Tinta del diseño</option>
+                <option value="palette">Degradado con la portada</option>
+                <option value="custom">Elegir colores</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="qrCustomColorsWrap" class="ea-grid-2" hidden>
+            <div class="ea-field">
+              <label class="ea-label" for="inpQrColor1">Color inicio</label>
+              <input type="color" id="inpQrColor1" class="ea-color-input" value="#1F2536" />
+            </div>
+            <div class="ea-field">
+              <label class="ea-label" for="inpQrColor2">Color fin</label>
+              <input type="color" id="inpQrColor2" class="ea-color-input" value="#EF3B39" />
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: HOJA Y ESTILO -->
+        <section class="ea-panel" id="panel-style">
+          <!-- Opciones de Hoja (Póster y Placa Reproductor) -->
+          <div id="posterFormatWrap">
+            <div class="ea-group-title">Tamaño y orientación de hoja</div>
+            <div class="ea-grid-2">
+              <div class="ea-field">
+                <label class="ea-label" for="selPaperSize">Hoja de impresión</label>
+                <select id="selPaperSize" class="ea-select">
+                  <option value="a4" selected>A4 (21 × 29,7 cm)</option>
+                  <option value="a3">A3 (29,7 × 42 cm)</option>
+                  <option value="a5">A5 (14,8 × 21 cm)</option>
+                  <option value="letter">Carta (21,6 × 27,9 cm)</option>
+                </select>
+              </div>
+              <div class="ea-field">
+                <label class="ea-label">Orientación</label>
+                <div class="ea-seg-group" id="orientGroup">
+                  <button type="button" class="ea-seg is-active" data-orient="portrait">▯ Vertical</button>
+                  <button type="button" class="ea-seg" data-orient="landscape">▭ Horizontal</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Opciones exclusivas de Llavero -->
+          <div id="keychainFormatWrap" hidden>
+            <div class="ea-group-title">Medidas del llavero (para imprimir/cortar)</div>
+            <div class="ea-grid-2">
+              <div class="ea-field">
+                <label class="ea-label" for="inpKeychainWidthCm">Largo real (cm)</label>
+                <input type="number" id="inpKeychainWidthCm" class="ea-input" min="4" max="12" step="0.5" value="7.5" />
+              </div>
+              <div class="ea-field">
+                <label class="ea-label" for="selPdfPairs">Pares en hoja PDF A4</label>
+                <select id="selPdfPairs" class="ea-select">
+                  <option value="1">1 par (anverso + reverso)</option>
+                  <option value="4" selected>4 pares (aprovecha la hoja)</option>
+                </select>
+              </div>
+            </div>
+            <div class="ea-field">
+              <label class="ea-label" for="selKeychainBg">Fondo de la cápsula</label>
+              <select id="selKeychainBg" class="ea-select">
+                <option value="#EAEBED" selected>Gris suave (clásico)</option>
+                <option value="#FFFFFF">Blanco puro</option>
+                <option value="#171920">Negro mate</option>
+                <option value="#F7EFE1">Crema cálido</option>
+                <option value="palette">Color suave de la portada</option>
+              </select>
+            </div>
+            <div class="ea-toggles-row">
+              <label class="ea-check"><input type="checkbox" id="chkCutGuides" checked /> Línea punteada de corte</label>
+              <label class="ea-check"><input type="checkbox" id="chkPunchHole" checked /> Guía de perforación (argolla)</label>
+            </div>
+          </div>
+
+          <div class="ea-group-title">Estética del diseño</div>
+          <div class="ea-grid-2">
+            <div class="ea-field">
+              <label class="ea-label" for="selTheme">Color de papel / fondo</label>
+              <select id="selTheme" class="ea-select">
+                <option value="white" selected>Blanco galería</option>
+                <option value="cream">Crema vintage</option>
+                <option value="dark">Vinilo oscuro</option>
+                <option value="kraft">Papel kraft</option>
+                <option value="tinted">Teñido con la portada</option>
+                <option value="custom">Color personalizado</option>
+              </select>
+            </div>
+            <div class="ea-field">
+              <label class="ea-label" for="selFont">Tipografía</label>
+              <select id="selFont" class="ea-select">
+                <option value="editorial" selected>Editorial clásica</option>
+                <option value="cinema">Cine condensada</option>
+                <option value="modern">Moderna limpia</option>
+                <option value="retro">Retro máquina</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="customBgWrap" class="ea-field" hidden>
+            <label class="ea-label" for="inpCustomBg">Elige el color de fondo</label>
+            <input type="color" id="inpCustomBg" class="ea-color-input" value="#FFF4E6" />
+          </div>
+
+          <div class="ea-field">
+            <label class="ea-label" for="inpFooterNote">Sello o nota al pie <small>(opcional)</small></label>
+            <input type="text" id="inpFooterNote" class="ea-input" placeholder="Ej: HECHO EN ENCUADRANDO ANDO · PA'L MAESTRO" />
+          </div>
+        </section>
+      </aside>
+
+      <!-- PANEL DE VISTA PREVIA Y DESCARGA -->
+      <section class="ea-stage-col">
+        <div class="ea-stage-header">
+          <span class="ea-meta-pill" id="previewMeta">Póster · A4 Vertical (210 × 297 mm)</span>
+          <div class="ea-quality-wrap">
+            <label for="exportQuality">Calidad:</label>
+            <select id="exportQuality" class="ea-select ea-select-sm">
+              <option value="300" selected>300 DPI (Impresión)</option>
+              <option value="180">180 DPI (Rápida / Celular)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ea-canvas-frame">
+          <canvas id="previewCanvas" aria-label="Vista previa del diseño"></canvas>
+        </div>
+
+        <div class="ea-export-bar">
+          <button type="button" id="btnDownloadPng" class="ea-btn ea-btn-red ea-btn-lg">
+            ⬇ Descargar PNG
+          </button>
+          <button type="button" id="btnDownloadPdf" class="ea-btn ea-btn-yellow ea-btn-lg">
+            🖨️ Descargar PDF para imprimir
+          </button>
+        </div>
+        <p class="ea-export-status" id="exportStatus" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <footer class="ea-footer">
+      <span><strong>Encuadrando ando</strong> · Herramienta gratuita de <a href="https://www.palmaestro.xyz/" target="_blank" rel="noopener">Pa'l Maestro</a>. Todo se genera en tu navegador sin guardar tus fotos.</span>
+      <span>Catálogo público vía iTunes, IMDb, TVMaze, Wikidata &amp; Odesli · QR open-source.</span>
+    </footer>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
