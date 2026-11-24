@@ -584,14 +584,14 @@ button:hover .ea-ico-dl { transform: translateY(2.5px); }
   background-color: #EEF2F6;
   border: 2px solid var(--ea-ink);
   border-radius: 14px;
-  padding: 18px;
-  min-height: 460px;
+  padding: 14px;
+  min-height: 390px;
   overflow: hidden;
 }
 
 #previewCanvas {
   max-width: 100%;
-  max-height: 70vh;
+  max-height: 60vh;
   width: auto;
   height: auto;
   display: block;
@@ -600,7 +600,8 @@ button:hover .ea-ico-dl { transform: translateY(2.5px); }
   background: #FFFFFF;
 }
 
-.ea-export-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.ea-export-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.ea-export-bar .ea-btn-lg { white-space: nowrap; }
 .ea-export-status { margin: 9px 0 0; min-height: 18px; text-align: center; }
 
 /* ---------- FOOTER ---------- */
@@ -625,15 +626,22 @@ button:hover .ea-ico-dl { transform: translateY(2.5px); }
 
 @media (max-width: 640px) {
   .ea-app { padding: 10px 10px 22px; }
-  .ea-header { padding: 12px 13px; }
-  .ea-template-bar { grid-template-columns: 1fr; gap: 8px; }
-  .ea-tpl-card { padding: 9px 12px; }
+  .ea-header { padding: 11px 12px; gap: 9px; margin-bottom: 10px; }
+  .ea-brand-icon { width: 40px; height: 40px; }
+  .ea-tech-sub { display: none; }
+  .ea-header-actions { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  .ea-chip-btn { justify-content: center; padding: 6px 4px; font-size: 11px; min-height: 36px; gap: 3px; }
+  .ea-template-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-bottom: 12px; }
+  .ea-tpl-card { flex-direction: column; align-items: center; text-align: center; padding: 8px 6px; gap: 6px; border-radius: 13px; }
+  .ea-tpl-ico { width: 34px; height: 34px; }
+  .ea-tpl-text strong { font-size: 12px; line-height: 1.15; }
+  .ea-tpl-text small { display: none; }
   .ea-grid-2, .ea-grid-3, .ea-sliders-grid { grid-template-columns: 1fr; }
   .ea-seg-grid-mobile { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ea-tabs { grid-template-columns: repeat(2, 1fr); }
   .ea-tab { border-bottom: 2px solid var(--ea-ink); min-height: 44px; }
   .ea-seg, .ea-input, .ea-select, .ea-btn { min-height: 44px; }
-  .ea-chip-btn { min-height: 38px; padding: 7px 12px; }
   .ea-check { min-height: 36px; padding: 4px 0; }
-  .ea-canvas-frame { min-height: 300px; padding: 12px; }
+  .ea-canvas-frame { min-height: 260px; padding: 10px; }
+  #previewCanvas { max-height: 50vh; }
 }
