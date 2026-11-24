@@ -851,33 +851,65 @@
       { k: 'ACTORES PRINCIPALES', v: state.cast || '—', maxLines: 2 }
     ];
 
-    const labelFs = Math.max(9, w * (isLarge ? 0.025 : 0.024));
-    const valFs = Math.max(11, w * (isLarge ? 0.036 : 0.032));
-    const rowGap = isLarge ? Math.max(10, h * 0.032) : Math.max(6, h * 0.025);
+    const labelFs = Math.max(8.5, w * (isLarge ? 0.025 : 0.017));
+    const valFs = Math.max(10, w * (isLarge ? 0.036 : 0.023));
+    const rowGap = isLarge ? Math.max(10, h * 0.032) : Math.max(4, h * 0.03);
 
     let curY = y;
-    rows.forEach((m) => {
-      // Ancho disponible en esta fila (por si el QR estuviera arriba/al lado, normalmente la lista va arriba del QR)
-      const availW = (qrAvoid && (curY + labelFs + valFs > qrAvoid.y))
-        ? Math.max(w * 0.45, qrAvoid.x - x)
-        : w;
+    if (!isLarge) {
+      // En Póster Vertical (bloque inferior más compacto):
+      // Fila 1 compacta (DURACIÓN + GÉNERO lado a lado) y Fila 2 (ACTORES PRINCIPALES) para dejar espacio real a la sinopsis
+      const availW = qrAvoid ? Math.max(w * 0.55, qrAvoid.x - x) : w;
+      const durW = availW * 0.28;
+      const genX = x + durW + availW * 0.04;
+      const genW = availW - durW - availW * 0.04;
 
       c.textAlign = 'left';
       c.textBaseline = 'top';
       c.fillStyle = theme.muted;
       c.font = `800 ${labelFs}px ${fonts.body}`;
-      c.fillText(m.k, x, curY);
-      curY += labelFs * 1.28;
+      c.fillText('DURACIÓN', x, curY);
+      c.fillText('GÉNERO', genX, curY);
+      curY += labelFs * 1.25;
 
       c.fillStyle = theme.ink;
-      const fitted = fitWrappedLines(c, m.v, availW, m.maxLines, valFs, valFs * 0.76, (sz) => `800 ${sz}px ${fonts.body}`);
-      c.font = `800 ${fitted.size}px ${fonts.body}`;
-      fitted.lines.forEach((ln) => {
-        c.fillText(ln, x, curY);
-        curY += fitted.size * 1.2;
+      c.font = `800 ${valFs}px ${fonts.body}`;
+      c.fillText(truncateText(c, state.duration || '—', durW), x, curY);
+      c.fillText(truncateText(c, state.genre || '—', genW), genX, curY);
+      curY += valFs * 1.28 + rowGap;
+
+      c.fillStyle = theme.muted;
+      c.font = `800 ${labelFs}px ${fonts.body}`;
+      c.fillText('ACTORES PRINCIPALES', x, curY);
+      curY += labelFs * 1.25;
+
+      c.fillStyle = theme.ink;
+      c.font = `800 ${valFs}px ${fonts.body}`;
+      c.fillText(truncateText(c, state.cast || '—', availW), x, curY);
+      curY += valFs * 1.25 + rowGap;
+    } else {
+      rows.forEach((m) => {
+        const availW = (qrAvoid && (curY + labelFs + valFs > qrAvoid.y))
+          ? Math.max(w * 0.45, qrAvoid.x - x)
+          : w;
+
+        c.textAlign = 'left';
+        c.textBaseline = 'top';
+        c.fillStyle = theme.muted;
+        c.font = `800 ${labelFs}px ${fonts.body}`;
+        c.fillText(m.k, x, curY);
+        curY += labelFs * 1.28;
+
+        c.fillStyle = theme.ink;
+        const fitted = fitWrappedLines(c, m.v, availW, m.maxLines, valFs, valFs * 0.76, (sz) => `800 ${sz}px ${fonts.body}`);
+        c.font = `800 ${fitted.size}px ${fonts.body}`;
+        fitted.lines.forEach((ln) => {
+          c.fillText(ln, x, curY);
+          curY += fitted.size * 1.2;
+        });
+        curY += rowGap;
       });
-      curY += rowGap;
-    });
+    }
 
     // Separador sutil entre ficha técnica y descripción
     const sepW = (qrAvoid && curY > qrAvoid.y) ? Math.max(w * 0.45, qrAvoid.x - x) : w;

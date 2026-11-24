@@ -22,6 +22,27 @@
 
 * { box-sizing: border-box; }
 
+.ea-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--ea-blue);
+  outline-offset: 2px;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -383,7 +404,8 @@ button:hover .ea-ico-dl { transform: translateY(2.5px); }
 
 .ea-btn-primary { background: var(--ea-ink); color: #FFFFFF; }
 .ea-btn-yellow { background: var(--ea-yellow); color: var(--ea-ink); }
-.ea-btn-red { background: var(--ea-red); color: #FFFFFF; }
+.ea-btn-red { background: #C92325; color: #FFFFFF; }
+.ea-btn-red:hover { background: #B31D1F; }
 .ea-btn-blue { background: var(--ea-blue); color: var(--ea-ink); }
 .ea-btn-ghost { background: var(--ea-paper); color: var(--ea-ink); box-shadow: none; }
 .ea-btn-lg { padding: 12px 18px; font-size: 14.5px; flex: 1; }
@@ -597,15 +619,21 @@ button:hover .ea-ico-dl { transform: translateY(2.5px); }
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 960px) {
   .ea-workspace { grid-template-columns: 1fr; }
-  .ea-stage-col { position: static; order: -1; }
+  .ea-stage-col { position: relative; top: 0; order: -1; }
   #previewCanvas { max-height: 58vh; }
 }
 
 @media (max-width: 640px) {
   .ea-app { padding: 10px 10px 22px; }
-  .ea-template-bar { grid-template-columns: 1fr; }
+  .ea-header { padding: 12px 13px; }
+  .ea-template-bar { grid-template-columns: 1fr; gap: 8px; }
+  .ea-tpl-card { padding: 9px 12px; }
   .ea-grid-2, .ea-grid-3, .ea-sliders-grid { grid-template-columns: 1fr; }
+  .ea-seg-grid-mobile { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ea-tabs { grid-template-columns: repeat(2, 1fr); }
-  .ea-tab { border-bottom: 2px solid var(--ea-ink); }
-  .ea-canvas-frame { min-height: 320px; padding: 12px; }
+  .ea-tab { border-bottom: 2px solid var(--ea-ink); min-height: 44px; }
+  .ea-seg, .ea-input, .ea-select, .ea-btn { min-height: 44px; }
+  .ea-chip-btn { min-height: 38px; padding: 7px 12px; }
+  .ea-check { min-height: 36px; padding: 4px 0; }
+  .ea-canvas-frame { min-height: 300px; padding: 12px; }
 }

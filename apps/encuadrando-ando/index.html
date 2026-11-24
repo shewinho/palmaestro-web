@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Encuadrando ando de Pa'l Maestro: crea y descarga gratis en 300 DPI pósters A5/A4/A3, placas reproductor y llaveros doble cara de música, películas, series o regalos con foto propia y QR personalizado." />
   <title>Encuadrando ando · Pa'l Maestro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,500;0,700;0,800;0,900;1,500;1,700;1,800&family=Oswald:wght@500;700&family=Plus+Jakarta+Sans:ital,wght@0,500;0,700;0,800;1,500;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../theme/palmaestro-theme.css" />
   <link rel="stylesheet" href="./styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.9.2/lib/qr-code-styling.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.9.2/lib/qr-code-styling.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script defer src="./app.js"></script>
 </head>
 <body>
   <div class="ea-app" id="eaApp">
@@ -106,17 +108,18 @@
       <!-- PANEL DE CONTROLES -->
       <aside class="ea-controls">
         <nav class="ea-tabs" role="tablist" aria-label="Secciones del editor">
-          <button type="button" class="ea-tab is-active" data-tab="search" role="tab" aria-selected="true">1. Buscar</button>
+          <button type="button" id="tabBtnSearch" class="ea-tab is-active" data-tab="search" role="tab" aria-selected="true">1. Buscar</button>
           <button type="button" class="ea-tab" data-tab="content" role="tab" aria-selected="false">2. Textos y Foto</button>
           <button type="button" class="ea-tab" data-tab="qr" role="tab" aria-selected="false">3. QR</button>
           <button type="button" class="ea-tab" data-tab="style" role="tab" aria-selected="false">4. Hoja y Estilo</button>
         </nav>
 
         <!-- TAB 1: BUSCAR -->
-        <section class="ea-panel is-active" id="panel-search">
+        <section class="ea-panel is-active" id="panel-search" aria-labelledby="tabBtnSearch">
+          <h2 class="ea-sr-only">Buscar música, películas o series</h2>
           <div class="ea-field">
-            <label class="ea-label">¿Qué quieres encuadrar?</label>
-            <div class="ea-seg-group" id="searchTypeGroup">
+            <span class="ea-label" id="lblSearchType">¿Qué quieres encuadrar?</span>
+            <div class="ea-seg-group ea-seg-grid-mobile" id="searchTypeGroup" role="group" aria-labelledby="lblSearchType">
               <button type="button" class="ea-seg is-active" data-search-type="album">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/></svg>
                 Álbum
@@ -137,10 +140,12 @@
           </div>
 
           <form class="ea-search-form" id="searchForm">
+            <label class="ea-sr-only" for="searchInput">Buscar álbum, canción, película o serie</label>
             <input
               type="text"
               id="searchInput"
               class="ea-input"
+              aria-label="Buscar álbum, canción, película o serie"
               placeholder="Ej: Curtain Call Eminem, Gustavo Cerati, Donnie Darko..."
               autocomplete="off"
             />
@@ -175,7 +180,7 @@
 
         <!-- TAB 2: TEXTOS Y FOTO -->
         <section class="ea-panel" id="panel-content">
-          <div class="ea-group-title">Portada / Foto principal</div>
+          <h2 class="ea-group-title">Portada / Foto principal</h2>
           <div class="ea-photo-box">
             <div class="ea-photo-actions">
               <label class="ea-btn ea-btn-yellow ea-file-btn">
@@ -353,11 +358,11 @@
           <div id="paletteSection">
             <div class="ea-group-title">Paleta de 5 colores <small>(toca cualquiera para cambiarlo)</small></div>
             <div class="ea-palette-row" id="paletteEditor">
-              <label class="ea-swatch"><input type="color" id="palColor0" value="#102542" /><span>1</span></label>
-              <label class="ea-swatch"><input type="color" id="palColor1" value="#1B2A41" /><span>2</span></label>
-              <label class="ea-swatch"><input type="color" id="palColor2" value="#244A26" /><span>3</span></label>
-              <label class="ea-swatch"><input type="color" id="palColor3" value="#7EB36A" /><span>4</span></label>
-              <label class="ea-swatch"><input type="color" id="palColor4" value="#A85568" /><span>5</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor0" aria-label="Color 1 de la paleta" value="#102542" /><span>1</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor1" aria-label="Color 2 de la paleta" value="#1B2A41" /><span>2</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor2" aria-label="Color 3 de la paleta" value="#244A26" /><span>3</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor3" aria-label="Color 4 de la paleta" value="#7EB36A" /><span>4</span></label>
+              <label class="ea-swatch"><input type="color" id="palColor4" aria-label="Color 5 de la paleta" value="#A85568" /><span>5</span></label>
             </div>
           </div>
         </section>
@@ -575,7 +580,5 @@
       <span class="pm-tech-italic">Catálogo público vía iTunes, IMDb, TVMaze, Wikidata &amp; Odesli · QR open-source.</span>
     </footer>
   </div>
-
-  <script src="./app.js"></script>
 </body>
 </html>
