@@ -274,7 +274,9 @@
     });
   }
 
-  /* ---------- CARGA RÁPIDA DE IMÁGENES (DIRECTO CON CORS FIRST, WSRV SOLO FALLBACK) ---------- */
+  /* ---------- CARGA RÁPIDA DE IMÁGENES CON TIMEOUT Y RESCATE ---------- */
+  let artLoadSeq = 0;
+
   function optimizeImdbPosterUrl(url, widthPx) {
     if (!url || !url.includes('media-amazon.com')) return url || '';
     return url.replace(/\._V1_[^.]*\./i, `._V1_UX${widthPx}_.`);
@@ -284,13 +286,33 @@
     if (!url) { if (onFail) onFail(); return; }
     const isLocal = url.startsWith('data:') || url.startsWith('blob:');
     const fastUrl = isLocal ? url : optimizeImdbPosterUrl(url, 1200);
+    const isTvmaze = fastUrl.includes('static.tvmaze.com');
     const proxied = isLocal ? url : `https://wsrv.nl/?url=${encodeURIComponent(fastUrl)}&w=1200&we&output=jpg&q=90`;
 
-    const tryLoad = (src, useCors, nextFallback) => {
+    const tryLoad = (src, useCors, timeoutMs, nextFallback) => {
+      let settled = false;
       const img = new Image();
       if (useCors) img.crossOrigin = 'anonymous';
-      img.onload = () => onSuccess(img);
+
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        img.onload = null;
+        img.onerror = null;
+        if (nextFallback) nextFallback();
+        else if (onFail) onFail();
+      }, timeoutMs);
+
+      img.onload = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        onSuccess(img);
+      };
       img.onerror = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
         if (nextFallback) nextFallback();
         else if (onFail) onFail();
       };
@@ -298,12 +320,18 @@
     };
 
     if (isLocal) {
-      tryLoad(url, false);
+      tryLoad(url, false, 8000);
+    } else if (isTvmaze) {
+      // static.tvmaze.com cuelga peticiones con header Origin en GitHub Pages:
+      // probamos proxy corto (3.5s) y si demora cargamos directo para que siempre se vea.
+      tryLoad(proxied, true, 3500, () => {
+        tryLoad(fastUrl, false, 6000, onFail);
+      });
     } else {
-      // iTunes, Amazon IMDb y TVMaze devuelven ACAO: * directo en 40–400ms (mucho más rápido que pasar por proxy)
-      tryLoad(fastUrl, true, () => {
-        tryLoad(proxied, true, () => {
-          tryLoad(fastUrl, false, onFail);
+      // iTunes y Amazon IMDb responden directo con ACAO: * en 40–450ms
+      tryLoad(fastUrl, true, 5500, () => {
+        tryLoad(proxied, true, 4000, () => {
+          tryLoad(fastUrl, false, 5000, onFail);
         });
       });
     }
@@ -2127,7 +2155,10 @@
       }
 
       btn.innerHTML = `
-        <img class="ea-result-thumb ${isPoster ? 'is-poster' : ''}" src="${thumb}" alt="" loading="lazy" />
+        ${thumb
+          ? `<img class="ea-result-thumb ${isPoster ? 'is-poster' : ''}" src="${thumb}" alt="" loading="lazy" />`
+          : `<div class="ea-result-thumb ${isPoster ? 'is-poster' : ''}" style="display:grid;place-items:center;color:#64748B;font-size:10px;font-weight:800;">N/A</div>`
+        }
         <div class="ea-result-info">
           <div class="ea-result-title"></div>
           <div class="ea-result-sub"></div>
@@ -2258,8 +2289,24 @@
       }
       scheduleQrRender();
 
-      const artUrl = sh.image?.original || sh.image?.medium || '';
-      loadMainArtwork(artUrl);
+      const tvmazeArt = sh.image?.original || sh.image?.medium || '';
+      const imdbId = sh.externals?.imdb || '';
+
+      // Priorizar póster HD desde IMDb/Amazon (CORS nativo rápido en GitHub Pages); si no, TVMaze
+      fetchImdbSuggest(sh.name || '')
+        .then((list) => {
+          const exact = imdbId ? list.find(x => x.id === imdbId && x.i?.[0]) : null;
+          const byType = list.find(x => (x.qid === 'tvSeries' || x.qid === 'tvMiniSeries') && x.i?.[0]);
+          const imdbArt = exact?.i?.[0] || byType?.i?.[0] || list[0]?.i?.[0] || '';
+          if (imdbArt) {
+            loadMainArtwork(imdbArt);
+          } else if (tvmazeArt) {
+            loadMainArtwork(tvmazeArt);
+          }
+        })
+        .catch(() => {
+          if (tvmazeArt) loadMainArtwork(tvmazeArt);
+        });
 
       // Cargar reparto principal + episodios en paralelo
       fetch(`https://api.tvmaze.com/shows/${sh.id}/cast`)
@@ -2316,15 +2363,18 @@
   }
 
   function loadMainArtwork(url) {
+    const seq = ++artLoadSeq;
     state.mainImgUrl = url;
     state.mainZoom = 100;
     state.mainX = 0;
     state.mainY = 0;
     loadCorsImage(url, (img) => {
+      if (seq !== artLoadSeq) return;
       state.mainImg = img;
       extractPaletteFromImage(img);
       scheduleRender();
     }, () => {
+      if (seq !== artLoadSeq) return;
       state.mainImg = createFallbackArtImage(state.title, state.subtitle, state.palette);
       scheduleRender();
     });
@@ -2409,9 +2459,11 @@
       ].join('\n');
       $('searchInput').value = 'Breaking Bad';
       state.mainImg = createFallbackArtImage(state.title, state.subtitle, state.palette);
-      fetch('https://api.tvmaze.com/singlesearch/shows?q=breaking+bad')
-        .then(r => r.json())
-        .then(sh => { if (sh?.image?.original) loadMainArtwork(sh.image.original); })
+      fetchImdbSuggest('breaking bad')
+        .then(list => {
+          const hit = list.find(x => x.id === 'tt0903747' && x.i?.[0]) || list.find(x => x.i?.[0]);
+          if (hit?.i?.[0]) loadMainArtwork(hit.i[0]);
+        })
         .catch(() => {});
     } else if (kind === 'gift') {
       state.template = 'player';
