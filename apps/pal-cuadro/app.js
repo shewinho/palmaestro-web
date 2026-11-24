@@ -1767,7 +1767,7 @@
      EXPORTACIÓN PNG Y PDF (ALTA RESOLUCIÓN 300 DPI)
      ========================================================================== */
   function safeFileName() {
-    const clean = (state.title || 'encuadrando-ando')
+    const clean = (state.title || 'pal-cuadro')
       .toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
@@ -1836,7 +1836,7 @@
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(10);
         pdf.setTextColor(70, 80, 95);
-        pdf.text(`Encuadrando ando · Llavero doble cara (${(capWmm / 10).toFixed(1)} cm) — Imprimir al 100% (Sin ajustar a página)`, 15, 14);
+        pdf.text(`Pa'l Cuadro · Llavero doble cara (${(capWmm / 10).toFixed(1)} cm) — Imprimir al 100% (Sin ajustar a página)`, 15, 14);
 
         if (pairs === 1) {
           const x = (210 - blockW) / 2;
@@ -2656,7 +2656,7 @@
   function notifyIframeHeight() {
     if (window.parent && window.parent !== window) {
       const h = document.documentElement.scrollHeight;
-      window.parent.postMessage({ type: 'pm-encuadrando-height', height: h }, '*');
+      window.parent.postMessage({ type: 'pm-pal-cuadro-height', height: h }, '*');
     }
   }
 

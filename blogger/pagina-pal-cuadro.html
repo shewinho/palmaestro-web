@@ -1,20 +1,20 @@
 <!-- =========================================================================
-     PA'L MAESTRO · ENCUADRANDO ANDO — CÓDIGO LISTO PARA BLOGGER
+     PA'L MAESTRO · PA´L CUADRO — CÓDIGO LISTO PARA BLOGGER
      Instrucciones:
        1. Primero sube los cambios de palmaestro-web a GitHub (git push)
        2. En Blogger ve a: Páginas → Nueva página
-       3. Título sugerido: Encuadrando ando
-          (Enlace permanente personalizado: encuadrando-ando -> /p/encuadrando-ando.html)
+       3. Título sugerido: Pa´l Cuadro
+          (Enlace permanente personalizado: pal-cuadro -> /p/pal-cuadro.html)
        4. Cambia el editor a "Vista HTML" (ícono <> arriba a la izquierda)
        5. Pega TODO este bloque y presiona "Publicar"
-       6. Publicada en: https://www.palmaestro.xyz/p/encuadrando-ando.html
+       6. Publicada en: https://www.palmaestro.xyz/p/pal-cuadro.html
      ========================================================================= -->
 <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin:0 0 14px;">
   <p class="pm-tech-italic" style="margin:0; flex:1; min-width:220px;">
     Herramienta gratuita de Pa'l Maestro · Crea pósters A5/A4/A3 (vertical u horizontal), placas reproductor y llaveros doble cara de música, películas, series o regalos con tu foto y QR personalizado.
   </p>
   <a
-    href="https://shewinho.github.io/palmaestro-web/apps/encuadrando-ando/"
+    href="https://shewinho.github.io/palmaestro-web/apps/pal-cuadro/"
     target="_blank"
     rel="noopener"
     class="pm-btn"
@@ -25,16 +25,16 @@
 </div>
 
 <div style="position:relative;">
-  <div id="pm-encuadrando-loading" style="display:flex; justify-content:center; padding:36px 0;">
+  <div id="pm-palcuadro-loading" style="display:flex; justify-content:center; padding:36px 0;">
     <palmaestro-loader loop size="230" show-status></palmaestro-loader>
   </div>
   <iframe
-    id="pm-encuadrando-frame"
+    id="pm-palcuadro-frame"
     class="iframe-wrapper-maestro"
-    src="https://shewinho.github.io/palmaestro-web/apps/encuadrando-ando/"
-    title="Encuadrando ando · Creador de Pósters, Placas y Llaveros de Pa'l Maestro"
+    src="https://shewinho.github.io/palmaestro-web/apps/pal-cuadro/"
+    title="Pa´l Cuadro · Creador de Pósters, Placas y Llaveros de Pa'l Maestro"
     style="width:100%; min-height:860px; height:920px; display:none; border:2.5px solid #1F2536; border-radius:16px; background:#FFF8EE; box-shadow:5px 5px 0 #1F2536;"
-    onload="document.getElementById('pm-encuadrando-loading').style.display='none'; this.style.display='block';"
+    onload="document.getElementById('pm-palcuadro-loading').style.display='none'; this.style.display='block';"
     frameborder="0"
     allow="clipboard-write; web-share"
     allowfullscreen>
@@ -43,11 +43,11 @@
 
 <script>
 (function(){
-  var fr = document.getElementById('pm-encuadrando-frame');
+  var fr = document.getElementById('pm-palcuadro-frame');
   if(!fr) return;
   window.addEventListener('message', function(ev){
     if(ev.origin !== 'https://shewinho.github.io') return;
-    if(ev.data && ev.data.type === 'pm-encuadrando-height' && ev.data.height){
+    if(ev.data && ev.data.type === 'pm-pal-cuadro-height' && ev.data.height){
       fr.style.height = Math.max(860, Math.min(2800, Number(ev.data.height) + 16)) + 'px';
     }
   });
