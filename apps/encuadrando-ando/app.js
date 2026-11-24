@@ -274,11 +274,17 @@
     });
   }
 
-  /* ---------- CARGA SEGURA DE IMÁGENES CON CORS (wsrv.nl) ---------- */
+  /* ---------- CARGA RÁPIDA DE IMÁGENES (DIRECTO CON CORS FIRST, WSRV SOLO FALLBACK) ---------- */
+  function optimizeImdbPosterUrl(url, widthPx) {
+    if (!url || !url.includes('media-amazon.com')) return url || '';
+    return url.replace(/\._V1_[^.]*\./i, `._V1_UX${widthPx}_.`);
+  }
+
   function loadCorsImage(url, onSuccess, onFail) {
     if (!url) { if (onFail) onFail(); return; }
     const isLocal = url.startsWith('data:') || url.startsWith('blob:');
-    const proxied = isLocal ? url : `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=1400&we&output=jpg&q=92&maxage=7d`;
+    const fastUrl = isLocal ? url : optimizeImdbPosterUrl(url, 1200);
+    const proxied = isLocal ? url : `https://wsrv.nl/?url=${encodeURIComponent(fastUrl)}&w=1200&we&output=jpg&q=90`;
 
     const tryLoad = (src, useCors, nextFallback) => {
       const img = new Image();
@@ -294,9 +300,10 @@
     if (isLocal) {
       tryLoad(url, false);
     } else {
-      tryLoad(proxied, true, () => {
-        tryLoad(url, true, () => {
-          tryLoad(url, false, onFail);
+      // iTunes, Amazon IMDb y TVMaze devuelven ACAO: * directo en 40–400ms (mucho más rápido que pasar por proxy)
+      tryLoad(fastUrl, true, () => {
+        tryLoad(proxied, true, () => {
+          tryLoad(fastUrl, false, onFail);
         });
       });
     }
@@ -1945,25 +1952,26 @@
   async function enrichMovieFromWikidata(imdbId) {
     if (!imdbId || !/^tt\d+$/i.test(imdbId)) return;
     try {
-      const sparql = `SELECT ?dur ?dirName ?genreName ?castName ?esWiki ?enWiki WHERE {
-        ?item wdt:P345 "${imdbId}".
-        OPTIONAL { ?item wdt:P2047 ?dur. }
-        OPTIONAL { ?item wdt:P57 ?dir. ?dir rdfs:label ?dirName. FILTER(LANG(?dirName) = "en" || LANG(?dirName) = "es") }
-        OPTIONAL { ?item wdt:P136 ?genre. ?genre rdfs:label ?genreName. FILTER(LANG(?genreName) = "es") }
-        OPTIONAL { ?item wdt:P161 ?actor. ?actor rdfs:label ?castName. FILTER(LANG(?castName) = "en" || LANG(?castName) = "es") }
-        OPTIONAL { ?esWiki schema:about ?item; schema:isPartOf <https://es.wikipedia.org/>. }
-        OPTIONAL { ?enWiki schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>. }
-      } LIMIT 30`;
-
+      // Paso 1: consulta mínima ultrarrápida para obtener solo el QID de la película
+      const sparql = `SELECT ?item WHERE { ?item wdt:P345 "${imdbId}". } LIMIT 1`;
       const wdRes = await fetch('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(sparql), {
         headers: { Accept: 'application/sparql-results+json' }
       });
       if (!wdRes.ok) return;
       const wdData = await wdRes.json();
-      const rows = wdData?.results?.bindings || [];
-      if (!rows.length) return;
+      const itemUri = wdData?.results?.bindings?.[0]?.item?.value;
+      const qid = itemUri ? itemUri.split('/').pop() : '';
+      if (!qid || !/^Q\d+$/i.test(qid)) return;
 
-      const mins = Number(rows.find(r => r.dur)?.dur?.value);
+      // Paso 2: API REST rápida de Wikidata (claims + sitelinks sin explosión cartesiana)
+      const entRes = await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=claims|sitelinks&format=json&origin=*`);
+      if (!entRes.ok) return;
+      const entData = await entRes.json();
+      const entity = entData?.entities?.[qid];
+      if (!entity) return;
+
+      const claims = entity.claims || {};
+      const mins = Number(claims.P2047?.[0]?.mainsnak?.datavalue?.value?.amount);
       if (mins && !isNaN(mins)) {
         const h = Math.floor(mins / 60);
         const m = Math.round(mins % 60);
@@ -1971,21 +1979,47 @@
         state.totalTime = state.duration;
       }
 
-      const dir = rows.find(r => r.dirName)?.dirName?.value;
+      const dirQid = claims.P57?.[0]?.mainsnak?.datavalue?.value?.id || '';
+      const genreQids = (claims.P136 || []).map(x => x?.mainsnak?.datavalue?.value?.id).filter(Boolean).slice(0, 3);
+      const castQids = (claims.P161 || []).map(x => x?.mainsnak?.datavalue?.value?.id).filter(Boolean).slice(0, 4);
+
+      const esTitle = entity.sitelinks?.eswiki?.title || '';
+      const enTitle = entity.sitelinks?.enwiki?.title || '';
+      const labelIds = [...new Set([dirQid, ...genreQids, ...castQids].filter(Boolean))];
+
+      // Paso 3: etiquetas (director/género/reparto) + sinopsis de Wikipedia EN PARALELO
+      const [labelsData, wikiData] = await Promise.all([
+        labelIds.length
+          ? fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${labelIds.join('|')}&props=labels&languages=es|en&format=json&origin=*`)
+              .then(r => r.ok ? r.json() : null)
+              .catch(() => null)
+          : Promise.resolve(null),
+        (esTitle || enTitle)
+          ? fetch(`https://${esTitle ? 'es' : 'en'}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(esTitle || enTitle)}`)
+              .then(r => r.ok ? r.json() : null)
+              .catch(() => null)
+          : Promise.resolve(null)
+      ]);
+
+      const getLabel = (id) => {
+        const e = labelsData?.entities?.[id]?.labels;
+        return e?.es?.value || e?.en?.value || '';
+      };
+
+      const dir = dirQid ? getLabel(dirQid) : '';
       if (dir) {
         state.subtitle = dir.toUpperCase();
         state.credit = `DIRIGIDA POR ${dir.toUpperCase()}`;
       }
 
-      const genres = [...new Set(rows.map(r => r.genreName?.value).filter(Boolean))];
+      const genres = genreQids.map(getLabel).filter(Boolean);
       if (genres.length) {
-        const cleanGenres = genres.slice(0, 3).map(g => g.replace(/^cine de /i, '').replace(/^\w/, c => c.toUpperCase()));
+        const cleanGenres = genres.map(g => g.replace(/^cine de /i, '').replace(/^\w/, c => c.toUpperCase()));
         state.genre = cleanGenres.join(' · ');
       }
 
-      // Completar actores principales combinando lo que ya trajo IMDb + Wikidata
-      const existingCast = (state.cast || '').split(',').map(s => s.trim()).filter(Boolean);
-      const wdCast = [...new Set(rows.map(r => r.castName?.value).filter(Boolean))];
+      const existingCast = (state.cast || '').split(',').map(s => s.trim()).filter(s => s && s !== '—');
+      const wdCast = castQids.map(getLabel).filter(Boolean);
       const mergedCast = [...existingCast];
       wdCast.forEach((a) => {
         if (mergedCast.length < 4 && !mergedCast.some(e => e.toLowerCase() === a.toLowerCase())) {
@@ -1996,19 +2030,8 @@
         state.cast = mergedCast.slice(0, 4).join(', ');
       }
 
-      const wikiUri = rows.find(r => r.esWiki)?.esWiki?.value || rows.find(r => r.enWiki)?.enWiki?.value;
-      if (wikiUri) {
-        const isEs = wikiUri.includes('es.wikipedia.org');
-        const slug = wikiUri.split('/wiki/')[1];
-        if (slug) {
-          const sumRes = await fetch(`https://${isEs ? 'es' : 'en'}.wikipedia.org/api/rest_v1/page/summary/${slug}`);
-          if (sumRes.ok) {
-            const sumData = await sumRes.json();
-            if (sumData.extract) {
-              state.synopsis = sumData.extract.slice(0, 720);
-            }
-          }
-        }
+      if (wikiData?.extract) {
+        state.synopsis = wikiData.extract.slice(0, 720);
       }
 
       syncFormFromState();
@@ -2087,7 +2110,7 @@
         tag = formatMs(item.trackTimeMillis) || 'Canción';
       } else if (type === 'movie') {
         const rawThumb = item.i?.[0] || '';
-        thumb = rawThumb ? `https://wsrv.nl/?url=${encodeURIComponent(rawThumb)}&w=120&output=jpg` : '';
+        thumb = rawThumb ? optimizeImdbPosterUrl(rawThumb, 180) : '';
         title = item.l || '';
         sub = [item.y || '', item.s || ''].filter(Boolean).join(' · ');
         tag = item.y ? `${item.y} · IMDb` : 'IMDb';
