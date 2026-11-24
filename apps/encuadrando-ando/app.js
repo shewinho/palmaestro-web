@@ -84,7 +84,7 @@
     ].join('\n'),
     duration: '1h 17m',
     genre: 'Hip-Hop · Rap',
-    rating: '★ 8.7 IMDb',
+    cast: 'Eminem, Dido, Elton John, Nate Dogg',
     synopsis: 'Un recorrido por los mayores éxitos y momentos icónicos. Edita cualquier texto o sube tu propia foto para personalizar tu cuadro.',
 
     // Reproductor
@@ -804,54 +804,101 @@
     c.restore();
   }
 
-  /* ---------- BLOQUE FICHA CINE / SERIE ---------- */
-  function drawCinemaSheet(c, x, y, w, h, theme, fonts, isLarge) {
+  /* ---------- BLOQUE FICHA CINE / SERIE (LISTA VERTICAL + DESCRIPCIÓN RODEANDO QR) ---------- */
+  function drawCinemaSheet(c, x, y, w, h, theme, fonts, opts = {}) {
     c.save();
-    const metaItems = [
-      { k: 'DURACIÓN', v: state.duration || '—' },
-      { k: 'GÉNERO', v: state.genre || '—' },
-      { k: 'DESTACADO', v: state.rating || '—' }
+    const isLarge = Boolean(opts.isLarge);
+    const qrAvoid = opts.qrAvoid || null; // { x, y, w, h } en coordenadas del canvas
+
+    const rows = [
+      { k: 'DURACIÓN', v: state.duration || '—', maxLines: 1 },
+      { k: 'GÉNERO', v: state.genre || '—', maxLines: 2 },
+      { k: 'ACTORES PRINCIPALES', v: state.cast || '—', maxLines: 2 }
     ];
 
-    const colW = w / 3;
-    const scaleBoost = isLarge ? 1.28 : 1;
-    const labelFs = Math.max(9, w * 0.022 * scaleBoost);
-    const valFs = Math.max(11, w * 0.032 * scaleBoost);
+    const labelFs = Math.max(9, w * (isLarge ? 0.025 : 0.024));
+    const valFs = Math.max(11, w * (isLarge ? 0.036 : 0.032));
+    const rowGap = isLarge ? Math.max(10, h * 0.032) : Math.max(6, h * 0.025);
 
-    let maxMetaBottom = y + labelFs * 1.4 + valFs * 1.5;
+    let curY = y;
+    rows.forEach((m) => {
+      // Ancho disponible en esta fila (por si el QR estuviera arriba/al lado, normalmente la lista va arriba del QR)
+      const availW = (qrAvoid && (curY + labelFs + valFs > qrAvoid.y))
+        ? Math.max(w * 0.45, qrAvoid.x - x)
+        : w;
 
-    metaItems.forEach((m, i) => {
-      const mx = x + i * colW;
       c.textAlign = 'left';
       c.textBaseline = 'top';
       c.fillStyle = theme.muted;
       c.font = `800 ${labelFs}px ${fonts.body}`;
-      c.fillText(m.k, mx, y);
+      c.fillText(m.k, x, curY);
+      curY += labelFs * 1.28;
 
       c.fillStyle = theme.ink;
-      const fitted = fitWrappedLines(c, m.v, colW - 10, 2, valFs, valFs * 0.72, (sz) => `800 ${sz}px ${fonts.body}`);
+      const fitted = fitWrappedLines(c, m.v, availW, m.maxLines, valFs, valFs * 0.76, (sz) => `800 ${sz}px ${fonts.body}`);
       c.font = `800 ${fitted.size}px ${fonts.body}`;
-      fitted.lines.forEach((ln, li) => {
-        c.fillText(ln, mx, y + labelFs * 1.35 + li * (fitted.size * 1.18));
+      fitted.lines.forEach((ln) => {
+        c.fillText(ln, x, curY);
+        curY += fitted.size * 1.2;
       });
-      const itemBottom = y + labelFs * 1.35 + fitted.lines.length * (fitted.size * 1.18);
-      if (itemBottom > maxMetaBottom) maxMetaBottom = itemBottom;
+      curY += rowGap;
     });
 
-    const synY = maxMetaBottom + (isLarge ? h * 0.055 : valFs * 0.65);
-    const synH = Math.max(24, y + h - synY);
-    const targetSynFs = isLarge ? Math.min(w * 0.036, synH / 6.2) : Math.min(w * 0.028, synH / 4.2);
-    const synFs = Math.max(10.5, targetSynFs);
+    // Separador sutil entre ficha técnica y descripción
+    const sepW = (qrAvoid && curY > qrAvoid.y) ? Math.max(w * 0.45, qrAvoid.x - x) : w;
+    c.fillStyle = mixColor(theme.bg, theme.ink, 0.22);
+    c.fillRect(x, curY - rowGap * 0.35, sepW, Math.max(1, w * 0.0025));
+
+    const synY = curY + rowGap * 0.35;
+    const synBottom = y + h;
+    const synAvailH = synBottom - synY;
+    if (synAvailH < 18 || !state.synopsis.trim()) {
+      c.restore();
+      return;
+    }
+
+    const synFs = Math.max(10.5, isLarge ? Math.min(w * 0.034, synAvailH / 5.5) : Math.min(w * 0.029, synAvailH / 4.2));
+    const lineStep = synFs * 1.44;
+
     c.fillStyle = theme.ink;
     c.font = `500 ${synFs}px ${fonts.body}`;
     c.textAlign = 'left';
     c.textBaseline = 'top';
-    const lineStep = synFs * 1.48;
-    const maxLines = Math.max(2, Math.floor(synH / lineStep));
-    const lines = wrapLines(c, state.synopsis, w, maxLines);
-    lines.forEach((ln, idx) => {
-      c.fillText(ln, x, synY + idx * lineStep);
-    });
+
+    // Flujo de texto rodeando el QR (ancho completo arriba del QR, ancho reducido al lado del QR)
+    const words = state.synopsis.trim().split(/\s+/).filter(Boolean);
+    let wi = 0;
+    let ly = synY;
+
+    while (wi < words.length && ly + synFs <= synBottom + 1) {
+      const besideQr = Boolean(qrAvoid && (ly + synFs * 1.15 > qrAvoid.y));
+      const lineMaxW = besideQr ? Math.max(w * 0.4, qrAvoid.x - x) : w;
+      const isLastLine = (ly + lineStep + synFs > synBottom + 1);
+
+      let line = '';
+      while (wi < words.length) {
+        const test = line ? line + ' ' + words[wi] : words[wi];
+        if (c.measureText(test).width <= lineMaxW) {
+          line = test;
+          wi++;
+        } else {
+          if (!line) {
+            line = truncateText(c, words[wi], lineMaxW);
+            wi++;
+          }
+          break;
+        }
+      }
+
+      if (isLastLine && wi < words.length) {
+        line = truncateText(c, line + ' ' + words[wi], lineMaxW);
+        wi = words.length;
+      }
+
+      c.fillText(line, x, ly);
+      ly += lineStep;
+    }
+
     c.restore();
   }
 
@@ -956,7 +1003,15 @@
       const bodyW = hasQr ? innerW - qrSize - innerW * 0.035 : innerW;
 
       if (state.bodyMode === 'cinema') {
-        drawCinemaSheet(c, padX, bodyY, bodyW, bodyH, theme, fonts);
+        const qrAvoidV = hasQr
+          ? {
+              x: padX + innerW - qrSize - innerW * 0.03,
+              y: bodyY + Math.max(0, (bodyH - qrSize - qrSize * 0.14) / 2) - innerH * 0.008,
+              w: qrSize + innerW * 0.03,
+              h: qrSize * 1.18
+            }
+          : null;
+        drawCinemaSheet(c, padX, bodyY, innerW, bodyH, theme, fonts, { isLarge: false, qrAvoid: qrAvoidV });
       } else {
         drawTracklist(c, parseTracks(state.tracksText), padX, bodyY, bodyW, bodyH, theme, fonts);
       }
@@ -1013,17 +1068,20 @@
         drawParentalAdvisory(c, artX + artW - paW - artW * 0.03, artY + artH - paW * 0.62 - artW * 0.03, paW);
       }
 
-      // Columna derecha: TODO lo demás a mayor escala llenando el resto de la hoja
+      // Columna derecha SIMÉTRICA: empieza a la misma altura superior (artY) y termina en la misma base (artY + artH) que la portada
       const rightX = artX + artW + colGap;
       const rightW = (hPadX + hInnerW) - rightX;
+      const colTop = artY;
+      const colBottom = artY + artH;
+      const colH = artH;
 
-      // Subtítulo / Artista / Director
+      // Subtítulo / Artista / Director (alineado exacto con el borde superior de la portada)
       const subFs = rightW * 0.056;
       c.fillStyle = theme.ink;
       c.textAlign = 'left';
       c.textBaseline = 'top';
       c.font = `italic 800 ${subFs}px ${fonts.display}`;
-      c.fillText(truncateText(c, (state.subtitle || '').toUpperCase(), rightW * 0.80), rightX, hPadY);
+      c.fillText(truncateText(c, (state.subtitle || '').toUpperCase(), rightW * 0.80), rightX, colTop);
 
       // Título principal + Año
       const yearText = (state.year || '').trim();
@@ -1035,7 +1093,7 @@
       }
 
       const titleText = (state.title || 'SIN TÍTULO').toUpperCase();
-      const titleBaseline = hPadY + subFs * 1.25 + rightW * 0.078;
+      const titleBaseline = colTop + subFs * 1.22 + rightW * 0.076;
       fitText(c, titleText, rightW - yearW, rightW * 0.088, rightW * 0.038, (sz) => `italic 900 ${sz}px ${fonts.display}`);
       c.textAlign = 'left';
       c.textBaseline = 'alphabetic';
@@ -1048,13 +1106,13 @@
       }
 
       // Línea divisoria superior
-      const rule1Y = titleBaseline + hInnerH * 0.022;
+      const rule1Y = titleBaseline + colH * 0.022;
       c.fillStyle = theme.rule;
       c.fillRect(rightX, rule1Y, rightW, ruleH);
 
       // Franja de Crédito + Paleta de 5 colores en la mitad derecha
-      const palY = rule1Y + ruleH + hInnerH * 0.022;
-      const palH = hInnerH * 0.052;
+      const palY = rule1Y + ruleH + colH * 0.022;
+      const palH = colH * 0.052;
       const palW = rightW * 0.42;
       drawPaletteBar(c, rightX + rightW - palW, palY, palW, palH);
 
@@ -1069,36 +1127,50 @@
       }
 
       // Segunda regla fina
-      const rule2Y = palY + palH + hInnerH * 0.02;
+      const rule2Y = palY + palH + colH * 0.02;
       c.fillStyle = theme.rule;
       c.fillRect(rightX, rule2Y, rightW, Math.max(1.5, ruleH * 0.7));
 
-      // Bloque central + Barra inferior con QR grande
-      const contentY = rule2Y + ruleH + hInnerH * 0.028;
+      // Bloque central + QR alineado exacto con el borde inferior de la portada (colBottom)
+      const contentY = rule2Y + ruleH + colH * 0.026;
       const hasQr = state.showQr && qrImg;
-      const qrSize = hasQr ? Math.min(hInnerH * 0.25, rightW * 0.30) : 0;
-      const bottomBarH = hasQr ? qrSize + qrSize * 0.16 : (state.footerNote.trim() ? hInnerH * 0.05 : 0);
-      const bodyH = Math.max(40, (hPadY + hInnerH - bottomBarH - hInnerH * 0.028) - contentY);
+      const qrSize = hasQr ? Math.min(colH * 0.25, rightW * 0.30) : 0;
+      const qrLabelExtra = hasQr && state.qrLabel.trim() ? qrSize * 0.14 : 0;
+      const qrTotalH = hasQr ? qrSize + qrLabelExtra : 0;
+      const qrX = rightX + rightW - qrSize;
+      const qrY = colBottom - qrTotalH;
+
+      const footerReserve = state.footerNote.trim() ? colH * 0.04 : 0;
 
       if (state.bodyMode === 'cinema') {
-        drawCinemaSheet(c, rightX, contentY, rightW, bodyH, theme, fonts, true);
+        const cineH = Math.max(60, (colBottom - footerReserve) - contentY);
+        const qrAvoid = hasQr
+          ? {
+              x: qrX - rightW * 0.04,
+              y: qrY - colH * 0.02,
+              w: qrSize + rightW * 0.04,
+              h: qrTotalH + colH * 0.02
+            }
+          : null;
+        drawCinemaSheet(c, rightX, contentY, rightW, cineH, theme, fonts, { isLarge: true, qrAvoid });
       } else {
+        const bottomBarH = hasQr ? qrTotalH + colH * 0.02 : footerReserve;
+        const bodyH = Math.max(40, (colBottom - bottomBarH) - contentY);
         drawTracklist(c, tracks, rightX, contentY, rightW, bodyH, theme, fonts);
       }
 
-      // Barra inferior derecha: Nota + QR
-      const bottomY = hPadY + hInnerH - bottomBarH;
+      // QR en esquina inferior derecha (borde inferior alineado con portada)
       if (hasQr) {
-        drawQrBlock(c, qrImg, rightX + rightW - qrSize, bottomY, qrSize, theme, state.qrLabel);
+        drawQrBlock(c, qrImg, qrX, qrY, qrSize, theme, state.qrLabel);
       }
 
-      // En modo cine/música, si hay nota al pie va a la izquierda del QR
+      // Nota al pie opcional (alineada a la base izquierda de la columna)
       if (state.footerNote.trim()) {
         c.fillStyle = theme.muted;
         c.textAlign = 'left';
         c.textBaseline = 'bottom';
         c.font = `700 ${rightW * 0.024}px ${fonts.mono}`;
-        c.fillText(truncateText(c, state.footerNote.trim().toUpperCase(), rightW - qrSize - 16), rightX, hPadY + hInnerH);
+        c.fillText(truncateText(c, state.footerNote.trim().toUpperCase(), rightW - qrSize - 16), rightX, colBottom);
       }
     }
   }
@@ -1128,10 +1200,14 @@
       c.bezierCurveTo(cx + r * 1.15, cy - r * 1.05, cx + r * 1.4, cy + r * 0.05, cx, cy + r * 0.85);
       c.fill();
     } else if (type === 'fire') {
-      c.font = `${r * 2}px sans-serif`;
-      c.textAlign = 'center';
-      c.textBaseline = 'middle';
-      c.fillText('🔥', cx, cy);
+      // Llama vectorial limpia (sin emoji de sistema)
+      c.beginPath();
+      c.moveTo(cx, cy - r * 1.0);
+      c.bezierCurveTo(cx + r * 0.65, cy - r * 0.35, cx + r * 0.95, cy + r * 0.25, cx + r * 0.55, cy + r * 0.78);
+      c.bezierCurveTo(cx + r * 0.22, cy + r * 1.05, cx - r * 0.22, cy + r * 1.05, cx - r * 0.55, cy + r * 0.78);
+      c.bezierCurveTo(cx - r * 0.95, cy + r * 0.25, cx - r * 0.55, cy - r * 0.35, cx, cy - r * 1.0);
+      c.closePath();
+      c.fill();
     }
     c.restore();
   }
@@ -1869,14 +1945,15 @@
   async function enrichMovieFromWikidata(imdbId) {
     if (!imdbId || !/^tt\d+$/i.test(imdbId)) return;
     try {
-      const sparql = `SELECT ?dur ?dirName ?genreName ?esWiki ?enWiki WHERE {
+      const sparql = `SELECT ?dur ?dirName ?genreName ?castName ?esWiki ?enWiki WHERE {
         ?item wdt:P345 "${imdbId}".
         OPTIONAL { ?item wdt:P2047 ?dur. }
         OPTIONAL { ?item wdt:P57 ?dir. ?dir rdfs:label ?dirName. FILTER(LANG(?dirName) = "en" || LANG(?dirName) = "es") }
         OPTIONAL { ?item wdt:P136 ?genre. ?genre rdfs:label ?genreName. FILTER(LANG(?genreName) = "es") }
+        OPTIONAL { ?item wdt:P161 ?actor. ?actor rdfs:label ?castName. FILTER(LANG(?castName) = "en" || LANG(?castName) = "es") }
         OPTIONAL { ?esWiki schema:about ?item; schema:isPartOf <https://es.wikipedia.org/>. }
         OPTIONAL { ?enWiki schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>. }
-      } LIMIT 12`;
+      } LIMIT 30`;
 
       const wdRes = await fetch('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(sparql), {
         headers: { Accept: 'application/sparql-results+json' }
@@ -1906,6 +1983,19 @@
         state.genre = cleanGenres.join(' · ');
       }
 
+      // Completar actores principales combinando lo que ya trajo IMDb + Wikidata
+      const existingCast = (state.cast || '').split(',').map(s => s.trim()).filter(Boolean);
+      const wdCast = [...new Set(rows.map(r => r.castName?.value).filter(Boolean))];
+      const mergedCast = [...existingCast];
+      wdCast.forEach((a) => {
+        if (mergedCast.length < 4 && !mergedCast.some(e => e.toLowerCase() === a.toLowerCase())) {
+          mergedCast.push(a);
+        }
+      });
+      if (mergedCast.length) {
+        state.cast = mergedCast.slice(0, 4).join(', ');
+      }
+
       const wikiUri = rows.find(r => r.esWiki)?.esWiki?.value || rows.find(r => r.enWiki)?.enWiki?.value;
       if (wikiUri) {
         const isEs = wikiUri.includes('es.wikipedia.org');
@@ -1915,7 +2005,7 @@
           if (sumRes.ok) {
             const sumData = await sumRes.json();
             if (sumData.extract) {
-              state.synopsis = sumData.extract.slice(0, 320);
+              state.synopsis = sumData.extract.slice(0, 720);
             }
           }
         }
@@ -2096,8 +2186,8 @@
       state.credit = item.s ? `PROTAGONIZADA POR ${item.s.toUpperCase()}` : 'PELÍCULA';
       state.duration = '—';
       state.genre = 'Cine';
-      state.rating = `IMDb · ${imdbId}`;
-      state.synopsis = item.s ? `Reparto principal: ${item.s}.` : '';
+      state.cast = item.s || '—';
+      state.synopsis = '';
       state.totalTime = '2:00';
       state.currentTime = '0:42';
       state.showExplicit = false;
@@ -2106,7 +2196,7 @@
       state.qrLabel = 'VER EN IMDb';
       state.qrUrl = imdbId ? `https://www.imdb.com/title/${imdbId}/` : `https://www.imdb.com/find/?q=${encodeURIComponent(state.title)}&s=tt`;
       $('inpQrUrl').value = state.qrUrl;
-      $('qrUrlBadge').textContent = imdbId ? '✓ IMDb exacto' : 'IMDb búsqueda';
+      $('qrUrlBadge').textContent = imdbId ? 'IMDb exacto' : 'IMDb búsqueda';
       scheduleQrRender();
 
       const artUrl = item.i?.[0] || '';
@@ -2115,10 +2205,10 @@
       scheduleRender();
 
       await enrichMovieFromWikidata(imdbId);
-      status.textContent = `✓ Película cargada (${state.year || 'Cine'}${state.duration && state.duration !== '—' ? ' · ' + state.duration : ''}) con QR directo a IMDb.`;
+      status.textContent = `Película cargada (${state.year || 'Cine'}${state.duration && state.duration !== '—' ? ' · ' + state.duration : ''}) con QR directo a IMDb.`;
     } else if (type === 'series') {
       const sh = item.show || {};
-      status.textContent = 'Cargando serie, episodios y enlace de IMDb...';
+      status.textContent = 'Cargando serie, reparto, episodios y enlace de IMDb...';
       state.title = sh.name || '';
       const net = sh.network?.name || sh.webChannel?.name || 'SERIE TV';
       state.subtitle = net.toUpperCase();
@@ -2128,7 +2218,7 @@
       state.credit = `${net.toUpperCase()} · SERIE ORIGINAL`;
       state.duration = sh.averageRuntime ? `${sh.averageRuntime} min/ep` : '45 min/ep';
       state.genre = (sh.genres || []).slice(0, 3).join(' · ') || 'Serie';
-      state.rating = sh.rating?.average ? `★ ${sh.rating.average} TVMaze` : 'Serie';
+      state.cast = 'Cargando reparto...';
       state.synopsis = (sh.summary || '').replace(/<[^>]+>/g, '').trim();
       state.showExplicit = false;
       state.fitContain = true;
@@ -2137,7 +2227,7 @@
       if (sh.externals?.imdb) {
         state.qrUrl = `https://www.imdb.com/title/${sh.externals.imdb}/`;
         $('inpQrUrl').value = state.qrUrl;
-        $('qrUrlBadge').textContent = '✓ IMDb exacto';
+        $('qrUrlBadge').textContent = 'IMDb exacto';
       } else {
         state.qrUrl = `https://www.imdb.com/find/?q=${encodeURIComponent(state.title)}&s=tt`;
         $('inpQrUrl').value = state.qrUrl;
@@ -2147,6 +2237,17 @@
 
       const artUrl = sh.image?.original || sh.image?.medium || '';
       loadMainArtwork(artUrl);
+
+      // Cargar reparto principal + episodios en paralelo
+      fetch(`https://api.tvmaze.com/shows/${sh.id}/cast`)
+        .then(r => r.ok ? r.json() : [])
+        .then(castList => {
+          const names = [...new Set((castList || []).map(c => c.person?.name).filter(Boolean))].slice(0, 4);
+          state.cast = names.length ? names.join(', ') : '—';
+          syncFormFromState();
+          scheduleRender();
+        })
+        .catch(() => { state.cast = '—'; });
 
       // Cargar episodios para permitir elegir temporada
       try {
@@ -2248,9 +2349,9 @@
       state.year = '2014';
       state.credit = 'DIRIGIDA POR CHRISTOPHER NOLAN';
       state.duration = '2h 49m';
-      state.genre = 'Sci-Fi · Drama · Aventura';
-      state.rating = '★ 8.7 IMDb';
-      state.synopsis = 'Un grupo de exploradores viaja a través de un agujero de gusano en el espacio en un intento por asegurar la supervivencia de la humanidad.';
+      state.genre = 'Ciencia ficción · Drama · Aventura';
+      state.cast = 'Matthew McConaughey, Anne Hathaway, Jessica Chastain, Michael Caine';
+      state.synopsis = 'Interstellar es una película épica de ciencia ficción y drama dirigida por Christopher Nolan. Cuando la Tierra se vuelve inhabitable en un futuro cercano, un granjero y expiloto de la NASA emprende una misión a través de un agujero de gusano para buscar un nuevo hogar para la humanidad.';
       state.showExplicit = false;
       state.fitContain = true;
       state.qrUrl = 'https://www.imdb.com/title/tt0816692/';
@@ -2272,7 +2373,7 @@
       state.credit = 'TEMPORADA 1 · 7 EPISODIOS';
       state.duration = '47 min/ep';
       state.genre = 'Drama · Crimen · Thriller';
-      state.rating = '★ 9.5 IMDb';
+      state.cast = 'Bryan Cranston, Aaron Paul, Anna Gunn, Dean Norris';
       state.showExplicit = false;
       state.fitContain = true;
       state.qrUrl = 'https://www.imdb.com/title/tt0903747/';
@@ -2371,7 +2472,7 @@
     $('inpTracks').value = state.tracksText;
     $('inpDuration').value = state.duration;
     $('inpGenre').value = state.genre;
-    $('inpRating').value = state.rating;
+    $('inpCast').value = state.cast;
     $('inpSynopsis').value = state.synopsis;
 
     $('inpCurrentTime').value = state.currentTime;
@@ -2532,7 +2633,7 @@
     bindInput('inpTracks', 'tracksText');
     bindInput('inpDuration', 'duration');
     bindInput('inpGenre', 'genre');
-    bindInput('inpRating', 'rating');
+    bindInput('inpCast', 'cast');
     bindInput('inpSynopsis', 'synopsis');
     bindInput('inpCurrentTime', 'currentTime');
     bindInput('inpTotalTime', 'totalTime');
