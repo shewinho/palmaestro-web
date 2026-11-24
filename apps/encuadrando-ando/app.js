@@ -595,31 +595,46 @@
   /* ---------- SELLO PARENTAL ADVISORY ---------- */
   function drawParentalAdvisory(c, x, y, w) {
     const h = w * 0.62;
-    c.save();
-    c.fillStyle = '#0D0E11';
-    c.fillRect(x, y, w, h);
-    c.strokeStyle = '#FFFFFF';
-    c.lineWidth = Math.max(1.5, w * 0.025);
-    c.strokeRect(x + c.lineWidth, y + c.lineWidth, w - c.lineWidth * 2, h - c.lineWidth * 2);
+    const border = Math.max(1.5, w * 0.024);
+    const innerX = x + border * 1.6;
+    const innerW = w - border * 3.2;
 
-    // Franja central blanca
+    c.save();
+    // Fondo negro base
+    c.fillStyle = '#0B0C0F';
+    c.fillRect(x, y, w, h);
+
+    // Marco blanco interior limpio
+    c.strokeStyle = '#FFFFFF';
+    c.lineWidth = border;
+    c.strokeRect(x + border * 1.1, y + border * 1.1, w - border * 2.2, h - border * 2.2);
+
+    // Franja central blanca (strictly inside white border)
+    const bandY = y + h * 0.30;
+    const bandH = h * 0.40;
     c.fillStyle = '#FFFFFF';
-    c.fillRect(x + w * 0.05, y + h * 0.30, w * 0.90, h * 0.42);
+    c.fillRect(innerX, bandY, innerW, bandH);
 
     c.textAlign = 'center';
     c.textBaseline = 'middle';
 
+    // Línea 1: PARENTAL (auto-ajustado para nunca salirse)
+    const topMaxW = innerW * 0.90;
+    fitText(c, 'PARENTAL', topMaxW, w * 0.135, w * 0.06, (sz) => `800 ${sz}px Montserrat, sans-serif`);
     c.fillStyle = '#FFFFFF';
-    c.font = `800 ${w * 0.145}px Montserrat, sans-serif`;
-    c.fillText('PARENTAL', x + w / 2, y + h * 0.17);
+    c.fillText('PARENTAL', x + w / 2, y + h * 0.175, topMaxW);
 
-    c.fillStyle = '#0D0E11';
-    c.font = `900 ${w * 0.215}px Oswald, sans-serif`;
-    c.fillText('ADVISORY', x + w / 2, y + h * 0.52);
+    // Línea 2: ADVISORY
+    const midMaxW = innerW * 0.92;
+    fitText(c, 'ADVISORY', midMaxW, w * 0.215, w * 0.09, (sz) => `900 ${sz}px Oswald, sans-serif`);
+    c.fillStyle = '#0B0C0F';
+    c.fillText('ADVISORY', x + w / 2, bandY + bandH * 0.53, midMaxW);
 
+    // Línea 3: EXPLICIT CONTENT
+    const botMaxW = innerW * 0.92;
+    fitText(c, 'EXPLICIT CONTENT', botMaxW, w * 0.095, w * 0.05, (sz) => `700 ${sz}px Montserrat, sans-serif`);
     c.fillStyle = '#FFFFFF';
-    c.font = `700 ${w * 0.105}px Montserrat, sans-serif`;
-    c.fillText('EXPLICIT CONTENT', x + w / 2, y + h * 0.85);
+    c.fillText('EXPLICIT CONTENT', x + w / 2, y + h * 0.845, botMaxW);
     c.restore();
   }
 
@@ -633,6 +648,40 @@
     }
     c.font = fontBuilder(size);
     return size;
+  }
+
+  function fitWrappedLines(c, text, maxW, maxLines, initialSize, minSize, fontBuilder) {
+    const clean = (text || '').trim();
+    if (!clean) return { size: initialSize, lines: [] };
+    let size = initialSize;
+    const step = Math.max(0.8, (initialSize - minSize) / 22);
+    while (size >= minSize) {
+      c.font = fontBuilder(size);
+      const rawLines = wrapLinesRaw(c, clean, maxW);
+      if (rawLines.length <= maxLines && rawLines.every(l => c.measureText(l).width <= maxW + 1)) {
+        return { size, lines: rawLines };
+      }
+      size -= step;
+    }
+    c.font = fontBuilder(minSize);
+    return { size: minSize, lines: wrapLines(c, clean, maxW, maxLines) };
+  }
+
+  function wrapLinesRaw(c, text, maxW) {
+    const words = (text || '').trim().split(/\s+/).filter(Boolean);
+    const lines = [];
+    let line = '';
+    for (let i = 0; i < words.length; i++) {
+      const test = line ? line + ' ' + words[i] : words[i];
+      if (c.measureText(test).width <= maxW) {
+        line = test;
+      } else {
+        if (line) lines.push(line);
+        line = words[i];
+      }
+    }
+    if (line) lines.push(line);
+    return lines;
   }
 
   function truncateText(c, text, maxW) {
@@ -756,7 +805,7 @@
   }
 
   /* ---------- BLOQUE FICHA CINE / SERIE ---------- */
-  function drawCinemaSheet(c, x, y, w, h, theme, fonts) {
+  function drawCinemaSheet(c, x, y, w, h, theme, fonts, isLarge) {
     c.save();
     const metaItems = [
       { k: 'DURACIÓN', v: state.duration || '—' },
@@ -765,8 +814,11 @@
     ];
 
     const colW = w / 3;
-    const labelFs = Math.max(9, w * 0.022);
-    const valFs = Math.max(11, w * 0.032);
+    const scaleBoost = isLarge ? 1.28 : 1;
+    const labelFs = Math.max(9, w * 0.022 * scaleBoost);
+    const valFs = Math.max(11, w * 0.032 * scaleBoost);
+
+    let maxMetaBottom = y + labelFs * 1.4 + valFs * 1.5;
 
     metaItems.forEach((m, i) => {
       const mx = x + i * colW;
@@ -777,21 +829,28 @@
       c.fillText(m.k, mx, y);
 
       c.fillStyle = theme.ink;
-      c.font = `800 ${valFs}px ${fonts.body}`;
-      c.fillText(truncateText(c, m.v, colW - 8), mx, y + labelFs * 1.35);
+      const fitted = fitWrappedLines(c, m.v, colW - 10, 2, valFs, valFs * 0.72, (sz) => `800 ${sz}px ${fonts.body}`);
+      c.font = `800 ${fitted.size}px ${fonts.body}`;
+      fitted.lines.forEach((ln, li) => {
+        c.fillText(ln, mx, y + labelFs * 1.35 + li * (fitted.size * 1.18));
+      });
+      const itemBottom = y + labelFs * 1.35 + fitted.lines.length * (fitted.size * 1.18);
+      if (itemBottom > maxMetaBottom) maxMetaBottom = itemBottom;
     });
 
-    const synY = y + labelFs * 1.4 + valFs * 1.8;
-    const synH = Math.max(20, y + h - synY);
-    const synFs = Math.max(10, Math.min(w * 0.028, synH / 4.2));
+    const synY = maxMetaBottom + (isLarge ? h * 0.055 : valFs * 0.65);
+    const synH = Math.max(24, y + h - synY);
+    const targetSynFs = isLarge ? Math.min(w * 0.036, synH / 6.2) : Math.min(w * 0.028, synH / 4.2);
+    const synFs = Math.max(10.5, targetSynFs);
     c.fillStyle = theme.ink;
     c.font = `500 ${synFs}px ${fonts.body}`;
     c.textAlign = 'left';
     c.textBaseline = 'top';
-    const maxLines = Math.max(2, Math.floor(synH / (synFs * 1.42)));
+    const lineStep = synFs * 1.48;
+    const maxLines = Math.max(2, Math.floor(synH / lineStep));
     const lines = wrapLines(c, state.synopsis, w, maxLines);
     lines.forEach((ln, idx) => {
-      c.fillText(ln, x, synY + idx * (synFs * 1.42));
+      c.fillText(ln, x, synY + idx * lineStep);
     });
     c.restore();
   }
@@ -917,38 +976,58 @@
         c.fillText(state.footerNote.trim().toUpperCase(), W / 2, padY + innerH);
       }
     } else {
-      /* ---------- PÓSTER HORIZONTAL (Galería 2 columnas) ---------- */
-      const colGap = innerW * 0.045;
-      const leftW = innerW * 0.44;
-      const rightX = padX + leftW + colGap;
-      const rightW = innerW - leftW - colGap;
+      /* ---------- PÓSTER HORIZONTAL (Sin espacios vacíos: Cine vs Música) ---------- */
+      const hPadX = W * 0.04;
+      const hPadY = H * 0.048;
+      const hInnerW = W - hPadX * 2;
+      const hInnerH = H - hPadY * 2;
+      const colGap = hInnerW * 0.038;
 
-      // Columna izquierda: Portada + Paleta abajo
-      const palH = innerH * 0.05;
-      const artSize = Math.min(leftW, innerH - palH - innerH * 0.035);
-      const artX = padX + (leftW - artSize) / 2;
-      const artY = padY + (innerH - artSize - palH - innerH * 0.028) / 2;
+      const isCinemaLayout = state.bodyMode === 'cinema' || state.searchType === 'movie' || state.searchType === 'series';
+      const tracks = parseTracks(state.tracksText);
 
-      drawCroppedImage(c, state.mainImg, artX, artY, artSize, artSize, state.mainZoom, state.mainX, state.mainY, {
-        contain: state.fitContain,
+      let artW, artH, artX, artY;
+      if (isCinemaLayout) {
+        // Películas y series: SOLO la portada ocupa toda la altura de la mitad izquierda (~2:3 real)
+        artH = hInnerH;
+        artW = Math.min(hInnerW * 0.48, artH * 0.69);
+        artX = hPadX;
+        artY = hPadY;
+      } else {
+        // Música (álbum/canción cuadrada): portada cuadrada lo más grande posible ocupando la izquierda
+        const maxRatio = tracks.length > 12 ? 0.56 : 0.61;
+        const sq = Math.min(hInnerH, hInnerW * maxRatio);
+        artW = sq;
+        artH = sq;
+        artX = hPadX;
+        artY = hPadY + (hInnerH - sq) / 2;
+      }
+
+      drawCroppedImage(c, state.mainImg, artX, artY, artW, artH, state.mainZoom, state.mainX, state.mainY, {
+        contain: isCinemaLayout ? false : state.fitContain,
         backdropColor: theme.bg
       });
-      if (state.showExplicit) {
-        const paW = artSize * 0.22;
-        drawParentalAdvisory(c, artX + artSize - paW - artSize * 0.03, artY + artSize - paW * 0.62 - artSize * 0.03, paW);
-      }
-      drawPaletteBar(c, artX, artY + artSize + innerH * 0.025, artSize, palH);
 
-      // Columna derecha: Header + Regla + Crédito + Contenido + QR
-      const subFs = rightW * 0.048;
+      if (state.showExplicit) {
+        const paW = Math.min(artW * 0.24, artH * 0.24);
+        drawParentalAdvisory(c, artX + artW - paW - artW * 0.03, artY + artH - paW * 0.62 - artW * 0.03, paW);
+      }
+
+      // Columna derecha: TODO lo demás a mayor escala llenando el resto de la hoja
+      const rightX = artX + artW + colGap;
+      const rightW = (hPadX + hInnerW) - rightX;
+
+      // Subtítulo / Artista / Director
+      const subFs = rightW * 0.056;
       c.fillStyle = theme.ink;
       c.textAlign = 'left';
       c.textBaseline = 'top';
       c.font = `italic 800 ${subFs}px ${fonts.display}`;
-      c.fillText(truncateText(c, (state.subtitle || '').toUpperCase(), rightW * 0.78), rightX, padY);
+      c.fillText(truncateText(c, (state.subtitle || '').toUpperCase(), rightW * 0.80), rightX, hPadY);
 
+      // Título principal + Año
       const yearText = (state.year || '').trim();
-      const yearFs = rightW * 0.056;
+      const yearFs = rightW * 0.066;
       let yearW = 0;
       if (yearText) {
         c.font = `italic 800 ${yearFs}px ${fonts.condensed}`;
@@ -956,11 +1035,11 @@
       }
 
       const titleText = (state.title || 'SIN TÍTULO').toUpperCase();
-      const titleBaseline = padY + subFs * 1.2 + rightW * 0.068;
-      fitText(c, titleText, rightW - yearW, rightW * 0.072, rightW * 0.032, (sz) => `italic 900 ${sz}px ${fonts.display}`);
+      const titleBaseline = hPadY + subFs * 1.25 + rightW * 0.078;
+      fitText(c, titleText, rightW - yearW, rightW * 0.088, rightW * 0.038, (sz) => `italic 900 ${sz}px ${fonts.display}`);
       c.textAlign = 'left';
       c.textBaseline = 'alphabetic';
-      c.fillText(titleText, rightX, titleBaseline);
+      c.fillText(truncateText(c, titleText, rightW - yearW), rightX, titleBaseline);
 
       if (yearText) {
         c.textAlign = 'right';
@@ -968,43 +1047,58 @@
         c.fillText(yearText, rightX + rightW, titleBaseline);
       }
 
-      const rule1Y = titleBaseline + innerH * 0.02;
+      // Línea divisoria superior
+      const rule1Y = titleBaseline + hInnerH * 0.022;
       c.fillStyle = theme.rule;
       c.fillRect(rightX, rule1Y, rightW, ruleH);
 
-      // Crédito
-      let contentY = rule1Y + ruleH + innerH * 0.022;
+      // Franja de Crédito + Paleta de 5 colores en la mitad derecha
+      const palY = rule1Y + ruleH + hInnerH * 0.022;
+      const palH = hInnerH * 0.052;
+      const palW = rightW * 0.42;
+      drawPaletteBar(c, rightX + rightW - palW, palY, palW, palH);
+
       if (state.credit.trim()) {
-        const cFs = fitText(c, state.credit.toUpperCase(), rightW, rightW * 0.038, rightW * 0.022, (sz) => `italic 700 ${sz}px ${fonts.display}`);
-        c.fillStyle = theme.muted;
+        const creditMaxW = rightW - palW - rightW * 0.04;
+        const cTxt = state.credit.trim().toUpperCase();
+        fitText(c, cTxt, creditMaxW, rightW * 0.042, rightW * 0.024, (sz) => `italic 700 ${sz}px ${fonts.display}`);
+        c.fillStyle = theme.ink;
         c.textAlign = 'left';
-        c.textBaseline = 'top';
-        c.fillText(state.credit.toUpperCase(), rightX, contentY);
-        contentY += cFs * 1.65;
+        c.textBaseline = 'middle';
+        c.fillText(truncateText(c, cTxt, creditMaxW), rightX, palY + palH * 0.52);
       }
 
+      // Segunda regla fina
+      const rule2Y = palY + palH + hInnerH * 0.02;
+      c.fillStyle = theme.rule;
+      c.fillRect(rightX, rule2Y, rightW, Math.max(1.5, ruleH * 0.7));
+
+      // Bloque central + Barra inferior con QR grande
+      const contentY = rule2Y + ruleH + hInnerH * 0.028;
       const hasQr = state.showQr && qrImg;
-      const qrSize = hasQr ? Math.min(innerH * 0.24, rightW * 0.28) : 0;
-      const bottomBarH = hasQr ? qrSize + qrSize * 0.18 : (state.footerNote.trim() ? innerH * 0.05 : 0);
-      const bodyH = (padY + innerH - bottomBarH - innerH * 0.025) - contentY;
+      const qrSize = hasQr ? Math.min(hInnerH * 0.25, rightW * 0.30) : 0;
+      const bottomBarH = hasQr ? qrSize + qrSize * 0.16 : (state.footerNote.trim() ? hInnerH * 0.05 : 0);
+      const bodyH = Math.max(40, (hPadY + hInnerH - bottomBarH - hInnerH * 0.028) - contentY);
 
       if (state.bodyMode === 'cinema') {
-        drawCinemaSheet(c, rightX, contentY, rightW, bodyH, theme, fonts);
+        drawCinemaSheet(c, rightX, contentY, rightW, bodyH, theme, fonts, true);
       } else {
-        drawTracklist(c, parseTracks(state.tracksText), rightX, contentY, rightW, bodyH, theme, fonts);
+        drawTracklist(c, tracks, rightX, contentY, rightW, bodyH, theme, fonts);
       }
 
       // Barra inferior derecha: Nota + QR
-      const bottomY = padY + innerH - bottomBarH;
+      const bottomY = hPadY + hInnerH - bottomBarH;
       if (hasQr) {
         drawQrBlock(c, qrImg, rightX + rightW - qrSize, bottomY, qrSize, theme, state.qrLabel);
       }
+
+      // En modo cine/música, si hay nota al pie va a la izquierda del QR
       if (state.footerNote.trim()) {
         c.fillStyle = theme.muted;
         c.textAlign = 'left';
         c.textBaseline = 'bottom';
-        c.font = `700 ${rightW * 0.022}px ${fonts.mono}`;
-        c.fillText(truncateText(c, state.footerNote.trim().toUpperCase(), rightW - qrSize - 16), rightX, padY + innerH);
+        c.font = `700 ${rightW * 0.024}px ${fonts.mono}`;
+        c.fillText(truncateText(c, state.footerNote.trim().toUpperCase(), rightW - qrSize - 16), rightX, hPadY + hInnerH);
       }
     }
   }
@@ -1339,7 +1433,7 @@
     const imgX1 = padX + holeShift + capW * 0.025;
     drawCroppedImage(c, state.mainImg, imgX1, imgY1, imgSize, imgSize, state.mainZoom, state.mainX, state.mainY, { circle: true });
 
-    // Zona derecha Cara A: QR centrado + texto sin solapamiento
+    // Zona derecha Cara A: QR centrado + texto en hasta 2 líneas sin cortar palabras
     const rightAreaX = imgX1 + imgSize + capW * 0.04;
     const rightAreaEnd = padX + capW - capW * 0.045;
     const rightAreaW = rightAreaEnd - rightAreaX;
@@ -1349,38 +1443,58 @@
 
       if (state.qrLabel.trim() && rightAreaW - qrSize > capW * 0.20) {
         const qx2 = rightAreaEnd - qrSize;
-        const textMaxW = Math.max(20, qx2 - rightAreaX - capW * 0.035);
+        const textMaxW = Math.max(20, qx2 - rightAreaX - capW * 0.032);
         c.drawImage(qrImg, qx2, qy, qrSize, qrSize);
 
         const lblText = state.qrLabel.trim().toUpperCase();
+        const subText = (state.subtitle || '').trim();
+        const lblFit = fitWrappedLines(c, lblText, textMaxW, 2, capH * 0.11, capH * 0.068, (sz) => `800 ${sz}px ${fonts.display}`);
+        const subFit = fitWrappedLines(c, subText, textMaxW, 2, capH * 0.095, capH * 0.065, (sz) => `italic 600 ${sz}px ${fonts.body}`);
+
+        const lblH = lblFit.lines.length * (lblFit.size * 1.18);
+        const subGap = subFit.lines.length ? capH * 0.055 : 0;
+        const subH = subFit.lines.length * (subFit.size * 1.2);
+        const totalTextH = lblH + subGap + subH;
+        let curY = y1 + (capH - totalTextH) / 2;
+
         c.fillStyle = ink;
         c.textAlign = 'left';
-        c.textBaseline = 'middle';
-        const lblFs = fitText(c, lblText, textMaxW, capH * 0.115, capH * 0.068, (sz) => `800 ${sz}px ${fonts.display}`);
-        const lblLines = wrapLines(c, lblText, textMaxW, 2);
-        const startLblY = lblLines.length > 1 ? y1 + capH * 0.36 : y1 + capH * 0.42;
-        lblLines.forEach((ln, idx) => {
-          c.fillText(truncateText(c, ln, textMaxW), rightAreaX, startLblY + idx * (lblFs * 1.2));
+        c.textBaseline = 'top';
+        c.font = `800 ${lblFit.size}px ${fonts.display}`;
+        lblFit.lines.forEach((ln) => {
+          c.fillText(ln, rightAreaX, curY);
+          curY += lblFit.size * 1.18;
         });
 
-        c.fillStyle = muted;
-        c.font = `italic 600 ${capH * 0.08}px ${fonts.body}`;
-        const subY = startLblY + lblLines.length * (lblFs * 1.2) + capH * 0.05;
-        c.fillText(truncateText(c, state.subtitle || '', textMaxW), rightAreaX, subY);
+        if (subFit.lines.length) {
+          curY += subGap;
+          c.fillStyle = muted;
+          c.font = `italic 600 ${subFit.size}px ${fonts.body}`;
+          subFit.lines.forEach((ln) => {
+            c.fillText(ln, rightAreaX, curY);
+            curY += subFit.size * 1.2;
+          });
+        }
       } else {
         const qx = rightAreaX + (rightAreaW - qrSize) / 2;
         c.drawImage(qrImg, qx, qy, qrSize, qrSize);
       }
     } else {
-      // Sin QR: mostrar título centrado
+      // Sin QR: mostrar título en hasta 2 líneas centrado
+      const tFit = fitWrappedLines(c, state.title || '', rightAreaW, 2, capH * 0.20, capH * 0.095, (sz) => `900 ${sz}px ${fonts.display}`);
       c.fillStyle = ink;
       c.textAlign = 'center';
-      c.textBaseline = 'middle';
-      fitText(c, state.title || '', rightAreaW, capH * 0.20, capH * 0.10, (sz) => `900 ${sz}px ${fonts.display}`);
-      c.fillText(truncateText(c, state.title || '', rightAreaW), rightAreaX + rightAreaW / 2, y1 + capH * 0.5);
+      c.textBaseline = 'top';
+      c.font = `900 ${tFit.size}px ${fonts.display}`;
+      const th = tFit.lines.length * (tFit.size * 1.15);
+      let ty = y1 + (capH - th) / 2;
+      tFit.lines.forEach((ln) => {
+        c.fillText(ln, rightAreaX + rightAreaW / 2, ty);
+        ty += tFit.size * 1.15;
+      });
     }
 
-    /* ---- CARA B (Reverso: Título + Artista izquierda + 2ª foto circular derecha) ---- */
+    /* ---- CARA B (Reverso: Título y Artista en hasta 2 líneas + 2ª foto circular) ---- */
     const y2 = startY + capH + gap;
     drawCapsuleShell(padX, y2, 'REVERSO (CARA B)');
 
@@ -1393,35 +1507,48 @@
     drawCroppedImage(c, img2, imgX2, imgY2, imgSize, imgSize, z2, x2, py2, { circle: true });
 
     const textX = padX + holeShift + capW * 0.032;
-    const textMaxW = Math.max(40, imgX2 - textX - capW * 0.045);
+    const textMaxW = Math.max(40, imgX2 - textX - capW * 0.042);
     const rawKeyTitle = state.title || 'Sin título';
-    c.fillStyle = ink;
+    const rawKeySub = (state.subtitle || '').trim();
+    const rawKeyYear = (state.year || '').trim();
+
+    const titleFit = fitWrappedLines(c, rawKeyTitle, textMaxW, 2, capH * 0.20, capH * 0.092, (sz) => `900 ${sz}px ${fonts.display}`);
+    const subFitB = fitWrappedLines(c, rawKeySub, textMaxW, 2, capH * 0.13, capH * 0.074, (sz) => `italic 600 ${sz}px ${fonts.body}`);
+    const yearFs = capH * 0.074;
+
+    const titleBlockH = titleFit.lines.length * (titleFit.size * 1.14);
+    const subGapB = subFitB.lines.length ? capH * 0.045 : 0;
+    const subBlockH = subFitB.lines.length * (subFitB.size * 1.18);
+    const showYear = Boolean(rawKeyYear) && (titleBlockH + subGapB + subBlockH + yearFs * 1.5 < capH * 0.78);
+    const yearGapB = showYear ? capH * 0.04 : 0;
+    const totalBH = titleBlockH + subGapB + subBlockH + (showYear ? yearGapB + yearFs : 0);
+
+    let cyB = y2 + (capH - totalBH) / 2;
     c.textAlign = 'left';
     c.textBaseline = 'top';
 
-    let keyTitleFs = fitText(c, rawKeyTitle, textMaxW, capH * 0.21, capH * 0.125, (sz) => `900 ${sz}px ${fonts.display}`);
-    let titleLines = [rawKeyTitle];
-    if (c.measureText(rawKeyTitle).width > textMaxW) {
-      keyTitleFs = capH * 0.135;
-      c.font = `900 ${keyTitleFs}px ${fonts.display}`;
-      titleLines = wrapLines(c, rawKeyTitle, textMaxW, 2);
-    }
-
-    const blockTop = titleLines.length > 1 ? y2 + capH * 0.20 : y2 + capH * 0.27;
-    titleLines.forEach((ln, idx) => {
-      c.font = `900 ${keyTitleFs}px ${fonts.display}`;
-      c.fillText(truncateText(c, ln, textMaxW), textX, blockTop + idx * (keyTitleFs * 1.15));
+    c.fillStyle = ink;
+    c.font = `900 ${titleFit.size}px ${fonts.display}`;
+    titleFit.lines.forEach((ln) => {
+      c.fillText(ln, textX, cyB);
+      cyB += titleFit.size * 1.14;
     });
 
-    const subTop = blockTop + titleLines.length * (keyTitleFs * 1.15) + capH * 0.05;
-    const subFs = fitText(c, state.subtitle || '', textMaxW, capH * 0.13, capH * 0.08, (sz) => `italic 600 ${sz}px ${fonts.body}`);
-    c.fillStyle = muted;
-    c.fillText(truncateText(c, state.subtitle || '', textMaxW), textX, subTop);
-
-    if (state.year && state.year.trim()) {
+    if (subFitB.lines.length) {
+      cyB += subGapB;
       c.fillStyle = muted;
-      c.font = `700 ${capH * 0.078}px ${fonts.mono}`;
-      c.fillText(truncateText(c, state.year.trim(), textMaxW), textX, Math.min(y2 + capH * 0.80, subTop + subFs * 1.3));
+      c.font = `italic 600 ${subFitB.size}px ${fonts.body}`;
+      subFitB.lines.forEach((ln) => {
+        c.fillText(ln, textX, cyB);
+        cyB += subFitB.size * 1.18;
+      });
+    }
+
+    if (showYear) {
+      cyB += yearGapB;
+      c.fillStyle = muted;
+      c.font = `700 ${yearFs}px ${fonts.mono}`;
+      c.fillText(truncateText(c, rawKeyYear, textMaxW), textX, cyB);
     }
   }
 
