@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ya Nomáh de Pa'l Maestro: convierte casi cualquier archivo gratis y directo en tu navegador. Imágenes, PDF, OCR para escaneos, Word, Excel, CSV, JSON, Audio, Video y ZIP sin subir nada a la nube." />
+  <title>Ya Nomáh · Conversor Universal · Pa'l Maestro</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="../../theme/palmaestro-theme.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="../../loader/palmaestro-loader.js"></script>
+  <script defer src="./engines.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="yn-app" id="ynApp">
+    <!-- Encabezado oficial Mesón Digital + Fanzine Pa'l Maestro -->
+    <header class="yn-header">
+      <div class="yn-brand">
+        <div class="yn-brand-icon" aria-hidden="true">
+          <svg class="yn-ico yn-ico-spin-soft" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+            <path d="M16 16h5v5" />
+          </svg>
+        </div>
+        <div class="yn-brand-copy">
+          <div class="yn-brand-row">
+            <h1 class="pm-title-xl yn-title">Ya <span class="pm-zine-accent">Nomáh</span></h1>
+            <span class="pm-badge" style="background:#22C55E;color:#1F2536;">100% Gratis</span>
+            <span class="pm-badge" style="background:#FFD000;color:#1F2536;">Privado · Sin nube</span>
+          </div>
+          <p class="pm-tech-italic yn-tech-sub">Imágenes · Taller PDF · OCR Escaneos · Docs &amp; Excel · Audio &amp; Video · ZIP · Todo corre en tu navegador</p>
+        </div>
+      </div>
+
+      <div class="yn-header-actions" aria-label="Pruebas rápidas">
+        <button type="button" class="yn-chip-btn" id="btnDemoImage" title="Cargar imagen de prueba para convertir">
+          <svg class="yn-ico yn-ico-tilt" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <span>Demo Foto</span>
+        </button>
+        <button type="button" class="yn-chip-btn" id="btnDemoCsv" title="Cargar planilla de prueba para pasar a Excel, JSON o PDF">
+          <svg class="yn-ico yn-ico-pulse" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7"/><rect x="12" y="7" width="3" height="11"/><rect x="17" y="13" width="3" height="5"/></svg>
+          <span>Demo Planilla</span>
+        </button>
+        <button type="button" class="yn-chip-btn yn-chip-ocr" id="btnDemoOcr" title="Cargar imagen con texto de obra para probar OCR">
+          <svg class="yn-ico yn-ico-bounce" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3"/><path d="M20 7V4h-3"/><path d="M4 17v3h3"/><path d="M20 17v3h-3"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+          <span>Demo OCR</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Selector de Taller / Modo de trabajo -->
+    <nav class="yn-mode-bar" aria-label="Modos de conversión">
+      <button type="button" class="yn-mode-card pat-trigger pat-blue-soft is-active" data-mode="convert" aria-pressed="true">
+        <span class="yn-mode-ico" style="background:#38BDF8;color:#1F2536;" aria-hidden="true">
+          <svg class="yn-ico yn-ico-tilt" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+        </span>
+        <span class="yn-mode-text">
+          <strong>Conversor Total</strong>
+          <small class="pm-tech-italic">Fotos, Docs, Excel, Audio, Video</small>
+        </span>
+      </button>
+
+      <button type="button" class="yn-mode-card pat-trigger pat-orange-soft" data-mode="pdf" aria-pressed="false">
+        <span class="yn-mode-ico" style="background:#FF5A1F;color:#FFFFFF;" aria-hidden="true">
+          <svg class="yn-ico yn-ico-pulse" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>
+        </span>
+        <span class="yn-mode-text">
+          <strong>Taller PDF</strong>
+          <small class="pm-tech-italic">Unir, dividir, rotar, comprimir</small>
+        </span>
+      </button>
+
+      <button type="button" class="yn-mode-card pat-trigger pat-yellow-soft" data-mode="ocr" aria-pressed="false">
+        <span class="yn-mode-ico" style="background:#FFD000;color:#1F2536;" aria-hidden="true">
+          <svg class="yn-ico yn-ico-bounce" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 10h10"/><path d="M7 14h7"/></svg>
+        </span>
+        <span class="yn-mode-text">
+          <strong>OCR Escaneos</strong>
+          <small class="pm-tech-italic">Foto o PDF → Texto / Word / PDF</small>
+        </span>
+      </button>
+
+      <button type="button" class="yn-mode-card pat-trigger pat-green-soft" data-mode="zip" aria-pressed="false">
+        <span class="yn-mode-ico" style="background:#22C55E;color:#1F2536;" aria-hidden="true">
+          <svg class="yn-ico yn-ico-wiggle" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+        </span>
+        <span class="yn-mode-text">
+          <strong>Caja ZIP</strong>
+          <small class="pm-tech-italic">Comprimir o abrir archivos .zip</small>
+        </span>
+      </button>
+    </nav>
+
+    <!-- Cuerpo Principal -->
+    <main class="yn-main" id="ynMain">
+      <!-- Zona Dropzone Universal -->
+      <section class="pm-card yn-drop-card" aria-labelledby="dropHeading">
+        <span class="pm-washi yn-washi" aria-hidden="true"></span>
+        <div class="yn-dropzone" id="dropzone" role="button" tabindex="0" aria-labelledby="dropHeading" aria-describedby="dropSubdesc dropHint">
+          <input type="file" id="fileInput" class="yn-sr-only" multiple aria-label="Seleccionar archivos para convertir" />
+          <div class="yn-drop-visual" aria-hidden="true">
+            <svg class="yn-ico yn-ico-bounce" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="yn-drop-copy">
+            <h2 class="pm-title-xl yn-drop-title" id="dropHeading">Tira tus archivos acá, ya nomáh</h2>
+            <p class="yn-drop-desc" id="dropSubdesc">Arrastra uno o varios archivos, toca para elegir desde tu equipo o pega una captura con <kbd>Ctrl+V</kbd>.</p>
+            <p class="pm-tech-italic yn-drop-hint" id="dropHint">JPG · PNG · WebP · AVIF · HEIC · SVG · PDF · DOCX · XLSX · CSV · JSON · YAML · MD · HTML · MP4 · MOV · WebM · MP3 · WAV · OGG · ZIP</p>
+          </div>
+          <div class="yn-drop-cta">
+            <span class="pm-btn yn-btn-yellow" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              Elegir archivos
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 1: CONVERSOR UNIVERSAL -->
+      <section class="yn-panel" id="panelConvert" aria-label="Cola de conversión universal">
+        <!-- Barra de acciones rápidas en lote -->
+        <div class="pm-card yn-toolbar is-hidden" id="convertToolbar">
+          <div class="yn-toolbar-left">
+            <span class="yn-count-pill" id="queueCountPill">0 archivos</span>
+            <div class="yn-batch-wrap" id="batchFormatWrap">
+              <label for="selBatchFormat" class="yn-inline-label">Pasar todos a:</label>
+              <select id="selBatchFormat" class="yn-select">
+                <option value="">Elegir formato...</option>
+              </select>
+            </div>
+          </div>
+          <div class="yn-toolbar-right">
+            <button type="button" class="pm-btn yn-btn-ghost" id="btnToggleOptions" aria-expanded="false" aria-controls="advancedOptions">
+              <svg class="yn-ico yn-ico-wiggle" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <span>Ajustes</span>
+            </button>
+            <button type="button" class="pm-btn yn-btn-ghost" id="btnClearQueue">
+              <svg class="yn-ico yn-ico-tilt" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              <span>Limpiar</span>
+            </button>
+            <button type="button" class="pm-btn yn-btn-red" id="btnConvertAll">
+              <svg class="yn-ico yn-ico-spin-soft" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>Convertir todo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel de opciones avanzadas -->
+        <div class="pm-card yn-options-card is-hidden" id="advancedOptions">
+          <div class="yn-options-grid">
+            <div class="yn-opt-group">
+              <label for="rngQuality" class="yn-opt-label">Calidad imagen / PDF: <strong id="lblQuality">88%</strong></label>
+              <input type="range" id="rngQuality" min="30" max="100" value="88" />
+              <span class="pm-tech-italic">Baja a 70–80% para archivos bien livianos</span>
+            </div>
+
+            <div class="yn-opt-group">
+              <label for="selResize" class="yn-opt-label">Tamaño máximo de imagen</label>
+              <select id="selResize" class="yn-select yn-select-full">
+                <option value="0">Mantener original</option>
+                <option value="1920">Full HD (1920 px)</option>
+                <option value="1280">Web rápida (1280 px)</option>
+                <option value="800">WhatsApp / liviano (800 px)</option>
+                <option value="256">Ícono / miniatura (256 px)</option>
+              </select>
+            </div>
+
+            <div class="yn-opt-group">
+              <label for="selPdfDpi" class="yn-opt-label">Resolución PDF → Imagen</label>
+              <select id="selPdfDpi" class="yn-select yn-select-full">
+                <option value="1.5">Estándar rápido (110 DPI)</option>
+                <option value="2" selected>Nítido lectura (150 DPI)</option>
+                <option value="3">Alta definición (220 DPI)</option>
+              </select>
+            </div>
+
+            <div class="yn-opt-group">
+              <label for="selVideoPreset" class="yn-opt-label">Audio / Video (FFmpeg)</label>
+              <select id="selVideoPreset" class="yn-select yn-select-full">
+                <option value="balanced" selected>Equilibrado (buena calidad y peso)</option>
+                <option value="small">Ultra liviano (ideal WhatsApp)</option>
+                <option value="high">Alta calidad (más lento)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="yn-opt-checks">
+            <label class="yn-check">
+              <input type="checkbox" id="chkGrayscale" />
+              <span>Blanco y negro (imágenes)</span>
+            </label>
+            <label class="yn-check">
+              <input type="checkbox" id="chkMergeImagesPdf" />
+              <span>Si paso varias fotos a PDF, juntarlas en 1 solo PDF</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Lista de archivos en cola -->
+        <div class="yn-queue" id="queueList" aria-live="polite"></div>
+
+        <!-- Barra de descarga masiva al terminar -->
+        <div class="pm-card yn-done-bar is-hidden" id="doneBar">
+          <div class="yn-done-copy">
+            <strong id="doneSummary">¡Listo el mate!</strong>
+            <span class="pm-tech-italic" id="doneDetail">Tus archivos quedaron listos sin salir de tu equipo.</span>
+          </div>
+          <div class="yn-done-actions">
+            <button type="button" class="pm-btn yn-btn-green" id="btnDownloadAllZip">
+              <svg class="yn-ico yn-ico-dl" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Descargar todo en ZIP</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Guía visual de formatos soportados (visible cuando la cola está vacía) -->
+        <section class="yn-matrix-grid" id="formatShowcase" aria-label="Formatos que puedes convertir">
+          <article class="pm-card yn-cat-card pat-trigger pat-blue-soft">
+            <div class="yn-cat-head">
+              <span class="yn-cat-ico" style="background:#38BDF8;color:#1F2536;" aria-hidden="true">
+                <svg class="yn-ico yn-ico-tilt" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+              </span>
+              <div>
+                <h3 class="pm-title-xl yn-cat-title">Imágenes</h3>
+                <p class="pm-tech-italic">Conversión masiva · Fotos iPhone HEIC</p>
+              </div>
+            </div>
+            <div class="yn-tags">
+              <span>JPG</span><span>PNG</span><span>WebP</span><span>AVIF</span><span>HEIC</span><span>SVG</span><span>BMP</span><span>ICO</span><span>PDF</span>
+            </div>
+          </article>
+
+          <article class="pm-card yn-cat-card pat-trigger pat-orange-soft">
+            <div class="yn-cat-head">
+              <span class="yn-cat-ico" style="background:#FF5A1F;color:#FFFFFF;" aria-hidden="true">
+                <svg class="yn-ico yn-ico-pulse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </span>
+              <div>
+                <h3 class="pm-title-xl yn-cat-title">PDF y Documentos</h3>
+                <p class="pm-tech-italic">Editar, extraer texto y convertir</p>
+              </div>
+            </div>
+            <div class="yn-tags">
+              <span>PDF</span><span>DOCX</span><span>Markdown</span><span>HTML</span><span>TXT</span><span>PDF → PNG</span><span>PDF → Word</span>
+            </div>
+          </article>
+
+          <article class="pm-card yn-cat-card pat-trigger pat-green-soft">
+            <div class="yn-cat-head">
+              <span class="yn-cat-ico" style="background:#22C55E;color:#1F2536;" aria-hidden="true">
+                <svg class="yn-ico yn-ico-bounce" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>
+              </span>
+              <div>
+                <h3 class="pm-title-xl yn-cat-title">Planillas y Datos</h3>
+                <p class="pm-tech-italic">Cubicaciones, listas y tablas</p>
+              </div>
+            </div>
+            <div class="yn-tags">
+              <span>XLSX</span><span>XLS</span><span>ODS</span><span>CSV</span><span>TSV</span><span>JSON</span><span>YAML</span><span>HTML</span><span>PDF</span>
+            </div>
+          </article>
+
+          <article class="pm-card yn-cat-card pat-trigger pat-yellow-soft">
+            <div class="yn-cat-head">
+              <span class="yn-cat-ico" style="background:#FFD000;color:#1F2536;" aria-hidden="true">
+                <svg class="yn-ico yn-ico-spin-soft" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              </span>
+              <div>
+                <h3 class="pm-title-xl yn-cat-title">Audio y Video</h3>
+                <p class="pm-tech-italic">Motor FFmpeg WASM local</p>
+              </div>
+            </div>
+            <div class="yn-tags">
+              <span>MP4</span><span>WebM</span><span>MOV</span><span>MKV</span><span>GIF</span><span>MP3</span><span>WAV</span><span>OGG</span><span>M4A</span>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <!-- PANEL 2: TALLER PDF -->
+      <section class="yn-panel is-hidden" id="panelPdf" aria-label="Herramientas avanzadas de PDF">
+        <div class="pm-card yn-subpanel-card">
+          <div class="yn-subpanel-head">
+            <div>
+              <h2 class="pm-title-xl yn-subpanel-title">Taller PDF</h2>
+              <p class="pm-tech-italic">Une varios PDFs, extrae páginas, gira planos o comprime archivos pesados sin perder claridad.</p>
+            </div>
+            <div class="yn-pill-tabs" role="tablist" aria-label="Acción PDF">
+              <button type="button" class="yn-pill-tab is-active" data-pdf-op="merge" role="tab" aria-selected="true">Unir PDFs</button>
+              <button type="button" class="yn-pill-tab" data-pdf-op="split" role="tab" aria-selected="false">Dividir / Extraer</button>
+              <button type="button" class="yn-pill-tab" data-pdf-op="rotate" role="tab" aria-selected="false">Rotar</button>
+              <button type="button" class="yn-pill-tab" data-pdf-op="compress" role="tab" aria-selected="false">Comprimir</button>
+              <button type="button" class="yn-pill-tab" data-pdf-op="img2pdf" role="tab" aria-selected="false">Fotos → PDF</button>
+            </div>
+          </div>
+
+          <div class="yn-pdf-controls" id="pdfOpControls">
+            <!-- Controles dinámicos según operación -->
+            <div class="yn-pdf-opt" data-for-op="merge">
+              <p class="yn-helper-text">Agrega 2 o más archivos <strong>PDF</strong> arriba y ordénalos con las flechas antes de unirlos.</p>
+            </div>
+            <div class="yn-pdf-opt is-hidden" data-for-op="split">
+              <div class="yn-field-row">
+                <div class="yn-field">
+                  <label for="inpPdfRange" class="yn-opt-label">Rango de páginas (deja vacío para separar todas en ZIP)</label>
+                  <input type="text" id="inpPdfRange" class="yn-input" placeholder="Ej: 1-3, 5, 8-10" />
+                </div>
+              </div>
+            </div>
+            <div class="yn-pdf-opt is-hidden" data-for-op="rotate">
+              <div class="yn-field-row">
+                <div class="yn-field">
+                  <label for="selPdfRotate" class="yn-opt-label">Ángulo de giro</label>
+                  <select id="selPdfRotate" class="yn-select yn-select-full">
+                    <option value="90">90° derecha (horario)</option>
+                    <option value="180">180° (dar vuelta)</option>
+                    <option value="270">90° izquierda (antihorario)</option>
+                  </select>
+                </div>
+                <div class="yn-field">
+                  <label for="inpRotatePages" class="yn-opt-label">Páginas (vacío = todas)</label>
+                  <input type="text" id="inpRotatePages" class="yn-input" placeholder="Ej: 1, 3-5" />
+                </div>
+              </div>
+            </div>
+            <div class="yn-pdf-opt is-hidden" data-for-op="compress">
+              <div class="yn-field-row">
+                <div class="yn-field">
+                  <label for="selPdfCompress" class="yn-opt-label">Nivel de compresión</label>
+                  <select id="selPdfCompress" class="yn-select yn-select-full">
+                    <option value="light">Suave (150 DPI · máxima nitidez)</option>
+                    <option value="medium" selected>Recomendado (120 DPI · gran ahorro)</option>
+                    <option value="strong">Fuerte (96 DPI · ultra liviano para correo)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="yn-pdf-opt is-hidden" data-for-op="img2pdf">
+              <div class="yn-field-row">
+                <div class="yn-field">
+                  <label for="selImgPdfPage" class="yn-opt-label">Tamaño de hoja</label>
+                  <select id="selImgPdfPage" class="yn-select yn-select-full">
+                    <option value="a4" selected>A4 (estándar Chile)</option>
+                    <option value="letter">Carta (Letter)</option>
+                    <option value="fit">Ajustar al tamaño exacto de cada foto</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="yn-pdf-list" id="pdfFileList">
+            <p class="yn-empty-mini">Suelta tus archivos PDF (o fotos en «Fotos → PDF») en la zona superior para empezar.</p>
+          </div>
+
+          <div class="yn-subpanel-footer">
+            <button type="button" class="pm-btn yn-btn-ghost" id="btnPdfClear">Limpiar lista</button>
+            <button type="button" class="pm-btn yn-btn-red" id="btnPdfRun" disabled>
+              <svg class="yn-ico yn-ico-dl" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span id="lblPdfRun">Ejecutar acción PDF</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 3: OCR ESCANEOS -->
+      <section class="yn-panel is-hidden" id="panelOcr" aria-label="Reconocimiento de texto OCR">
+        <div class="pm-card yn-subpanel-card">
+          <div class="yn-subpanel-head">
+            <div>
+              <h2 class="pm-title-xl yn-subpanel-title">OCR Escaneos y Fotos</h2>
+              <p class="pm-tech-italic">Modo híbrido inteligente: extrae texto digital al instante o lee escaneos y fotos con Tesseract WASM.</p>
+            </div>
+          </div>
+
+          <div class="yn-ocr-grid">
+            <div class="yn-field">
+              <label for="selOcrLang" class="yn-opt-label">Idioma del documento</label>
+              <select id="selOcrLang" class="yn-select yn-select-full">
+                <option value="spa" selected>Español (Chile / Latam)</option>
+                <option value="spa+eng">Español + Inglés (manuales técnicos)</option>
+                <option value="eng">Inglés</option>
+                <option value="por">Portugués</option>
+              </select>
+            </div>
+            <div class="yn-field">
+              <label for="selOcrMode" class="yn-opt-label">Estrategia para PDFs</label>
+              <select id="selOcrMode" class="yn-select yn-select-full">
+                <option value="hybrid" selected>Híbrido (texto nativo + OCR donde haga falta)</option>
+                <option value="force">Forzar OCR en todas las páginas</option>
+              </select>
+            </div>
+            <div class="yn-field">
+              <label for="selOcrOutput" class="yn-opt-label">Archivo de salida</label>
+              <select id="selOcrOutput" class="yn-select yn-select-full">
+                <option value="all" selected>Ver texto + descargar TXT / DOCX / PDF buscable</option>
+                <option value="searchable-pdf">Generar PDF buscable directo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="yn-ocr-file-bar" id="ocrFileBar">
+            <span class="yn-empty-mini">Suelta una foto (JPG/PNG/WebP/HEIC) o un PDF escaneado en la zona superior, o prueba con el botón «Demo OCR».</span>
+          </div>
+
+          <div class="yn-subpanel-footer">
+            <button type="button" class="pm-btn yn-btn-ghost" id="btnOcrClear">Limpiar</button>
+            <button type="button" class="pm-btn yn-btn-red" id="btnOcrRun" disabled>
+              <svg class="yn-ico yn-ico-bounce" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3"/><path d="M20 7V4h-3"/><path d="M4 17v3h3"/><path d="M20 17v3h-3"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+              <span>Leer texto (OCR)</span>
+            </button>
+          </div>
+
+          <div class="yn-ocr-result is-hidden" id="ocrResultBox">
+            <div class="yn-ocr-res-head">
+              <label for="txtOcrOutput" class="yn-opt-label">Texto reconocido (<span id="lblOcrStats">0 palabras</span>)</label>
+              <div class="yn-ocr-res-actions">
+                <button type="button" class="yn-chip-btn" id="btnOcrCopy">Copiar</button>
+                <button type="button" class="yn-chip-btn" id="btnOcrDlTxt">.TXT</button>
+                <button type="button" class="yn-chip-btn" id="btnOcrDlDocx">.DOCX (Word)</button>
+                <button type="button" class="yn-chip-btn" id="btnOcrDlMd">.MD</button>
+                <button type="button" class="yn-chip-btn yn-chip-pdf" id="btnOcrDlPdf">PDF Buscable</button>
+              </div>
+            </div>
+            <textarea id="txtOcrOutput" class="yn-textarea" rows="10" spellcheck="true"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 4: CAJA ZIP -->
+      <section class="yn-panel is-hidden" id="panelZip" aria-label="Comprimir o descomprimir archivos ZIP">
+        <div class="pm-card yn-subpanel-card">
+          <div class="yn-subpanel-head">
+            <div>
+              <h2 class="pm-title-xl yn-subpanel-title">Caja ZIP</h2>
+              <p class="pm-tech-italic">Arrastra un .zip para ver y sacar sus archivos uno por uno, o tira varios archivos para empaquetarlos en un .zip.</p>
+            </div>
+            <div class="yn-pill-tabs" role="tablist" aria-label="Acción ZIP">
+              <button type="button" class="yn-pill-tab is-active" data-zip-op="pack" role="tab" aria-selected="true">Crear ZIP</button>
+              <button type="button" class="yn-pill-tab" data-zip-op="unpack" role="tab" aria-selected="false">Abrir / Extraer ZIP</button>
+            </div>
+          </div>
+
+          <div class="yn-zip-list" id="zipFileList">
+            <p class="yn-empty-mini">Suelta archivos arriba para comprimirlos en un ZIP, o cambia a «Abrir / Extraer ZIP» y suelta un archivo .zip.</p>
+          </div>
+
+          <div class="yn-subpanel-footer" id="zipPackFooter">
+            <div class="yn-field yn-field-inline">
+              <label for="inpZipName" class="yn-opt-label">Nombre del archivo</label>
+              <input type="text" id="inpZipName" class="yn-input" value="paquete-ya-nomah.zip" />
+            </div>
+            <div class="yn-footer-btns">
+              <button type="button" class="pm-btn yn-btn-ghost" id="btnZipClear">Limpiar</button>
+              <button type="button" class="pm-btn yn-btn-green" id="btnZipCreate" disabled>
+                <svg class="yn-ico yn-ico-dl" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+                <span>Crear y descargar .ZIP</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cintillo de privacidad y motores -->
+      <footer class="pm-card yn-footer-strip">
+        <div class="yn-footer-left">
+          <span class="yn-shield-dot" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
+          <div>
+            <strong>100 % en tu dispositivo · Cero servidores</strong>
+            <p class="pm-tech-italic">Tus archivos nunca salen de tu computador o celular. Los motores WASM se descargan gratis solo cuando los necesitas.</p>
+          </div>
+        </div>
+        <div class="yn-engine-pills" id="engineStatusPills" aria-label="Motores disponibles">
+          <span class="yn-epill" data-engine="canvas">Imágenes</span>
+          <span class="yn-epill" data-engine="pdflib">PDF</span>
+          <span class="yn-epill" data-engine="tesseract">OCR</span>
+          <span class="yn-epill" data-engine="xlsx">Planillas</span>
+          <span class="yn-epill" data-engine="ffmpeg">FFmpeg</span>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Toast de notificaciones -->
+    <div class="yn-toast" id="ynToast" role="status" aria-live="polite" aria-atomic="true"></div>
+  </div>
+</body>
+</html>
